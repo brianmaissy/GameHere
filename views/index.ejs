@@ -1,15 +1,41 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <script src="jquery-1.7.1.min.js"></script>
+        <script type="text/javascript">
+            $(document).keypress(function(event) {
+                var deltaX = 0, deltaY = 0;
+                switch(parseInt(event.keyCode)){
+                    case 37:
+                        deltaX = -1;
+                        break;
+                    case 38:
+                        deltaY = -1;
+                        break;
+                    case 39:
+                        deltaX = 1;
+                        break;
+                    case 40:
+                        deltaY = 1;
+                        break;
+                    default:
+                        return;
+                }
+                $.ajax({
+                    url: 'input',
+                    type: 'POST',
+                    data: {x: deltaX, y: deltaY},
+                    success: function(response){
+                        var x = $(response).find('x').contents().text();
+                        var y = $(response).find('y').contents().text();
+                        $('#dot').css({top: y, left: x});
+                    },
+                    datatype: 'xml'
+                });
+            });
+        </script>
     </head>
     <body>
-        <div style="position: absolute; top: <%= parseInt(x) + 10 %>; left: <%= parseInt(y) + 10%>;height: 20px; width: 20px; -moz-border-radius: 10px; border-radius: 10px; background-color: blue;"></div>
-        <div style="position: absolute; bottom: 10px; left: 10px;">
-            <form method="post" action="/">
-                x: <input type="text" name="pos[x]"><br>
-                y: <input type="text" name="pos[y]"><br>
-                <input type="submit" value="Move dot">
-            </form>
-        </div>
+        <div id="dot" style="position: absolute; top: <%= parseInt(y) %>; left: <%= parseInt(x) %>;height: 20px; width: 20px; -moz-border-radius: 10px; border-radius: 10px; background-color: blue;"></div>
     </body>
 </html>
