@@ -3,6 +3,24 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <script src="jquery-1.7.1.min.js"></script>
         <script type="text/javascript">
+            function updatePosition(response){
+                var x = $(response).find('x').contents().text();
+                var y = $(response).find('y').contents().text();
+                $('#dot').css({top: y, left: x});
+            }
+
+            function requestUpdate(){
+                $.ajax({
+                    url: 'input',
+                    type: 'POST',
+                    data: {x: 0, y: 0},
+                    success: updatePosition,
+                    datatype: 'xml'
+                });
+            }
+
+            window.setInterval(requestUpdate, 500);
+
             $(document).keypress(function(event) {
                 var deltaX = 0, deltaY = 0;
                 switch(parseInt(event.keyCode)){
@@ -25,11 +43,7 @@
                     url: 'input',
                     type: 'POST',
                     data: {x: deltaX, y: deltaY},
-                    success: function(response){
-                        var x = $(response).find('x').contents().text();
-                        var y = $(response).find('y').contents().text();
-                        $('#dot').css({top: y, left: x});
-                    },
+                    success: updatePosition,
                     datatype: 'xml'
                 });
             });
