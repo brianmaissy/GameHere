@@ -10,7 +10,7 @@
             var interval = 10;
             
             if(sockets){
-                var socket = io.connect('http://localhost:8888');
+                var socket = io.connect('http://' + window.location.host);
                 socket.on('location', updatePosition);
             }else{
                 window.setInterval(requestUpdate, 500);

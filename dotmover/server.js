@@ -13,12 +13,13 @@ app.set('view options', {
 });
 app.use(express.bodyParser());
 
-var sockets = false;
+var port = 1337;
+var sockets = true;
 
 if(sockets){
     var io = require('socket.io').listen(app);
 }
-app.listen(8888);
+app.listen(port);
 
 var xPos = 0;
 var yPos = 0;
@@ -40,11 +41,13 @@ if(sockets){
             xPos += data.x;
             yPos += data.y;
             socket.emit('location', { x: xPos, y: yPos });
+            socket.broadcast.emit('location', { x: xPos, y: yPos });
         });
         socket.on('move', function (data) {
             xPos = data.x;
             yPos = data.y;
             socket.emit('location', { x: xPos, y: yPos });
+            socket.broadcast.emit('location', { x: xPos, y: yPos });
         });
     });
 }else{
