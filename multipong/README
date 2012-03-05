@@ -1,1 +1,9 @@
-A multiplayer pong game.
+A multiplayer pong game over socket.io.
+
+Architecture:
+The server (server.js) handles connection and disconnection of clients. The controller and display clients (controller.ejs and display.ejs) talk to the server to handle input and output respectively. The game (nullpong.js) handles the game logic.
+
+
+To run:
+node server.js
+Navigate to localhost:1337/display and localhost:1337/controller

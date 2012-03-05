@@ -18,11 +18,11 @@ var port = 1337;
 var io = require('socket.io').listen(app);
 app.listen(port);
 
-var display;
-function updateDisplay(){
+var display;    // TODO: add support for multiple displays
+function updateDisplay(){   // TODO: make this on a time loop
     if(display){
         console.log("Updating display");
-        display.emit('update', {players: game.players()});
+        display.emit('update', {players: game.players()});  // TODO: fix this so it is independent of the game (more modular)
     }
 }
 
@@ -39,7 +39,7 @@ app.get('/display', function(req, res){
 });
 
 io.sockets.on('connection', function (socket) {
-    socket.on('newPlayer', function () {
+    socket.on('newPlayer', function () {    // TODO: let players choose their own names
         player = game.newPlayer();
         socket.set('player', player, function(){
             console.log("Player " + player.name + " connected");
@@ -61,7 +61,7 @@ io.sockets.on('connection', function (socket) {
             }
         });
     });
-    socket.on('move', function(data) {
+    socket.on('move', function(data) {  // TODO: generalize this so it is game-independent
         socket.get('player', function(err, player){
             if (player){
                 player.y += data.y;

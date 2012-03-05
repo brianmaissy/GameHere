@@ -9,7 +9,7 @@ function Player(name){
     this.y = 0;
 }
 
-// utility function
+// utility function, temporary until users can choose their own names
 function randomString() {
 	var chars = "abcdefghiklmnopqrstuvwxyz";
 	var string_length = 8;
@@ -22,6 +22,7 @@ function randomString() {
 }
 
 // stores the players
+// TODO: push players all the way to the outside edges of the board
 var leftPlayers = [];
 var rightPlayers = [];
 

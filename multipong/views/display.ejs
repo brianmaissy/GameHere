@@ -12,12 +12,13 @@
             });
             socket.on('update', function(data){
                 $('div.player').hide();
-                for(i=0; i<data.players.length; i++){
+                for(i=0; i<data.players.length; i++){   // TODO: separate screen into left and right, style differently
                     var div = $('div.player#' + i);
                     if(div.length == 0){
                         $('div#game').append('<div class="player" id="' + i + '"></div>');
                         div = $('div.player#' + i);
                     }
+                    // TODO: this cannot be dependent on window size. Standardize locations between game and display
                     div.css('left', $(document).width()/2 + data.players[i].x * 100);
                     div.css('top', data.players[i].y);
                     div.show();
@@ -27,7 +28,7 @@
     </head>
     <body>
         <div id="message">Not Connected</div>
-        <div id="game">
+        <div id="game"> <!-- TODO: draw boundaries, ball, etc. -->
         </div>
     </body>
 </html>
