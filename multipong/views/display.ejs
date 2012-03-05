@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" href="multipong.css" />
+        <script src="jquery-1.7.1.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript">            
+            var socket = io.connect('http://' + window.location.host);
+            socket.on('connect', function(){
+                $('div#message').html('<%= game.title %> display connected');
+                socket.emit('newDisplay');
+            });
+            socket.on('update', function(data){
+                $('div.player').hide();
+                for(i=0; i<data.players.length; i++){
+                    var div = $('div.player#' + i);
+                    if(div.length == 0){
+                        $('div#game').append('<div class="player" id="' + i + '"></div>');
+                        div = $('div.player#' + i);
+                    }
+                    div.css('left', $(document).width()/2 + data.players[i].x * 100);
+                    div.css('top', data.players[i].y);
+                    div.show();
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <div id="message">Not Connected</div>
+        <div id="game">
+        </div>
+    </body>
+</html>

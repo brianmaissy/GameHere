@@ -1,0 +1,15 @@
+body{
+    color: blue;
+}
+div#game{
+    position: relative;
+    top: 50px;
+}
+div.player{
+    position: absolute;
+    width: 20px;
+    height: 100px;
+    background-color: blue;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}

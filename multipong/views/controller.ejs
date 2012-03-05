@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" href="multipong.css" />
+        <script src="jquery-1.7.1.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript">            
+            var socket = io.connect('http://' + window.location.host);
+            socket.on('connect', function(){
+                $('div#message').html('<%= game.title %> controller connected');
+                socket.emit('newPlayer');
+            });
+            socket.on('playerConnected', function(data){
+                $('div#message').html('<%= game.title %> controller connected as player ' + data.name);
+            });
+            
+            $(document).keypress(function(event) {
+                var deltaY = 0;
+                switch(parseInt(event.keyCode)){
+                    case 38:
+                        deltaY = -1;
+                        break;
+                    case 40:
+                        deltaY = 1;
+                        break;
+                    default:
+                        return;
+                }
+                socket.emit('move', {y: 10*deltaY});
+            });
+        </script>
+    </head>
+    <body>
+        <div id="message">Not Connected</div>
+    </body>
+</html>
