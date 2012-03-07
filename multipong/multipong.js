@@ -39,39 +39,55 @@ var leftScore = 0;
 var rightScore = 0;
 var ballLocationX = .5;
 var ballLocationY = .5;
-var ballSpeedX = 0;
-var ballSpeedY = 0;
+var ballSpeed = 0;
+var ballDirection = 0;
 
 function start(){
     started = true;
-    var ballSpeed = .005;
-    var angle = Math.random() * Math.PI/2 + Math.PI/4;
-    ballSpeedX = ballSpeed * Math.sin(angle);
-    ballSpeedY = ballSpeed * Math.cos(angle);
-    if(Math.random()<.5) ballSpeedX = -ballSpeedX;
+    setTimeout(function(){
+        if(started){
+            ballSpeed = .005;
+            ballDirection = Math.random() * Math.PI/2 - Math.PI/4;
+            if(Math.random()<.5) ballDirection += Math.PI;
+        }
+    }, 2000);
+}
+
+function stop(){
+    started = false;
+    ballSpeed = 0;
+    ballLocationX = .5;
+    ballLocationY = .5;
 }
 
 function restart(){
-    ballSpeedX = 0;
-    ballSpeedY = 0;
-    ballLocationX = .5;
-    ballLocationY = .5;
-    setTimeout(start, 2000);
+    stop();
+    start();
 }
 
 Multipong.tick = function(){
     Multipong.updateBallPosition();
 }
 
+function normalizeAngle(){
+    if(ballDirection > Math.PI){
+        ballDirection -= 2*Math.PI;   
+    }else if(ballDirection < -Math.PI){
+        ballDirection += 2*Math.PI;
+    }
+}
+
 Multipong.updateBallPosition = function(){
-    ballLocationX += ballSpeedX;
-    ballLocationY += ballSpeedY;
+    ballLocationX += ballSpeed * Math.cos(ballDirection);
+    ballLocationY += ballSpeed * Math.sin(ballDirection);
     // check for hitting the walls
     if(ballLocationY > 1 - Multipong.ballRadius){
-        ballSpeedY = -ballSpeedY;
+        ballDirection = -ballDirection;
+        normalizeAngle();
     }
     if(ballLocationY < Multipong.ballRadius){
-        ballSpeedY = -ballSpeedY;
+        ballDirection = -ballDirection;
+        normalizeAngle();
     }
     if(ballLocationX < -Multipong.ballRadius){
         rightScore++;
@@ -82,16 +98,18 @@ Multipong.updateBallPosition = function(){
         restart();
     }
     // check for hitting a paddle
-    if(ballLocationX < .5 && ballSpeedX < 0){
+    if(ballLocationX < .5 && (ballDirection > Math.PI/2 || ballDirection < -Math.PI/2)){
         for(i=0; i < leftPlayers.length; i++){
             if(collision(leftPlayers[i], 1)){
-                ballSpeedX = -ballSpeedX;
+                ballDirection = Math.PI - ballDirection;
+                normalizeAngle();
             }
         }
-    }else if (ballLocationX > .5 && ballSpeedX > 0){
+    }else if (ballLocationX > .5 && ballDirection < Math.PI/2 && ballDirection > -Math.PI/2){
         for(i=0; i < rightPlayers.length; i++){
             if(collision(rightPlayers[i], -1)){
-                ballSpeedX = -ballSpeedX;
+                ballDirection = Math.PI - ballDirection;
+                normalizeAngle();
             }
         }
     }
@@ -104,7 +122,7 @@ function collision(player, direction){
         var paddleFrontier = player.x + direction*Multipong.paddleThickness/4;
         var ballFrontier = ballLocationX - direction*Multipong.ballRadius;
         var difference = direction*(paddleFrontier - ballFrontier);
-        if(difference > 0 && difference < Math.abs(ballSpeedX)){
+        if(difference > 0 && difference < Math.abs(ballSpeed * Math.cos(ballDirection))){
             return true;
         }
     }
@@ -117,7 +135,6 @@ Multipong.newPlayer = function(){
     if (leftPlayers.length > rightPlayers.length){
         player.position = rightPlayers.length + 1;
         rightPlayers.push(player);
-        if(!started) start();
     }else{
         player.position = leftPlayers.length + 1;
         leftPlayers.push(player);
@@ -151,6 +168,10 @@ function calculateXPositions(){
     for(i=0; i < rightPlayers.length; i++){
         rightPlayers[i].x = 1 - .25 * (rightPlayers.length - rightPlayers[i].position + 1) / (rightPlayers.length + 1);
     }
+    if (leftPlayers.concat(rightPlayers).length >= 2 && !started)
+        start();
+    else if (leftPlayers.concat(rightPlayers).length < 2 && started)
+        stop();
 }
 
 // returns the gamestate, for updating the clients
