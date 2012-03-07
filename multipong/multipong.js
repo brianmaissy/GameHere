@@ -48,7 +48,8 @@ function start(){
         if(started){
             ballSpeed = .005;
             ballDirection = Math.random() * Math.PI/2 - Math.PI/4;
-            if(Math.random()<.5) ballDirection += Math.PI;
+            if(false) ballDirection += Math.PI;
+//            if(Math.random() < .5) ballDirection += Math.PI;
         }
     }, 2000);
 }
@@ -69,29 +70,51 @@ Multipong.tick = function(){
     updateBallPosition();
 }
 
-function normalizeAngle(){
-    if(ballDirection > Math.PI){
-        ballDirection -= 2*Math.PI;   
-    }else if(ballDirection < -Math.PI){
-        ballDirection += 2*Math.PI;
+function normalize(angle){
+    if(angle > Math.PI){
+        return angle - 2*Math.PI;   
+    }else if(angle < -Math.PI){
+        return angle + 2*Math.PI;
     }
+    return angle;
+}
+
+function deflectBall(collisionDistance, side){
+    var direction = 1; // going up
+    if(ballDirection<0){
+        direction = -1; // going down
+    }
+    if(direction==1 && collisionDistance>0 || direction==-1 && collisionDistance<0){
+        // divert towards the tangent a fraction of the angle to it
+        var differential = Math.abs(Math.PI/2 - direction*ballDirection);
+        ballDirection += differential*collisionDistance/Multipong.paddleWidth;
+    }else{
+        // divert towards the normal a fraction of the angle to it
+        if(side == "left"){
+            var differential = ballDirection;
+            ballDirection += differential*collisionDistance/Multipong.paddleWidth;
+        }else{
+            var differential = Math.PI/2 - Math.abs(ballDirection);
+            ballDirection -= differential*collisionDistance/Multipong.paddleWidth;
+        }
+    }
+    ballDirection = normalize(ballDirection);
 }
 
 function updateBallPosition(){
     ballLocationX += ballSpeed * Math.cos(ballDirection);
-    ballLocationY += ballSpeed * Math.sin(ballDirection);
+    ballLocationY -= ballSpeed * Math.sin(ballDirection);
     // check for hitting the walls
     if(ballLocationY > 1 - Multipong.ballRadius){
         ballDirection = -ballDirection;
-        normalizeAngle();
     }
     if(ballLocationY < Multipong.ballRadius){
         ballDirection = -ballDirection;
-        normalizeAngle();
     }
     if(ballLocationX < -Multipong.ballRadius){
-        rightScore++;
-        restart();
+    ballDirection = normalize(Math.PI - ballDirection);
+//        rightScore++;
+ //       restart();
     }
     if(ballLocationX > 1 + Multipong.ballRadius){
         leftScore++;
@@ -100,22 +123,24 @@ function updateBallPosition(){
     // check for hitting a paddle
     if(ballLocationX < .5 && (ballDirection > Math.PI/2 || ballDirection < -Math.PI/2)){
         for(i=0; i < leftPlayers.length; i++){
-            if(collision(leftPlayers[i], 1)){
-                ballDirection = Math.PI - ballDirection;
-                normalizeAngle();
+            var collisionDistance = collision(leftPlayers[i], 1);
+            if(collisionDistance){
+                ballDirection = normalize(Math.PI - ballDirection);
+                deflectBall(collisionDistance, "left");
             }
         }
     }else if (ballLocationX > .5 && ballDirection < Math.PI/2 && ballDirection > -Math.PI/2){
         for(i=0; i < rightPlayers.length; i++){
-            if(collision(rightPlayers[i], -1)){
-                ballDirection = Math.PI - ballDirection;
-                normalizeAngle();
+            var collisionDistance = collision(rightPlayers[i], -1);
+            if(collisionDistance){
+                ballDirection = normalize(Math.PI - ballDirection);
+                deflectBall(collisionDistance, "right");
             }
         }
     }
 }
 
-// if there is a collision with the given paddle, returns the distance from the center of the paddle
+// if there is a collision with the given paddle, returns the distance above center of the paddle where the ball hit
 // returns false if there is no collision
 function collision(player, direction){
     var paddleTop = player.y;
@@ -125,7 +150,7 @@ function collision(player, direction){
         var ballFrontier = ballLocationX - direction*Multipong.ballRadius;
         var difference = direction*(paddleFrontier - ballFrontier);
         if(difference > 0 && difference < Math.abs(ballSpeed * Math.cos(ballDirection))){
-            return true;
+            return ballLocationY - (paddleTop + paddleBottom)/2;
         }
     }
     return false;
