@@ -16,15 +16,21 @@ app.use(express.bodyParser());
 
 var port = 1337;
 var io = require('socket.io').listen(app);
+io.set('log level', 1);
 app.listen(port);
 
-var display;    // TODO: add support for multiple displays
-function updateDisplay(){   // TODO: make this on a time loop
+var display;
+function updateDisplay(){
     if(display){
-        console.log("Updating display");
-        display.emit('update', {players: game.players()});  // TODO: fix this so it is independent of the game (more modular)
+        display.emit('update', {state: game.state()});
     }
 }
+function tick(){
+    game.tick();
+    updateDisplay();
+}
+setInterval(tick, 10);
+
 
 app.get('/controller', function(req, res){
     res.render('controller', {
@@ -39,33 +45,29 @@ app.get('/display', function(req, res){
 });
 
 io.sockets.on('connection', function (socket) {
-    socket.on('newPlayer', function () {    // TODO: let players choose their own names
+    socket.on('newPlayer', function () {    // TODO: let players choose their own names and give them unique colors
         player = game.newPlayer();
         socket.set('player', player, function(){
             console.log("Player " + player.name + " connected");
-            updateDisplay();
             socket.emit('playerConnected', {name: player.name});
         });
     });
     socket.on('newDisplay', function() {
         console.log("Display connected");
         display = socket;
-        updateDisplay();
     });
     socket.on('disconnect', function() {
         socket.get('player', function(err, player){
             if (player){
                 game.removePlayer(player);
                 console.log("Player " + player.name + " disconnected");
-                updateDisplay();
             }
         });
     });
-    socket.on('move', function(data) {  // TODO: generalize this so it is game-independent
+    socket.on('move', function(data) {
         socket.get('player', function(err, player){
             if (player){
-                player.y += data.y;
-                updateDisplay();
+                player.move(data);
             }
         });
     });

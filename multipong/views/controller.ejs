@@ -26,7 +26,7 @@
                     default:
                         return;
                 }
-                socket.emit('move', {y: 10*deltaY});
+                socket.emit('move', {y: deltaY});
             });
             //TODO: add touch input
         </script>
