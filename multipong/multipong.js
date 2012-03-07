@@ -66,7 +66,7 @@ function restart(){
 }
 
 Multipong.tick = function(){
-    Multipong.updateBallPosition();
+    updateBallPosition();
 }
 
 function normalizeAngle(){
@@ -77,7 +77,7 @@ function normalizeAngle(){
     }
 }
 
-Multipong.updateBallPosition = function(){
+function updateBallPosition(){
     ballLocationX += ballSpeed * Math.cos(ballDirection);
     ballLocationY += ballSpeed * Math.sin(ballDirection);
     // check for hitting the walls
@@ -115,6 +115,8 @@ Multipong.updateBallPosition = function(){
     }
 }
 
+// if there is a collision with the given paddle, returns the distance from the center of the paddle
+// returns false if there is no collision
 function collision(player, direction){
     var paddleTop = player.y;
     var paddleBottom = player.y + Multipong.paddleWidth;
@@ -139,7 +141,7 @@ Multipong.newPlayer = function(){
         player.position = leftPlayers.length + 1;
         leftPlayers.push(player);
     }
-    calculateXPositions();
+    assignPositions();
     return player;
 }
 // when players leave, all players outside of them on their side move up
@@ -157,11 +159,11 @@ Multipong.removePlayer = function(player){
             rightPlayers[i].position = i + 1;
         }
     }
-    calculateXPositions();
+    assignPositions();
 }
 
 // calculates the x locations of all players based on their positions
-function calculateXPositions(){
+function assignPositions(){
     for(i=0; i < leftPlayers.length; i++){
         leftPlayers[i].x = .25 * (leftPlayers.length - leftPlayers[i].position + 1) / (leftPlayers.length + 1);
     }
