@@ -48,8 +48,7 @@ function start(){
         if(started){
             ballSpeed = .005;
             ballDirection = Math.random() * Math.PI/2 - Math.PI/4;
-            if(false) ballDirection += Math.PI;
-//            if(Math.random() < .5) ballDirection += Math.PI;
+            if(Math.random() < .5) ballDirection += Math.PI;
         }
     }, 2000);
 }
@@ -68,7 +67,7 @@ function restart(){
 
 Multipong.tick = function(){
     updateBallPosition();
-}
+};
 
 function normalize(angle){
     if(angle > Math.PI){
@@ -84,17 +83,18 @@ function deflectBall(collisionDistance, side){
     if(ballDirection<0){
         direction = -1; // going down
     }
+    var differential;
     if(direction==1 && collisionDistance>0 || direction==-1 && collisionDistance<0){
         // divert towards the tangent a fraction of the angle to it
-        var differential = Math.abs(Math.PI/2 - direction*ballDirection);
+        differential = Math.abs(Math.PI/2 - direction*ballDirection);
         ballDirection += differential*collisionDistance/Multipong.paddleWidth;
     }else{
         // divert towards the normal a fraction of the angle to it
         if(side == "left"){
-            var differential = ballDirection;
+            differential = ballDirection;
             ballDirection += differential*collisionDistance/Multipong.paddleWidth;
         }else{
-            var differential = Math.PI/2 - Math.abs(ballDirection);
+            differential = Math.PI/2 - Math.abs(ballDirection);
             ballDirection -= differential*collisionDistance/Multipong.paddleWidth;
         }
     }
@@ -112,18 +112,18 @@ function updateBallPosition(){
         ballDirection = -ballDirection;
     }
     if(ballLocationX < -Multipong.ballRadius){
-    ballDirection = normalize(Math.PI - ballDirection);
-//        rightScore++;
- //       restart();
+        rightScore++;
+        restart();
     }
     if(ballLocationX > 1 + Multipong.ballRadius){
         leftScore++;
         restart();
     }
     // check for hitting a paddle
+    var collisionDistance;
     if(ballLocationX < .5 && (ballDirection > Math.PI/2 || ballDirection < -Math.PI/2)){
         for(i=0; i < leftPlayers.length; i++){
-            var collisionDistance = collision(leftPlayers[i], 1);
+            collisionDistance = collision(leftPlayers[i], 1);
             if(collisionDistance){
                 ballDirection = normalize(Math.PI - ballDirection);
                 deflectBall(collisionDistance, "left");
@@ -131,7 +131,7 @@ function updateBallPosition(){
         }
     }else if (ballLocationX > .5 && ballDirection < Math.PI/2 && ballDirection > -Math.PI/2){
         for(i=0; i < rightPlayers.length; i++){
-            var collisionDistance = collision(rightPlayers[i], -1);
+            collisionDistance = collision(rightPlayers[i], -1);
             if(collisionDistance){
                 ballDirection = normalize(Math.PI - ballDirection);
                 deflectBall(collisionDistance, "right");
@@ -168,7 +168,7 @@ Multipong.newPlayer = function(){
     }
     assignPositions();
     return player;
-}
+};
 // when players leave, all players outside of them on their side move up
 Multipong.removePlayer = function(player){
     var index = leftPlayers.indexOf(player);
@@ -185,7 +185,7 @@ Multipong.removePlayer = function(player){
         }
     }
     assignPositions();
-}
+};
 
 // calculates the x locations of all players based on their positions
 function assignPositions(){
@@ -208,4 +208,4 @@ Multipong.state = function(){
         ball: {x: ballLocationX, y: ballLocationY},
         score: {left: leftScore, right: rightScore}
     };
-}
+};
