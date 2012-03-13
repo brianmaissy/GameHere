@@ -23,7 +23,7 @@
             socket.on('update', function(data){
                 $('.player').hide();
                 $('#ball').hide();
-                for(i=0; i<data.state.players.length; i++){
+                for(var i=0; i<data.state.players.length; i++){
                     var div = $('.player#' + i);
                     if(div.length == 0){
                         var container = $('#leftfield');
