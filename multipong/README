@@ -1,9 +1,15 @@
 A multiplayer pong game over socket.io.
 
 Architecture:
-The server (server.js) handles connection and disconnection of clients. The controller and display clients (controller.ejs and display.ejs) talk to the server to handle input and output respectively. The game (nullpong.js) handles the game logic.
-
+The server (server.js) forwards communications from the controllers to the display.
+The controllers (controller.html) gather user input and send them to the display through the server.
+The display (display.html) runs the game logic (nullpong.js) and renders the view.
 
 To run:
 node server.js
-Navigate to localhost:1337/display and localhost:1337/controller
+Navigate to localhost:1337/display.html and localhost:1337/controller.html
+
+Tests:
+Some unit tests written using nodeunit can be found in the test/ directory.
+The Bond testing library (bond.js) and the lines in the production and testing code that refer to it
+are a little experiment of my own in an alternative way of testing using observation points.

@@ -1,5 +1,8 @@
+var Bond = require("../bond.js").Bond;
+
 // The Player object constructor
 function Player(name, color, game){
+    Bond.spy('playerInstantiated', {name: name});
 
     // state variables
 
@@ -51,6 +54,7 @@ function Multipong(){
     // game lifecycle methods
 
     this.start = function(){
+        Bond.spy('gameStart', {started: true});
         this.started = true;
         var game = this;
         // wait around for 2 seconds and then start the game
@@ -276,4 +280,8 @@ function Multipong(){
 // export a single instance of a Multipong object
 function createGame(){
     return new Multipong();
+}
+if(exports){
+    exports.multipong = createGame();
+    exports.Player = Player;
 }
