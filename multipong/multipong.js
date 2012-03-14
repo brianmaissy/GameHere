@@ -83,7 +83,7 @@ function Multipong(){
     // the server requests the game state so it can update the clients with the relevant information
     this.state = function(){
         return {
-            players: this.leftPlayers.concat(this.rightPlayers),
+            players: {left: this.leftPlayers, right: this.rightPlayers},
             ball: {x: this.ballLocationX, y: this.ballLocationY},
             score: {left: this.leftScore, right: this.rightScore}
         };

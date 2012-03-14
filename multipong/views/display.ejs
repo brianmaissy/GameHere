@@ -23,23 +23,11 @@
             socket.on('update', function(data){
                 $('.player').hide();
                 $('#ball').hide();
-                for(var i=0; i<data.state.players.length; i++){
-                    var div = $('.player#' + i);
-                    if(div.length == 0){
-                        var container = $('#leftfield');
-                        if(data.state.players[i].x > .5){
-                            container = $('#rightfield');
-                        }
-                        container.append('<div class="player" id="' + i + '" style="height:' + h * <%= game.paddleWidth %> + 'px; width: ' + w * <%= game.paddleThickness %> + 'px;"></div>');
-                        div = $('.player#' + i);
-                    }
-                    if(data.state.players[i].x > .5){
-                        div.css('left', w * data.state.players[i].x - $("#leftfield").width() - w * <%= game.paddleThickness/2 %>);
-                    }else{
-                        div.css('left', w * data.state.players[i].x - w * <%= game.paddleThickness/2 %>);
-                    }
-                    div.css('top', h * data.state.players[i].y);
-                    div.show();
+                for(var i=0; i<data.state.players.left.length; i++){
+                    drawPlayer(data.state.players.left[i], "left", i);
+                }
+                for(var i=0; i<data.state.players.right.length; i++){
+                    drawPlayer(data.state.players.right[i], "right", i);
                 }
                 $("#ball").css('top', h * (data.state.ball.y - <%= game.ballRadius %>));
                 $("#ball").css('left', w * data.state.ball.x - h * <%= game.ballRadius %>);
@@ -47,6 +35,24 @@
                 $('#leftscore').html(data.state.score.left);
                 $('#rightscore').html(data.state.score.right);
             });
+            function drawPlayer(player, side, number){
+                var div = $('.player#' + side + number);
+                if(div.length == 0){
+                    var container = $('#leftfield');
+                    if(side == "right"){
+                        container = $('#rightfield');
+                    }
+                    container.append('<div class="player" id="' + side + number + '" style="height:' + h * <%= game.paddleWidth %> + 'px; width: ' + w * <%= game.paddleThickness %> + 'px;"></div>');
+                    div = $('.player#' + side + number);
+                }
+                if(side == "right"){
+                    div.css('left', w * player.x - $("#leftfield").width() - w * <%= game.paddleThickness/2 %>);
+                }else{
+                    div.css('left', w * player.x - w * <%= game.paddleThickness/2 %>);
+                }
+                div.css('top', h * player.y);
+                div.show();
+            }
         </script>
     </head>
     <body>
