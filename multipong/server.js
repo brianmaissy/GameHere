@@ -43,7 +43,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('disconnect', function() {
         socket.get('controllerID', function(err, controllerID){
             if (controllerID){
-                if(display) display.emit('disconnect', {controllerID: controllerID});
+                if(display) display.emit('clientDisconnect', {controllerID: controllerID});
                 console.log('Controller disconnected');
             }
         });

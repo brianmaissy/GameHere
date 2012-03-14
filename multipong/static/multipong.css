@@ -48,6 +48,7 @@ div.players{
     width: 100px;
     height: 400px;
     background-color: #a9a9a9;
+    word-wrap: break-word;
 }
 div#leftPlayers{
     left: -130px;

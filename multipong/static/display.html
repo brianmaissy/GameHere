@@ -34,7 +34,7 @@
                     socket.emit('playerConnected', {controllerID: data.controllerID, title: game.title});
                 });
                 // a client has disconnected from the server
-                socket.on('disconnect', function(data){
+                socket.on('clientDisconnect', function(data){
                     if(game.leftPlayers.indexOf(players[data.controllerID]) >= 0
                             || game.rightPlayers.indexOf(players[data.controllerID]) >= 0){
                         game.removePlayer(players[data.controllerID]);
