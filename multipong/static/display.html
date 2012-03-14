@@ -68,12 +68,12 @@
                 $('#leftScore').html(game.leftScore);
                 $('#rightScore').html(game.rightScore);
                 var playerList = '';
-                for(var i=0; i< game.leftPlayers.length; i++){
+                for(i=0; i< game.leftPlayers.length; i++){
                     playerList += '<span style="color:' + game.leftPlayers[i].color + ';">' + game.leftPlayers[i].name + '</span><br>';
                 }
                 $('#leftPlayers').html(playerList);
                 playerList = '';
-                for(var i=0; i< game.rightPlayers.length; i++){
+                for(i=0; i< game.rightPlayers.length; i++){
                     playerList += '<span style="color:' + game.rightPlayers[i].color + ';">' + game.rightPlayers[i].name + '</span><br>';
                 }
                 $('#rightPlayers').html(playerList);

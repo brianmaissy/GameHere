@@ -6,7 +6,7 @@ function Player(name, color, game){
     this.name = name;
     this.x = 0;         // the x and y position in the game, each in [0, 1], starting from the top left
     this.y = 0;
-    this.position = 0;  // the position of the player on the field, a positive or negative nonzero integer
+    this.position = 0;  // the position of the player on the field, a positive nonzero integer
     this.color = color;
 
     // motion function based on an input of 1 or -1
@@ -80,15 +80,6 @@ function Multipong(){
     // was intentional, to decouple the game logic from the server logic, and time seems like a server thing
     this.tick = function(){
         if(this.started) this.updateBallPosition();
-    };
-
-    // the server requests the game state so it can update the clients with the relevant information
-    this.state = function(){
-        return {
-            players: {left: this.leftPlayers, right: this.rightPlayers},
-            ball: {x: this.ballLocationX, y: this.ballLocationY},
-            score: {left: this.leftScore, right: this.rightScore}
-        };
     };
 
     // logic for moving the ball around
@@ -214,7 +205,8 @@ function Multipong(){
         return player;
     };
 
-    // when a player leaves, all players to the outside of them on their side move inwards
+    // when a player leaves, all players to the outside of them on their side move inwards,
+    // and we need to switch someone over from the other side if there is now a discrepancy of more than 1 player
     this.removePlayer = function(player) {
         // release the color so it can be used again later
         this.availableColors.push(player.color);
@@ -226,10 +218,24 @@ function Multipong(){
             for (i = 0; i < this.rightPlayers.length; i++) {
                 this.rightPlayers[i].position = i + 1;
             }
+            if(this.leftPlayers.length - this.rightPlayers.length > 1){
+                this.rightPlayers.push(this.leftPlayers[this.leftPlayers.length-1]);
+                this.leftPlayers.splice(this.leftPlayers.length-1, 1);
+                for (i = 0; i < this.rightPlayers.length; i++) {
+                    this.rightPlayers[i].position = i + 1;
+                }
+            }
         } else {
             this.leftPlayers.splice(index, 1);
             for (i = 0; i < this.leftPlayers.length; i++) {
-                this.leftPlayers[i].position = -i - 1;
+                this.leftPlayers[i].position = i + 1;
+            }
+            if(this.rightPlayers.length - this.leftPlayers.length > 1){
+                this.leftPlayers.push(this.rightPlayers[this.rightPlayers.length-1]);
+                this.rightPlayers.splice(this.rightPlayers.length-1, 1);
+                for (i = 0; i < this.leftPlayers.length; i++) {
+                    this.leftPlayers[i].position = i + 1;
+                }
             }
         }
         // and we need to reassign the players' x coordinates
