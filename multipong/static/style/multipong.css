@@ -4,6 +4,7 @@ body{
 div#game{
     position: relative;
     top: 50px;
+    left: 130px;
     background-color: #FFDDDD;
     width: 600px;
     height: 400px;
@@ -11,7 +12,7 @@ div#game{
     border-left-width: 30px;
     border-right-width: 30px;
 }
-div#leftfield{
+div#leftField{
     position: absolute;
     top: 0px;
     left: 0px;
@@ -19,7 +20,7 @@ div#leftfield{
     height: 400px;
     border-right: 1px dashed purple;
 }
-div#rightfield{
+div#rightField{
     position: absolute;
     top: 0px;
     right: 0px;
@@ -35,19 +36,32 @@ div.score{
     font-weight: bold;
     text-align: center;
 }
-div#leftscore{
+div#leftScore{
     left: -30px;
 }
-div#rightscore{
+div#rightScore{
     right: -30px;
 }
-div#leftfield div.player{
+div.players{
+    position: absolute;
+    top: 0px;
+    width: 100px;
+    height: 400px;
+    background-color: #a9a9a9;
+}
+div#leftPlayers{
+    left: -130px;
+}
+div#rightPlayers{
+    right: -130px;
+}
+div#leftField div.player{
     -moz-border-top-left-radius: 20px;
     border-top-left-radius: 20px;
     -moz-border-bottom-left-radius: 20px;
     border-bottom-left-radius: 20px;
 }
-div#rightfield div.player{
+div#rightField div.player{
     -moz-border-top-right-radius: 20px;
     border-top-right-radius: 20px;
     -moz-border-bottom-right-radius: 20px;

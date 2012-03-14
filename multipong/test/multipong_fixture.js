@@ -1,4 +1,4 @@
-var multipong = require("../multipong");
+var multipong = require("../static/multipong.js");
 
 exports.testSomething = function(test){
     test.expect(1);
