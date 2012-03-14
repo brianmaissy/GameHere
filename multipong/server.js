@@ -11,7 +11,6 @@ app.set('view engine', 'ejs');
 app.set('view options', {
     layout: false
 });
-app.use(express.bodyParser());
 
 var port = 1337;
 var io = require('socket.io').listen(app);
@@ -45,7 +44,7 @@ app.get('/display', function(req, res){
 
 io.sockets.on('connection', function (socket) {
     socket.on('newPlayer', function () {    // TODO: let players choose their own names and give them unique colors
-        player = game.newPlayer();
+        var player = game.newPlayer();
         socket.set('player', player, function(){
             console.log("Player " + player.name + " connected");
             socket.emit('playerConnected', {name: player.name});
