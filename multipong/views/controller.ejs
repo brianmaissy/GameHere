@@ -5,15 +5,19 @@
         <script src="/script/jquery-1.7.1.min.js"></script>
         <script src="/script/socket.io/socket.io.js"></script>
         <script type="text/javascript">            
-            var socket = io.connect('http://' + window.location.host);
-            socket.on('connect', function(){
-                $('div#message').html('<%= game.title %> controller connected');
-                socket.emit('newPlayer');
+            var socket;
+            var name;
+            $(document).ready(function(){
+                name = prompt("What is your name?", "anonymous");
+                socket = io.connect('http://' + window.location.host);
+                socket.on('connect', function(){
+                    $('div#message').html('<%= game.title %> controller connected');
+                    socket.emit('newPlayer', {name: name});
+                });
+                socket.on('playerConnected', function(){
+                    $('div#message').html('<%= game.title %> controller connected as player ' + name);
+                });
             });
-            socket.on('playerConnected', function(data){
-                $('div#message').html('<%= game.title %> controller connected as player ' + data.name);
-            });
-            
             $(document).keypress(function(event) {
                 var deltaY = 0;
                 switch(parseInt(event.keyCode)){

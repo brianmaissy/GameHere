@@ -1,5 +1,5 @@
 // The Player object constructor
-function Player(name, game){
+function Player(name, color, game){
 
     // state variables
 
@@ -7,6 +7,7 @@ function Player(name, game){
     this.x = 0;         // the x and y position in the game, each in [0, 1], starting from the top left
     this.y = 0;
     this.position = 0;  // the position of the player on the field, a positive or negative nonzero integer
+    this.color = color;
 
     // motion function based on an input of 1 or -1
     // move the paddle up or down unless we are at the edge of the field
@@ -34,6 +35,7 @@ function Multipong(){
 
     // state variables, all in terms of a 1x1 field
 
+    this.availableColors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF"];
     this.started = false;
     this.leftPlayers = [];
     this.rightPlayers = [];
@@ -188,9 +190,13 @@ function Multipong(){
     // logic for managing the players
 
     // when a player joins, he gets the outermost position on the side with less players, or left if they are equal
-    this.newPlayer = function(){
+    this.newPlayer = function(name){
+        // choose a random available color to assign to the player
+        var index = Math.floor(Math.random() * this.availableColors.length);
+        var color = this.availableColors[index];
+        this.availableColors.splice(index, 1);
         // create the Player object
-        var player = new Player(this.randomString(), this);
+        var player = new Player(name, color, this);
         if (this.leftPlayers.length > this.rightPlayers.length){
             player.position = this.rightPlayers.length + 1;
             this.rightPlayers.push(player);
@@ -210,6 +216,8 @@ function Multipong(){
 
     // when a player leaves, all players to the outside of them on their side move inwards
     this.removePlayer = function(player) {
+        // release the color so it can be used again later
+        this.availableColors.push(player.color);
         var index = this.leftPlayers.indexOf(player);
         var i;
         if (index < 0) {
@@ -255,18 +263,6 @@ function Multipong(){
             return angle + 2*Math.PI;
         }
         return angle;
-    };
-
-    // generates a random 8-character string, to be used as names for now
-    this.randomString = function() {
-        var chars = "abcdefghiklmnopqrstuvwxyz";
-        var string_length = 8;
-        var theString = '';
-        for (var i=0; i<string_length; i++) {
-            var rNum = Math.floor(Math.random() * chars.length);
-            theString += chars.substring(rNum,rNum+1);
-        }
-        return theString;
     };
 
 }

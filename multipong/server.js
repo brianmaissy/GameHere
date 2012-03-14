@@ -43,22 +43,22 @@ app.get('/display', function(req, res){
 });
 
 io.sockets.on('connection', function (socket) {
-    socket.on('newPlayer', function () {    // TODO: let players choose their own names and give them unique colors
-        var player = game.newPlayer();
+    socket.on('newPlayer', function (data) {
+        var player = game.newPlayer(data.name);
         socket.set('player', player, function(){
-            console.log("Player " + player.name + " connected");
-            socket.emit('playerConnected', {name: player.name});
+            console.log('Player ' + player.name + ' connected');
+            socket.emit('playerConnected');
         });
     });
     socket.on('newDisplay', function() {
-        console.log("Display connected");
+        console.log('Display connected');
         display = socket;
     });
     socket.on('disconnect', function() {
         socket.get('player', function(err, player){
             if (player){
                 game.removePlayer(player);
-                console.log("Player " + player.name + " disconnected");
+                console.log('Player ' + player.name + ' disconnected');
             }
         });
     });
