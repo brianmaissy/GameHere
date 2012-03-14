@@ -1,6 +1,5 @@
 var express = require("express");
-var ejs = require("ejs");
-var game = require("./multipong");
+var game = require("./multipong").createGame();
 
 var app = express.createServer();
 app.configure(function() {
