@@ -12,6 +12,13 @@ div#game{
     border-left-width: 30px;
     border-right-width: 30px;
 }
+div#field{
+    position: absolute;
+    left: 0px;
+    top:0px;
+    width: 600px;
+    height: 400px;
+}
 div#leftField{
     position: absolute;
     top: 0px;

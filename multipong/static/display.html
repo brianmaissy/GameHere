@@ -47,7 +47,7 @@
                 });
 
                 // start ticking away
-                setInterval(tick, 10);
+                setInterval(tick, 20);
             });
 
             function tick(){
@@ -105,11 +105,13 @@
         <div id="message">Not Connected</div>
         <div id="game">
             <div class="players" id="leftPlayers"></div>
-            <div id="leftField"></div>
-                <div class="score" id="leftScore"></div>
-            <div id="rightField"></div>
-                <div class="score" id="rightScore"></div>
-            <div id="ball"></div>
+            <div id="field">
+                <div id="leftField"></div>
+                    <div class="score" id="leftScore"></div>
+                <div id="rightField"></div>
+                    <div class="score" id="rightScore"></div>
+                <div id="ball"></div>
+            </div>
             <div class="players" id="rightPlayers"></div>
         </div>
     </body>

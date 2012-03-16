@@ -64,7 +64,7 @@ function Multipong(){
         // wait around for 2 seconds and then start the game
         setTimeout(function(){
             if(game.started){
-                game.ballSpeed = .005;
+                game.ballSpeed = .012;
                 // initialize the ball's direction randomly between -pi/4 and pi/4 or 3pi/4 and 5pi/4
                 game.ballDirection = Math.random() * Math.PI/2 - Math.PI/4;
                 if(Math.random() < .5) game.ballDirection += Math.PI;
