@@ -1,4 +1,8 @@
-var Bond = require("../bond.js").Bond;
+if (typeof window === 'undefined'){
+    Bond = require("./bond").Bond;
+}else{
+    // the browser already loaded  it, Bond is already defined
+}
 
 // The Player object constructor
 function Player(name, color, game){
@@ -281,7 +285,11 @@ function Multipong(){
 function createGame(){
     return new Multipong();
 }
-if(exports){
-    exports.multipong = createGame();
+
+if (typeof window === 'undefined'){
+    exports.Multipong = Multipong;
     exports.Player = Player;
+    exports.createGame = createGame;
+}else{
+    this.Multipong = Multipong;
 }

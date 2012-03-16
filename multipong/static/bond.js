@@ -49,9 +49,13 @@ Bond.seenTimes = function(location, target, value){
     }
 };
 
-exports.Bond = Bond;
-
 // A helper function, because javascript is so pathetically lacking in usable and readable functions
 Array.prototype.contains = function(element){
     return this.indexOf(element) != -1;
 };
+
+if (typeof window === 'undefined'){
+    exports.Bond = Bond;
+}else{
+    this.Bond = Bond;
+}

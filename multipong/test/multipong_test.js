@@ -1,6 +1,6 @@
-var multipong = require("../static/multipong.js");
-var game = multipong.multipong;
-var Bond = require("../bond.js").Bond;
+var multipong = require("../static/multipong");
+var game = multipong.createGame();
+var Bond = require("../static/bond").Bond;
 
 exports.testMultipong = {
 
