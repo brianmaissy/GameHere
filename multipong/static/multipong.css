@@ -84,5 +84,4 @@ div.player{
 div#ball{
     position: absolute;
     background-color: red;
-    display: none;
 }
