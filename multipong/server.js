@@ -56,4 +56,9 @@ io.sockets.on('connection', function (socket) {
             }
         });
     });
+
+	socket.on('touchstart' , function() {
+		console.log('touchstart reached');
+		
+	});
 });

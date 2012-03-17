@@ -21,12 +21,13 @@
                 });
             });
             $(document).keypress(function(event) {
+				console.log(parseInt(event.keyCode))
                 var deltaY = 0;
                 switch(parseInt(event.keyCode)){
-                    case 38:
+                    case 97:
                         deltaY = -1;
                         break;
-                    case 40:
+                    case 122:
                         deltaY = 1;
                         break;
                     default:
@@ -34,7 +35,42 @@
                 }
                 socket.emit('move', {y: deltaY});
             });
+
+		    
             //TODO: add touch input
+			var fingerDown = false;
+		    var dir = false;
+		    var startY = 0;
+		    var moveY = 0;
+		    var moveThreshold = 10;
+		
+			console.log("test");    
+		
+			document.addEventListener('touchstart', function(e) {
+		        startY = e.touches[0].pageY;
+		    });
+		    document.addEventListener('touchmove', function(e) {
+		        moveY = e.touches[0].pageY;
+		        if(Math.abs(moveY - startY) > moveThreshold) {
+		            dir = (moveY > startY) ? 'down' : 'up';
+					if (dir == 'up')
+					{
+						deltaY = -1;
+					}
+					else
+					{
+						deltaY = 1;
+					}
+		        }
+		        else {
+		            deltaY = 0;
+		        }
+				socket.emit('move', {y: deltaY});
+		    });
+		    document.addEventListener('touchend', function(e) {
+		        deltaY = 0;
+				socket.emit('move', {y: deltaY});
+		    });
         </script>
     </head>
     <body>
