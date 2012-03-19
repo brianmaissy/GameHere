@@ -58,6 +58,7 @@ div.players{
     width: 100px;
     height: 400px;
     background-color: #000000;
+    color: #0000FF;
     word-wrap: break-word;
 }
 div#leftPlayers{
