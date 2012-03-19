@@ -1,16 +1,19 @@
 body{
-    color: blue;
+    background-color: #000000;
+}
+div#message {
+    color: #FFFFFF;
 }
 div#game{
     position: relative;
     top: 50px;
-    left: 130px;
-    background-color: #FFDDDD;
+    left: 150px;
+    background-color: #000000;
     width: 600px;
     height: 400px;
-    border: 3px solid purple;
-    border-left-width: 30px;
-    border-right-width: 30px;
+    border: 1px solid #00FF00;
+    margin-left: 30px;
+    margin-right: 30px;
 }
 div#field{
     position: absolute;
@@ -25,7 +28,7 @@ div#leftField{
     left: 0px;
     width: 300px;
     height: 400px;
-    border-right: 1px dashed purple;
+    border-right: 1px dashed #00FF00;
 }
 div#rightField{
     position: absolute;
@@ -37,31 +40,31 @@ div#rightField{
 div.score{
     position: absolute;
     top: 0px;
-    width: 30px;
-    color: yellow;
+    width: 50px;
+    color: #00FF00;
     font-size: x-large;
     font-weight: bold;
     text-align: center;
 }
 div#leftScore{
-    left: -30px;
+    left: -50px;
 }
 div#rightScore{
-    right: -30px;
+    right: -50px;
 }
 div.players{
     position: absolute;
     top: 0px;
     width: 100px;
     height: 400px;
-    background-color: #a9a9a9;
+    background-color: #000000;
     word-wrap: break-word;
 }
 div#leftPlayers{
-    left: -130px;
+    left: -150px;
 }
 div#rightPlayers{
-    right: -130px;
+    right: -150px;
 }
 div#leftField div.player{
     -moz-border-top-left-radius: 20px;
@@ -77,11 +80,13 @@ div#rightField div.player{
 }
 div.player{
     position: absolute;
-    background-color: blue;
+    border: 2px solid #0000FF;
     -moz-border-radius: 2px;
     border-radius: 2px;
+    background-color: #000000;
 }
 div#ball{
     position: absolute;
-    background-color: red;
+    border: 1px solid #00FF00;
+    background-color: #000000;
 }

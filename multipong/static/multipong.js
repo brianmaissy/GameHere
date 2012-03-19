@@ -42,7 +42,7 @@ function Multipong(){
 
     // state variables, all in terms of a 1x1 field
 
-    this.availableColors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF"];
+    this.availableColors = ["#FF0000", "#FFFFFF", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF"];
     this.started = false;
     this.leftPlayers = [];
     this.rightPlayers = [];
