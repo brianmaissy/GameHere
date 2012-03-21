@@ -47,7 +47,7 @@
                 socket.on('move', function(data){
                     if(game.canMove) players[data.controllerID].move(data);
                 });
-                socket.on('pause', function(data){
+                socket.on('pause', function(){
                     game.pause();
                 });
                 // set up the Bond debugger

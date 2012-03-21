@@ -21,7 +21,6 @@
                 });
             });
             $(document).keypress(function(event) {
-				console.log(parseInt(event.keyCode))
                 var deltaY = 0;
                 switch(parseInt(event.keyCode)){
                     case 38:
@@ -33,7 +32,7 @@
                         deltaY = 1;
                         break;
                     case 0:
-                        if(event.charCode == 112) socket.emit('pause', {});
+                        if(event.charCode == 112) socket.emit('pause');
                         break;
                     default:
                         return;
