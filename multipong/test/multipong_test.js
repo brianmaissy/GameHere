@@ -15,17 +15,17 @@ exports.testMultipong = {
     countStarts: function(test){
         test.expect(2);
         game.start();
-        test.ok(Bond.seen('gameStart', 'started'));
+        test.ok(Bond.seen('gameStart', {started: true}));
         game.start();
-        test.equals(2, Bond.seenTimes('gameStart', 'started', true));
+        test.equals(2, Bond.seenTimes('gameStart', {started: true}));
         test.done();
     },
     countPlayersCreated: function(test){
         test.expect(2);
         var player = new multipong.Player('brian');
-        test.ok(Bond.seen('playerInstantiated', 'name', 'brian'));
+        test.ok(Bond.seen('playerInstantiated', {name: 'brian'}));
         game.newPlayer('george');
-        test.equals(2, Bond.seenTimes('playerInstantiated', 'name'));
+        test.equals(2, Bond.seenTimes('playerInstantiated', {}));
         test.done();
     }
 };

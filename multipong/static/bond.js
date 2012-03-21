@@ -11,25 +11,32 @@ Bond.start = function(){
     Bond.observations = [];
 };
 
-// Tell Bond to keep an eye on somebody with a call to Bond.spy(location, {target: value}) where 'location' is a
-// string naming the place he is observing from, 'target' is a label for who he is spying on, and 'value' is what he records.
-Bond.spy = function(location, observation){
+// Tell Bond to keep an eye on somebody with a call to Bond.spy(location, observations) where 'location' is a
+// string labeling the place he is observing from and observations is a dictionary mapping variable names to values
+Bond.spy = function(location, observations){
     if(!Bond.observations[location]){
         Bond.observations[location] = [];
     }
-    Bond.observations[location].push(observation);
+    Bond.observations[location].push(observations);
 };
 
-// Ask Bond if he has seen something with a call to Bond.seen(location, target) where 'location' and 'target' are strings
-// and he will respond with a list of the values he has seen target take on, or null if that list happens to be empty.
+// Ask Bond if he has seen something with a call to Bond.seen(location, observations) where 'location' is a string
+// labeling the place and observations is a dictionary mapping variable names to values
+// and he will respond with a list of the matching observations, or null if that list happens to be empty.
 // You can ask Bond with an extra parameter value to filter his results by observations of the value given.
-Bond.seen = function(location, target, value){
+Bond.seen = function(location, observations){
     var obs = Bond.observations[location];
     var results = [];
     var i;
     for(i=0; i<obs.length; i++){
-        if(obs[i][target] && (!value || obs[i][target]==value)){
-            results.push(obs[i][target]);
+        var match = true;
+        for(var variable in observations){
+            if(!obs[i][variable] || obs[i][variable]!=observations[variable]){
+                match = false;
+            }
+        }
+        if(match){
+            results.push(obs[i]);
         }
     }
     if(results.length == 0){
@@ -40,8 +47,8 @@ Bond.seen = function(location, target, value){
 };
 
 // A shortcut method for asking Bond how many times he has made a specific observation
-Bond.seenTimes = function(location, target, value){
-    var result = Bond.seen(location, target, value);
+Bond.seenTimes = function(location, observations){
+    var result = Bond.seen(location, observations);
     if(!result){
         return 0;
     }else{
