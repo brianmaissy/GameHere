@@ -41,6 +41,9 @@ io.sockets.on('connection', function (socket) {
     socket.on('newDisplay', function() {
         display = socket;
         console.log('Display connected');
+        // set up the Bond debugger
+        Bond.startRemoteServer(socket);
+        Bond.start();
     });
     socket.on('disconnect', function() {
         socket.get('controllerID', function(err, controllerID){
@@ -58,10 +61,6 @@ io.sockets.on('connection', function (socket) {
             }
         });
     });
-
-    // set up the Bond debugger
-    Bond.startRemoteServer(socket);
-    Bond.start();
 
 	socket.on('touchstart' , function() {
 		console.log('touchstart reached');

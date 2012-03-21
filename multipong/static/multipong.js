@@ -22,8 +22,8 @@ function Player(name, color, game){
         if((motion.y == -1 && this.y >= game.moveDistance) ||
            (motion.y == 1 && this.y <= 1 - game.moveDistance - game.paddleWidth)){
             this.y += game.moveDistance * motion.y;
-            // not sure why I put this here. I think it was intended to avoid numerical issues,
-            // but it seems like an unnecessary loss of precision. TODO: investigate
+            // this is here to avoid numerical issues. We want to make sure players can move all the way to the edges
+            // of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
             this.y = Math.round(this.y*100)/100;
         }
     }
@@ -38,7 +38,7 @@ function Multipong(){
     this.paddleWidth = .2;
     this.paddleThickness = .03;
     this.ballRadius = .02;
-    this.moveDistance = .1;
+    this.moveDistance = .05;   // must be a fraction of paddleWidth
 
     // state variables, all in terms of a 1x1 field
 
@@ -58,16 +58,16 @@ function Multipong(){
     // game lifecycle methods
 
     this.start = function(){
-        Bond.spy('gameStart', {started: true, speed: .01});
         this.started = true;
         var game = this;
         // wait around for 2 seconds and then start the game
         setTimeout(function(){
             if(game.started){
-                game.ballSpeed = .012;
+                game.ballSpeed = .0075;
                 // initialize the ball's direction randomly between -pi/4 and pi/4 or 3pi/4 and 5pi/4
                 game.ballDirection = Math.random() * Math.PI/2 - Math.PI/4;
                 if(Math.random() < .5) game.ballDirection += Math.PI;
+                Bond.spy('gameStart', {started: game.started, speed: game.ballSpeed});
             }
         }, 2000);
     };
@@ -151,7 +151,7 @@ function Multipong(){
             var ballFrontier = this.ballLocationX - direction*this.ballRadius;
             var difference = direction*(paddleFrontier - ballFrontier);
             if(difference > 0 && difference < Math.abs(this.ballSpeed * Math.cos(this.ballDirection))){
-                return this.ballLocationY - (paddleTop + paddleBottom)/2;
+                return (paddleTop + paddleBottom)/2 - this.ballLocationY;
             }
         }
         return false;
@@ -168,22 +168,29 @@ function Multipong(){
         if(this.ballDirection<0){
             direction = -1; // going down
         }
+        Bond.spy('naturalDirection', {direction: Math.round(this.ballDirection/Math.PI*100)/100 + "pi"});
+        /*BOND*/ var dir = "up"; if(direction == -1) dir = "down";
+        Bond.spy('hitPaddle', {ballMoving: dir, paddleLocation: Math.round(collisionDistance/this.paddleWidth*100)/100});
         var differential;
         if(direction==1 && collisionDistance>0 || direction==-1 && collisionDistance<0){
             // divert towards the tangent a fraction of the angle to it
-            differential = Math.abs(Math.PI/2 - direction*this.ballDirection);
-            this.ballDirection += differential*collisionDistance/this.paddleWidth;
+            differential = direction*Math.PI/2 - this.ballDirection;
+            this.ballDirection += differential*Math.abs(collisionDistance)/this.paddleWidth;
+            Bond.spy('deflectTowardTangent', {byAdding: Math.round(differential*Math.abs(collisionDistance)/this.paddleWidth/Math.PI*100)/100 + "pi"});
         }else{
             // divert towards the normal a fraction of the angle to it
             if(side == "left"){
                 differential = this.ballDirection;
-                this.ballDirection += differential*collisionDistance/this.paddleWidth;
+                this.ballDirection -= differential*Math.abs(collisionDistance)/this.paddleWidth;
+                Bond.spy('deflectTowardNormal', {bySubtracting: Math.round(differential*Math.abs(collisionDistance)/this.paddleWidth/Math.PI*100)/100 + "pi"});
             }else{
-                differential = Math.PI/2 - Math.abs(this.ballDirection);
-                this.ballDirection -= differential*collisionDistance/this.paddleWidth;
+                differential = direction*Math.PI - this.ballDirection;
+                this.ballDirection += differential*Math.abs(collisionDistance)/this.paddleWidth;
+                Bond.spy('deflectTowardNormal', {byAdding: Math.round(differential*Math.abs(collisionDistance)/this.paddleWidth/Math.PI*100)/100 + "pi"});
             }
         }
         this.ballDirection = this.normalize(this.ballDirection);
+        Bond.spy('divertedDirection', {direction: Math.round(this.ballDirection/Math.PI*100)/100 + "pi"});
     };
 
     // logic for managing the players

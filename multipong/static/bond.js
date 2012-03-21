@@ -11,6 +11,12 @@ var Bond = {
 // Tell Bond to start a new mission by clearing his past observations
 Bond.start = function(){
     Bond.observations = [];
+    // clear log file
+    fs.createWriteStream('./BondLogs/log.txt', {
+        flags: 'w',
+        encoding: "utf8",
+        mode: 0666
+    }).write("");
 };
 
 // Call this to change to remote reporting mode, and pass the socket.io socket of the testing server.
@@ -24,7 +30,6 @@ Bond.startRemoteClient = function(socket){
 Bond.startRemoteServer = function(socket){
     socket.on('Bond.spy', function(data){
         Bond.spy(data.location, data.observations);
-        console.log("BOND: Observation at " + data.location + ": " + JSON.stringify(data.observations));
     });
 };
 
@@ -39,6 +44,13 @@ Bond.spy = function(location, observations){
             Bond.observations[location] = [];
         }
         Bond.observations[location].push(observations);
+
+        // write to log file
+        fs.createWriteStream('./BondLogs/log.txt', {
+            flags: 'a',
+            encoding: "utf8",
+            mode: 0666
+        }).write(location + ": " + JSON.stringify(observations) + "\n");
     }
 };
 
@@ -137,8 +149,10 @@ String.prototype.stripLast = function(number) {
 
 function isArray(a) { return Object.prototype.toString.apply(a) === '[object Array]'; }
 
+var fs;
 if (typeof window === 'undefined'){
     exports.Bond = Bond;
+    var fs = require('fs');
 }else{
     this.Bond = Bond;
 }
