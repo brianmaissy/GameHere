@@ -32,10 +32,15 @@
                     case 122:
                         deltaY = 1;
                         break;
+                    case 0:
+                        if(event.charCode == 112) socket.emit('pause', {});
+                        break;
                     default:
                         return;
                 }
-                socket.emit('move', {y: deltaY});
+                if(deltaY != 0){
+                    socket.emit('move', {y: deltaY});
+                }
             });
 
 		    

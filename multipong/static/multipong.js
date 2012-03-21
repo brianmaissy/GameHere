@@ -12,7 +12,7 @@ function Player(name, color, game){
 
     this.name = name;
     this.x = 0;         // the x and y position in the game, each in [0, 1], starting from the top left
-    this.y = 0;
+    this.y = .5 - game.paddleWidth/2;
     this.position = 0;  // the position of the player on the field, a positive nonzero integer
     this.color = color;
 
@@ -39,10 +39,13 @@ function Multipong(){
     this.paddleThickness = .03;
     this.ballRadius = .02;
     this.moveDistance = .05;   // must be a fraction of paddleWidth
+    this.startingSpeed = .0075;
 
     // state variables, all in terms of a 1x1 field
 
     this.availableColors = ["#FF0000", "#FFFFFF", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF"];
+    this.canPause = false;
+    this.canMove = true;
     this.started = false;
     this.leftPlayers = [];
     this.rightPlayers = [];
@@ -58,18 +61,30 @@ function Multipong(){
     // game lifecycle methods
 
     this.start = function(){
-        this.started = true;
         var game = this;
+        game.canPause = false;
+        game.ballSpeed = game.startingSpeed;
+        // initialize the ball's direction randomly between -pi/4 and pi/4 or 3pi/4 and 5pi/4
+        game.ballDirection = Math.random() * Math.PI/2 - Math.PI/4;
+        if(Math.random() < .5) game.ballDirection += Math.PI;
         // wait around for 2 seconds and then start the game
         setTimeout(function(){
-            if(game.started){
-                game.ballSpeed = .0075;
-                // initialize the ball's direction randomly between -pi/4 and pi/4 or 3pi/4 and 5pi/4
-                game.ballDirection = Math.random() * Math.PI/2 - Math.PI/4;
-                if(Math.random() < .5) game.ballDirection += Math.PI;
-                Bond.spy('gameStart', {started: game.started, speed: game.ballSpeed});
-            }
+            game.started = true;
+            game.canPause = true;
+            Bond.spy('gameStart', {started: game.started, speed: game.ballSpeed});
         }, 2000);
+    };
+
+    this.pause = function(){
+        if(this.canPause){
+            if(this.started){
+                this.started = false;
+                this.canMove = false;
+            }else{
+                this.started = true;
+                this.canMove = true;
+            }
+        }
     };
 
     this.stop = function(){

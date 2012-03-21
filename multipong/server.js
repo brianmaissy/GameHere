@@ -61,7 +61,9 @@ io.sockets.on('connection', function (socket) {
             }
         });
     });
-
+    socket.on('pause', function(data){
+       if(display) display.emit('pause', {});
+    });
 	socket.on('touchstart' , function() {
 		console.log('touchstart reached');
 		

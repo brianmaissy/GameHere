@@ -45,7 +45,10 @@
                 });
                 // motion input from a controller through the server
                 socket.on('move', function(data){
-                    players[data.controllerID].move(data);
+                    if(game.canMove) players[data.controllerID].move(data);
+                });
+                socket.on('pause', function(data){
+                    game.pause();
                 });
                 // set up the Bond debugger
                 Bond.startRemoteClient(socket);
