@@ -58,7 +58,7 @@ function Multipong(){
     // game lifecycle methods
 
     this.start = function(){
-        Bond.spy('gameStart', {started: true});
+        Bond.spy('gameStart', {started: true, speed: .01});
         this.started = true;
         var game = this;
         // wait around for 2 seconds and then start the game
