@@ -3,7 +3,9 @@
 // Bond keeps his records in a dictionary mapping observation locations to lists of observations made there.
 // Each observation itself is a dictionary mapping labels of targets to their values
 var Bond = {
-    observations: []
+    observations: [],
+    remote: false,
+    socket: null
 };
 
 // Tell Bond to start a new mission by clearing his past observations
@@ -11,13 +13,33 @@ Bond.start = function(){
     Bond.observations = [];
 };
 
+// Call this to change to remote reporting mode, and pass the socket.io socket of the testing server.
+// Remote mode allows Bond to report from a remote location, such as a client running javascript code in a browser.
+// This really consists of two instances of Bond, one on the client and one on the server. The client Bond instance is
+// put into remote mode, and forwards all observations to the server. The server Bond receives the message and logs it.
+Bond.startRemoteClient = function(socket){
+    this.remote = true;
+    this.socket = socket;
+};
+Bond.startRemoteServer = function(socket){
+    socket.on('Bond.spy', function(data){
+        Bond.spy(data.location, data.observations);
+        console.log("BOND: Observation at " + data.location + ": " + JSON.stringify(data.observations));
+    });
+};
+
 // Tell Bond to keep an eye on somebody with a call to Bond.spy(location, observations) where 'location' is a
 // string labeling the place he is observing from and observations is a dictionary mapping variable names to values
+// If we are in remote mode, send a socket.io message to the server, where the server's instance of Bond will log it.
 Bond.spy = function(location, observations){
-    if(!Bond.observations[location]){
-        Bond.observations[location] = [];
+    if(this.remote){
+        this.socket.emit('Bond.spy', {location: location, observations: observations});
+    }else{
+        if(!Bond.observations[location]){
+            Bond.observations[location] = [];
+        }
+        Bond.observations[location].push(observations);
     }
-    Bond.observations[location].push(observations);
 };
 
 // Ask Bond if he has seen something with a call to Bond.seen(location, observations) where 'location' is a string

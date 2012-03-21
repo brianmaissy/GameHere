@@ -47,6 +47,8 @@
                 socket.on('move', function(data){
                     players[data.controllerID].move(data);
                 });
+                // set up the Bond debugger
+                Bond.startRemoteClient(socket);
 
                 // start ticking away
                 setInterval(tick, 20);
@@ -57,12 +59,12 @@
                 game.tick();
                 // update the display
                 var players = document.getElementsByClassName("player");
+                var i;
                 if(players.length > 0){
-                    for(var i=0; i<players.length; i++){
+                    for(i=0; i<players.length; i++){
                         players[i].style.display = "none";
                     }
                 }
-                var i;
                 for(i=0; i<game.leftPlayers.length; i++){
                     drawPlayer(game.leftPlayers[i], "left", i);
                 }

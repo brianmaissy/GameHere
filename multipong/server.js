@@ -3,6 +3,8 @@
 // but I haven't found it. I simply forward messages along, including a controllerID so the display
 // knows where it came from.
 
+var Bond = require("./static/bond").Bond;
+
 var express = require("express");
 var app = express.createServer();
 app.configure(function() {
@@ -16,7 +18,7 @@ app.set('view options', {
 
 var port = 1337;
 var io = require('socket.io').listen(app);
-//io.set('log level', 1);
+io.set('log level', 1);
 app.listen(port);
 
 var display;
@@ -56,6 +58,10 @@ io.sockets.on('connection', function (socket) {
             }
         });
     });
+
+    // set up the Bond debugger
+    Bond.startRemoteServer(socket);
+    Bond.start();
 
 	socket.on('touchstart' , function() {
 		console.log('touchstart reached');
