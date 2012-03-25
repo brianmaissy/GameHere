@@ -22,25 +22,31 @@ io.set('log level', 1);
 app.listen(port);
 
 var display;
+var title;
 var nextControllerID = 1;
 var controllers = {};
 
 io.sockets.on('connection', function (socket) {
     socket.on('newPlayer', function (data) {
-        socket.set('controllerID', nextControllerID, function(){
-            controllers[nextControllerID] = socket;
-            data.controllerID = nextControllerID;
-            if(display) display.emit('newPlayer', data);
-            nextControllerID++;
-        });
+        if(data.title == title){
+            socket.set('controllerID', nextControllerID, function(){
+                controllers[nextControllerID] = socket;
+                data.controllerID = nextControllerID;
+                if(display) display.emit('newPlayer', data);
+                nextControllerID++;
+            });
+        }else{
+            socket.emit('playerConnected', {title: data.title, error: "That game is not in progress. Are you using the correct controller?"});
+        }
     });
     socket.on('playerConnected', function(data){
         if(!data.error) console.log('Player connected');
         controllers[data.controllerID].emit('playerConnected', {title: data.title, error: data.error});
     });
-    socket.on('newDisplay', function() {
+    socket.on('newDisplay', function(data) {
         display = socket;
-        console.log('Display connected');
+        title = data.title;
+        console.log(title + ' display connected');
         // set up the Bond debugger
         Bond.startRemoteServer(socket);
         Bond.start();

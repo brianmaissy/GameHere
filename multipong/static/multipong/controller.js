@@ -7,7 +7,7 @@ $(document).ready(function(){
     socket = io.connect('http://' + window.location.host);
     socket.on('connect', function(){
         $('div#message').html('Controller connected to server');
-        socket.emit('newPlayer', {name: name});
+        socket.emit('newPlayer', {title: 'Multipong', name: name});
     });
     socket.on('playerConnected', function(data){
         if(data.error){

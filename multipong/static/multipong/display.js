@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function(){
     // the display's own connection handshake
     socket.on('connect', function(){
         document.getElementById("message").innerHTML = 'Display connected to server';
-        socket.emit('newDisplay');
+        socket.emit('newDisplay', {title: game.title});
     });
     // a new controller has connected through the server, create a player for it
     socket.on('newPlayer', function(data){
