@@ -78,6 +78,14 @@
                 ball.style.left = w * game.ballLocationX - h * game.ballRadius;
                 document.getElementById("leftScore").innerHTML = game.leftScore;
                 document.getElementById("rightScore").innerHTML = game.rightScore;
+                var flash = document.getElementById("flash");
+                if(game.paused){
+                    flash.innerHTML = "PAUSED";
+                }else if(game.starting){
+                    flash.innerHTML = "GET READY";
+                }else{
+                    flash.innerHTML = "";
+                }
                 var playerList = '';
                 for(i=0; i< game.leftPlayers.length; i++){
                     playerList += '<span style="color:' + game.leftPlayers[i].color + ';">' + game.leftPlayers[i].name + '</span><br>';
@@ -126,6 +134,7 @@
                 <div id="rightField"></div>
                     <div class="score" id="rightScore"></div>
                 <div id="ball"></div>
+                <div id="flash"></div>
             </div>
             <div class="players" id="rightPlayers"></div>
         </div>
