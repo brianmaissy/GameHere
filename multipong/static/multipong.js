@@ -38,8 +38,9 @@ function Multipong(){
     this.paddleWidth = .2;
     this.paddleThickness = .03;
     this.ballRadius = .02;
-    this.moveDistance = .05;   // must be a fraction of paddleWidth
+    this.moveDistance = this.paddleWidth / 4;   // must be a fraction of paddleWidth
     this.startingSpeed = .0075;
+    this.ballSpeedIncreasePerBounce = .00025;
 
     // state variables, all in terms of a 1x1 field
 
@@ -133,6 +134,7 @@ function Multipong(){
                 if(collisionDistance){
                     // if there was a collision, turn the ball around and then do our non-physical deflection
                     this.ballDirection = this.normalize(Math.PI - this.ballDirection);
+                    this.ballSpeed += this.ballSpeedIncreasePerBounce;
                     this.deflectBall(collisionDistance, "left");
                 }
             }
@@ -143,6 +145,7 @@ function Multipong(){
                 if(collisionDistance){
                     // if there was a collision, turn the ball around and then do our non-physical deflection
                     this.ballDirection = this.normalize(Math.PI - this.ballDirection);
+                    this.ballSpeed += this.ballSpeedIncreasePerBounce;
                     this.deflectBall(collisionDistance, "right");
                 }
             }
