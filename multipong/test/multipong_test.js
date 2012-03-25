@@ -1,4 +1,4 @@
-var multipong = require("../static/multipong");
+var multipong = require("../static/multipong/multipong");
 var game = multipong.createGame();
 var Bond = require("../static/bond").Bond;
 

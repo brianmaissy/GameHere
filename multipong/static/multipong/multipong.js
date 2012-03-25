@@ -1,5 +1,5 @@
 if (typeof window === 'undefined'){
-    Bond = require("./bond").Bond;
+    Bond = require("../bond").Bond;
 }else{
     // the browser already loaded  it, Bond is already defined
 }
