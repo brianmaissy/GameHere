@@ -210,6 +210,9 @@ function Multipong(){
 
     // when a player joins, he gets the outermost position on the side with less players, or left if they are equal
     this.newPlayer = function(name){
+        if(this.availableColors.length == 0){
+            return false;
+        }
         // choose a random available color to assign to the player
         var index = Math.floor(Math.random() * this.availableColors.length);
         var color = this.availableColors[index];

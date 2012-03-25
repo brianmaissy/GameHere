@@ -26,7 +26,11 @@ document.addEventListener("DOMContentLoaded", function(){
     // a new controller has connected through the server, create a player for it
     socket.on('newPlayer', function(data){
         players[data.controllerID] = game.newPlayer(data.name);
-        socket.emit('playerConnected', {controllerID: data.controllerID, title: game.title});
+        if(players[data.controllerID]){
+            socket.emit('playerConnected', {controllerID: data.controllerID, title: game.title});
+        }else{
+            socket.emit('playerConnected', {controllerID: data.controllerID, error: "too many players"});
+        }
     });
     // a client has disconnected from the server
     socket.on('clientDisconnect', function(data){

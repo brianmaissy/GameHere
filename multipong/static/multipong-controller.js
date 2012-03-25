@@ -10,7 +10,12 @@ $(document).ready(function(){
         socket.emit('newPlayer', {name: name});
     });
     socket.on('playerConnected', function(data){
-        $('div#message').html(data.title + ' controller connected to display as player ' + name);
+        if(data.error){
+            $('div#message').html('Error: ' + data.error);
+            socket.disconnect();
+        }else{
+            $('div#message').html(data.title + ' controller connected to display as player ' + name);
+        }
     });
 });
 $(document).keypress(function(event) {

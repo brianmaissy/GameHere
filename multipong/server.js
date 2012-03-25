@@ -32,11 +32,11 @@ io.sockets.on('connection', function (socket) {
             data.controllerID = nextControllerID;
             if(display) display.emit('newPlayer', data);
             nextControllerID++;
-            console.log('Controller connected');
         });
     });
     socket.on('playerConnected', function(data){
-        controllers[data.controllerID].emit('playerConnected', {title: data.title});
+        if(!data.error) console.log('Player connected');
+        controllers[data.controllerID].emit('playerConnected', {title: data.title, error: data.error});
     });
     socket.on('newDisplay', function() {
         display = socket;
@@ -49,7 +49,6 @@ io.sockets.on('connection', function (socket) {
         socket.get('controllerID', function(err, controllerID){
             if (controllerID){
                 if(display) display.emit('clientDisconnect', {controllerID: controllerID});
-                console.log('Controller disconnected');
             }
         });
     });
