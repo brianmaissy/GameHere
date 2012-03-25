@@ -15,25 +15,25 @@ exports.testMultipong = {
         test.expect(6);
         game.start();
         test.ok(Bond.seen('gameStart', {started: true}));
-        test.ok(Bond.seen('gameStart', {started: true, speed_gt: 0}));
-        test.ok(Bond.seen('gameStart', {started: true, speed_lt: 1}));
-        test.ok(Bond.seen('gameStart', {started: true, speed_gte: .01}));
-        test.ok(Bond.seen('gameStart', {started: true, speed_lte: .01}));
+        test.ok(Bond.seen('gameStart', {started: true, speed__gt: 0}));
+        test.ok(Bond.seen('gameStart', {started: true, speed__lt: 1}));
+        test.ok(Bond.seen('gameStart', {started: true, speed__gte: .0075}));
+        test.ok(Bond.seen('gameStart', {started: true, speed__lte: .0075}));
         game.start();
-        test.equals(2, Bond.seenTimes('gameStart', {started: true}));
+        test.equals(Bond.seenTimes('gameStart', {started: true}), 2);
         test.done();
     },
     countPlayersCreated: function(test){
         test.expect(7);
-        new multipong.Player('brian');
+        new multipong.Player('brian', '', game);
         test.ok(Bond.seen('playerInstantiated', {name: 'brian'}));
-        test.ok(Bond.seen('playerInstantiated', {name_begins_with: 'br'}));
-        test.ok(Bond.seen('playerInstantiated', {name_ends_with: 'n'}));
-        test.ok(Bond.seen('playerInstantiated', {name_contains: 'ia'}));
-        test.ok(Bond.seen('playerInstantiated', {name_neq: 'joe'}));
-        test.ok(Bond.seen('playerInstantiated', {name_in: ['brian', 'george']}));
+        test.ok(Bond.seen('playerInstantiated', {name__begins_with: 'br'}));
+        test.ok(Bond.seen('playerInstantiated', {name__ends_with: 'n'}));
+        test.ok(Bond.seen('playerInstantiated', {name__contains: 'ia'}));
+        test.ok(Bond.seen('playerInstantiated', {name__neq: 'joe'}));
+        test.ok(Bond.seen('playerInstantiated', {name__in: ['brian', 'george']}));
         game.newPlayer('george');
-        test.equals(2, Bond.seenTimes('playerInstantiated', {}));
+        test.equals(Bond.seenTimes('playerInstantiated', {}), 2);
         test.done();
     }
 };

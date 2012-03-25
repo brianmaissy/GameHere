@@ -67,11 +67,11 @@ function Multipong(){
         // initialize the ball's direction randomly between -pi/4 and pi/4 or 3pi/4 and 5pi/4
         game.ballDirection = Math.random() * Math.PI/2 - Math.PI/4;
         if(Math.random() < .5) game.ballDirection += Math.PI;
+        Bond.spy('gameStart', {started: true, speed: game.ballSpeed});
         // wait around for 2 seconds and then start the game
         setTimeout(function(){
             game.started = true;
             game.canPause = true;
-            Bond.spy('gameStart', {started: game.started, speed: game.ballSpeed});
         }, 2000);
     };
 

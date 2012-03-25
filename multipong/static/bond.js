@@ -56,18 +56,19 @@ Bond.spy = function(location, observations){
 
 // Ask Bond if he has seen something with a call to Bond.seen(location, observations) where 'location' is a string
 // labeling the place and observations is a dictionary mapping variable names to values
-// and he will respond with a list of the matching observations, or null if that list happens to be empty.
+// and he will respond with a list of the matching observations, or false if that list happens to be empty.
 // You can ask Bond with an extra parameter value to filter his results by observations of the value given.
 // The following predicates can be appended to a variable name to modify the comparison:
-// _contains, _begins_with, _ends_with - the variable (a string or set) contains/begins with/ends with the given value
-// _in - the variable is a member of the given set
-// _neq - not equal to
-// _gt, _gte - greater than, greater than or equal to
-// _lt, _lte - less than, less than or equal to
+// __contains, __begins_with, __ends_with - the variable (a string or set) contains/begins with/ends with the given value
+// __in - the variable is a member of the given set
+// __neq - not equal to
+// __gt, __gte - greater than, greater than or equal to
+// __lt, __lte - less than, less than or equal to
 Bond.seen = function(location, observations){
     var obs = Bond.observations[location];
     var results = [];
     var i;
+    if(!obs) return false;
     for(i=0; i<obs.length; i++){
         var match = true;
         for(var variable in observations){
@@ -80,7 +81,7 @@ Bond.seen = function(location, observations){
         }
     }
     if(results.length == 0){
-        return null;
+        return false;
     }else{
         return results;
     }
@@ -88,27 +89,27 @@ Bond.seen = function(location, observations){
 
 function evaluatePredicate(observation, variable, value){
     var theVar;
-    if(variable.endsWith('_contains')){
-        theVar = observation[variable.stripLast(9)];
-        return (isArray(theVar) || typeof(theVar)=="string") && theVar.contains(value);
-    }else if(variable.endsWith('_begins_with')){
-        theVar = observation[variable.stripLast(12)];
-        return (isArray(theVar) || typeof(theVar)=="string") && theVar.beginsWith(value);
-    }else if(variable.endsWith('_ends_with')){
+    if(variable.endsWith('__contains')){
         theVar = observation[variable.stripLast(10)];
+        return (isArray(theVar) || typeof(theVar)=="string") && theVar.contains(value);
+    }else if(variable.endsWith('__begins_with')){
+        theVar = observation[variable.stripLast(13)];
+        return (isArray(theVar) || typeof(theVar)=="string") && theVar.beginsWith(value);
+    }else if(variable.endsWith('__ends_with')){
+        theVar = observation[variable.stripLast(11)];
         return (isArray(theVar) || typeof(theVar)=="string") && theVar.endsWith(value);
-    }else if(variable.endsWith('_in')){
-        return isArray(value) && value.contains(observation[variable.stripLast(3)]);
-    }else if(variable.endsWith('_neq')){
-        return observation[variable.stripLast(4)] != value;
-    }else if(variable.endsWith('_lt')){
-        return observation[variable.stripLast(3)] < value;
-    }else if(variable.endsWith('_lte')){
-        return observation[variable.stripLast(4)] <= value;
-    }else if(variable.endsWith('_gt')){
-        return observation[variable.stripLast(3)] > value;
-    }else if(variable.endsWith('_gte')){
-        return observation[variable.stripLast(4)] >= value;
+    }else if(variable.endsWith('__in')){
+        return isArray(value) && value.contains(observation[variable.stripLast(4)]);
+    }else if(variable.endsWith('__neq')){
+        return observation[variable.stripLast(5)] != value;
+    }else if(variable.endsWith('__lt')){
+        return observation[variable.stripLast(4)] < value;
+    }else if(variable.endsWith('__lte')){
+        return observation[variable.stripLast(5)] <= value;
+    }else if(variable.endsWith('__gt')){
+        return observation[variable.stripLast(4)] > value;
+    }else if(variable.endsWith('__gte')){
+        return observation[variable.stripLast(5)] >= value;
     }else{
         return observation[variable] == value;
     }
@@ -152,7 +153,7 @@ function isArray(a) { return Object.prototype.toString.apply(a) === '[object Arr
 var fs;
 if (typeof window === 'undefined'){
     exports.Bond = Bond;
-    var fs = require('fs');
+    fs = require('fs');
 }else{
     this.Bond = Bond;
 }
