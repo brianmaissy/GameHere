@@ -44,9 +44,9 @@ function Multipong(){
     // state variables, all in terms of a 1x1 field
 
     this.availableColors = ["#FF0000", "#FFFFFF", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF"];
-    this.canPause = false;
-    this.canMove = true;
     this.started = false;
+    this.starting = false;
+    this.paused = false;
     this.leftPlayers = [];
     this.rightPlayers = [];
     this.leftScore = 0;
@@ -62,33 +62,28 @@ function Multipong(){
 
     this.start = function(){
         var game = this;
-        game.canPause = false;
         game.ballSpeed = game.startingSpeed;
         // initialize the ball's direction randomly between -pi/4 and pi/4 or 3pi/4 and 5pi/4
         game.ballDirection = Math.random() * Math.PI/2 - Math.PI/4;
         if(Math.random() < .5) game.ballDirection += Math.PI;
         Bond.spy('gameStart', {started: true, speed: game.ballSpeed});
         // wait around for 2 seconds and then start the game
+        game.starting = true;
         setTimeout(function(){
-            game.started = true;
-            game.canPause = true;
+            if(game.starting){
+                game.started = true;
+                game.starting = false;
+            }
         }, 2000);
     };
 
     this.pause = function(){
-        if(this.canPause){
-            if(this.started){
-                this.started = false;
-                this.canMove = false;
-            }else{
-                this.started = true;
-                this.canMove = true;
-            }
-        }
+        this.paused = !this.paused;
     };
 
     this.stop = function(){
         this.started = false;
+        this.starting = false;
         this.ballSpeed = 0;
         this.ballLocationX = .5;
         this.ballLocationY = .5;
@@ -102,7 +97,7 @@ function Multipong(){
     // the tick function is called by the server every so often to tell it that time is moving. This design
     // was intentional, to decouple the game logic from the server logic, and time seems like a server thing
     this.tick = function(){
-        if(this.started) this.updateBallPosition();
+        if(this.started && !this.paused) this.updateBallPosition();
     };
 
     // logic for moving the ball around
@@ -228,7 +223,7 @@ function Multipong(){
         // now we need to reassign the players' x coordinates
         this.shiftPlayers();
         // start the game if it isn't started yet and we have two or more players
-        if (!this.started && this.leftPlayers.concat(this.rightPlayers).length >= 2){
+        if (!this.started && !this.starting && this.leftPlayers.concat(this.rightPlayers).length >= 2){
             this.start();
         }
         // return the Player object, so the server can associate it with a socket
@@ -271,7 +266,7 @@ function Multipong(){
         // and we need to reassign the players' x coordinates
         this.shiftPlayers();
         // stop the game if it is in progress and we have less than two players
-        if (this.started && this.leftPlayers.concat(this.rightPlayers).length < 2) {
+        if ((this.started || this.starting) && this.leftPlayers.concat(this.rightPlayers).length < 2) {
             this.stop();
         }
     };

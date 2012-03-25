@@ -45,7 +45,7 @@
                 });
                 // motion input from a controller through the server
                 socket.on('move', function(data){
-                    if(game.canMove) players[data.controllerID].move(data);
+                    if(!game.paused) players[data.controllerID].move(data);
                 });
                 socket.on('pause', function(){
                     game.pause();
