@@ -20,7 +20,7 @@ div#game{
     left: 150px;
     background-color: #000000;
     width: 600px;
-    height: 404px;
+    height: 400px;
     border: 1px solid #00FF00;
     margin-left: 30px;
     margin-right: 30px;
@@ -98,6 +98,7 @@ div.player{
     -moz-border-radius: 2px;
     border-radius: 2px;
     background-color: #000000;
+    z-index: 1;
 }
 div#ball{
     position: absolute;
