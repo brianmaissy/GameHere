@@ -41,7 +41,10 @@ document.addEventListener("DOMContentLoaded", function(){
     });
     // motion input from a controller through the server
     socket.on('move', function(data){
-        if(!game.paused) players[data.controllerID].move(data);
+        // ignore it if the message is from a controllerID that doesn't correspond to one of our players
+        if(players[data.controllerID]){
+            if(!game.paused) players[data.controllerID].move(data);
+        }
     });
     socket.on('pause', function(){
         game.pause();
