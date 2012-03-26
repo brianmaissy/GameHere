@@ -110,7 +110,7 @@ function drawPlayer(player, side, number){
         div.setAttribute('id', side + number);
         div.style.height = h * game.paddleWidth - 4; // small correction for borders
         div.style.width = w * game.paddleThickness - 4;
-        container.appendChild(div)
+        container.appendChild(div);
     }
     if(side == "right"){
         div.style.left = w * (player.x - 1.0/2 - game.paddleThickness/2);
