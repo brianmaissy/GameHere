@@ -36,7 +36,8 @@ io.sockets.on('connection', function (socket) {
                 nextControllerID++;
             });
         }else{
-            socket.emit('playerConnected', {title: data.title, error: "That game is not in progress. Are you using the correct controller?"});
+            socket.emit('playerConnected', {title: data.title, error: "That game is not in progress. " +
+                "Did you start the server and are you using the correct controller?"});
         }
     });
     socket.on('playerConnected', function(data){
