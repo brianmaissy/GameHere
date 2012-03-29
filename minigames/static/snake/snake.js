@@ -1,7 +1,5 @@
 if (typeof window === 'undefined'){
     Bond = require("../bond").Bond;
-}else{
-    // the browser already loaded  it, Bond is already defined
 }
 
 // The Square object, represents a square on the field
@@ -150,7 +148,7 @@ Array.prototype.last = function(){
     return this[this.length-1];
 };
 
-// export a single instance of a Multipong object
+// return a single instance of a Multipong object
 function createGame(){
     return new Snake();
 }
@@ -159,6 +157,4 @@ if (typeof window === 'undefined'){
     exports.Snake = Snake;
     exports.Player = Player;
     exports.createGame = createGame;
-}else{
-    this.Snake = Snake;
 }
