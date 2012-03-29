@@ -1,7 +1,5 @@
 if (typeof window === 'undefined'){
     Bond = require("../bond").Bond;
-}else{
-    // the browser already loaded  it, Bond is already defined
 }
 
 // The Player object constructor
@@ -304,7 +302,7 @@ function Multipong(){
 
 }
 
-// export a single instance of a Multipong object
+// return a single instance of a Multipong object
 function createGame(){
     return new Multipong();
 }
@@ -313,6 +311,4 @@ if (typeof window === 'undefined'){
     exports.Multipong = Multipong;
     exports.Player = Player;
     exports.createGame = createGame;
-}else{
-    this.Multipong = Multipong;
 }
