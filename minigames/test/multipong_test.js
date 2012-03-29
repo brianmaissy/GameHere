@@ -109,8 +109,8 @@ exports.testMultipong = {
             test.ok(Bond.seen("deflectTowardTangent"));
             for(var i=0; i<7; i++) lefty.move({y: 1});
             dir = game.ballDirection;
-            var bounces = Bond.seenTimes("divertedDirection");
-            while(Bond.seenTimes("divertedDirection") == bounces){
+            var bounces = Bond.seenTimes("hitPaddle");
+            while(Bond.seenTimes("hitPaddle") == bounces){          // !!! This is a unique power of Bond !!!
                 game.tick();
             }
             test.ok(Bond.seen("deflectTowardNormal"));
@@ -118,6 +118,26 @@ exports.testMultipong = {
         };
         // adding two players should start the game automatically
         lefty = game.newPlayer('a');
+        game.newPlayer('b');
+    },
+    replicateBounce: function(test){
+        test.expect(2);
+        var dir;
+        game.onStart = function(){
+            dir = game.ballDirection = Math.PI/10;
+            Bond.recordAt("deflectBall");           // !!! Another amazing use of Bond: recording execution state !!!
+            while(game.ballDirection == dir){
+                game.tick();
+            }
+            var observation = Bond.seen("deflectTowardTangent")[0];
+            test.equals(Bond.seenTimes("deflectTowardTangent", {byAdding: observation.byAdding}), 1);
+            Bond.replayAt("deflectBall");           // put it into replay mode...
+            game.deflectBall(null, null);           // call a function with dummy arguments...
+            test.equals(Bond.seenTimes("deflectTowardTangent", {byAdding: observation.byAdding}), 2); // and watch us get the same observation!
+            test.done();
+        };
+        // adding two players should start the game automatically
+        game.newPlayer('a');
         game.newPlayer('b');
     }
 };

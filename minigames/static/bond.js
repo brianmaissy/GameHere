@@ -1,11 +1,15 @@
 // The Bond testing library - James Bond spies on your code while it's running and reports back to you.
+// Out of respect for the production code, all calls to Bond in the production code are prefaced with /*BOND*/ for readability
 
 // Bond keeps his records in a dictionary mapping observation locations to lists of observations made there.
 // Each observation itself is a dictionary mapping labels of targets to their values
 var Bond = {
     observations: [],
     remote: false,
-    socket: null
+    socket: null,
+    recordingModes: {},
+    recordedStates: {},
+    recordedParams: {}
 };
 
 // Tell Bond to start a new mission by clearing his past observations
@@ -125,6 +129,35 @@ Bond.seenTimes = function(location, observations){
     }
 };
 
+// Allows for the recording and replaying of execution by recording and reinstating objects.
+// Turn on recording for a point with a call to Bond.recordAt(location) and then turn on replay with
+// Bond.replayAt(location). Cancel with Bond.dontRecord(location).
+Bond.recordAt = function(location){
+    this.recordingModes[location] = "record";
+};
+Bond.replayAt = function(location){
+    this.recordingModes[location] = "replay";
+};
+Bond.dontRecord = function(location){
+    this.recordingModes[location] = "";
+};
+// Set up recording points with a call to Bond.recordingPoint(location, state, params), where location is a string that
+// labels the recording location, state is an object which will be directly recorded and modified (eg pass 'this'), and
+// params is a map (object) of parameters which will be returned as is from the recordingPoint call during replay.
+Bond.recordingPoint = function(location, state, params){
+    if(this.recordingModes[location] == "record"){
+        this.recordedStates[location] = JSON.stringify(state);
+        this.recordedParams[location] = JSON.stringify(params);
+    }else if(this.recordingModes[location] == "replay"){
+        if(this.recordedStates[location]){
+            var recorded = JSON.parse(this.recordedStates[location]);
+            unpack(recorded, state);
+        }
+        return JSON.parse(this.recordedParams[location]);
+    }
+    return null;
+};
+
 // Helper functions
 Array.prototype.contains = function(element){
     return this.indexOf(element) != -1;
@@ -149,6 +182,18 @@ String.prototype.stripLast = function(number) {
 };
 
 function isArray(a) { return Object.prototype.toString.apply(a) === '[object Array]'; }
+
+function unpack(from, to){
+    for(var member in from){
+        if(typeof member == "object"){
+            var newObj = (member instanceof Array) ? [] : {};
+            unpack(member, newObj);
+            to[member] = newObj;
+        }else{
+            to[member] = from[member];
+        }
+    }
+}
 
 var fs;
 if (typeof window === 'undefined'){
