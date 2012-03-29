@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function(){
     socket.on('move', function(data){
         // ignore it if the message is from a controllerID that doesn't correspond to one of our players
         if(players[data.controllerID]){
-            if(!game.paused) players[data.controllerID].move(data);
+            players[data.controllerID].move(data);
         }
     });
     socket.on('pause', function(){

@@ -17,12 +17,14 @@ function Player(name, color, game){
     // motion function based on an input of 1 or -1
     // move the paddle up or down unless we are at the edge of the field
     this.move = function(motion){
-        if((motion.y == -1 && this.y >= game.moveDistance) ||
+        if(!game.paused){
+            if((motion.y == -1 && this.y >= game.moveDistance) ||
            (motion.y == 1 && this.y <= 1 - game.moveDistance - game.paddleWidth)){
-            this.y += game.moveDistance * motion.y;
-            // this is here to avoid numerical issues. We want to make sure players can move all the way to the edges
-            // of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
-            this.y = Math.round(this.y*100)/100;
+                this.y += game.moveDistance * motion.y;
+                // this is here to avoid numerical issues. We want to make sure players can move all the way to the edges
+                // of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
+                this.y = Math.round(this.y*100)/100;
+            }
         }
     }
 }
@@ -33,6 +35,7 @@ function Multipong(){
     // constants, all in terms of a 1x1 field
 
     this.title = 'Multipong';
+    this.startDelay = 2000;
     this.paddleWidth = .2;
     this.paddleThickness = .03;
     this.ballRadius = .02;
@@ -45,6 +48,7 @@ function Multipong(){
     this.availableColors = ["#FF0000", "#FFFFFF", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF"];
     this.started = false;
     this.starting = false;
+    this.onStart = function(){};
     this.paused = false;
     this.leftPlayers = [];
     this.rightPlayers = [];
@@ -72,8 +76,9 @@ function Multipong(){
             if(game.starting){
                 game.started = true;
                 game.starting = false;
+                game.onStart();
             }
-        }, 2000);
+        }, this.startDelay);
     };
 
     this.pause = function(){
