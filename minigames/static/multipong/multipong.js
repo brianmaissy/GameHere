@@ -20,6 +20,7 @@ function Player(name, color, game){
         if(!game.paused){
             if((motion.y == -1 && this.y >= game.moveDistance) ||
            (motion.y == 1 && this.y <= 1 - game.moveDistance - game.paddleWidth)){
+                Bond.spy("move", {player: this.name, direction: motion.y});
                 this.y += game.moveDistance * motion.y;
                 // this is here to avoid numerical issues. We want to make sure players can move all the way to the edges
                 // of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
@@ -108,6 +109,7 @@ function Multipong(){
 
     // updating the ball position, and detecting and handling collisions
     this.updateBallPosition = function(){
+        Bond.spy("ballLocation", {x: this.ballLocationX, y: this.ballLocationY});
         // move the ball forward in its direction
         this.ballLocationX += this.ballSpeed * Math.cos(this.ballDirection);
         this.ballLocationY -= this.ballSpeed * Math.sin(this.ballDirection); // remember that this needs to be negative
@@ -134,7 +136,7 @@ function Multipong(){
             for(i=0; i < this.leftPlayers.length; i++){
                 // if the ball is on the left, moving left, run collision detection for each paddle on the left
                 collisionDistance = this.collision(this.leftPlayers[i], 1);
-                if(collisionDistance){
+                if(collisionDistance != null){
                     // if there was a collision, turn the ball around and then do our non-physical deflection
                     this.ballDirection = this.normalize(Math.PI - this.ballDirection);
                     this.ballSpeed += this.ballSpeedIncreasePerBounce;
@@ -145,7 +147,7 @@ function Multipong(){
             for(i=0; i < this.rightPlayers.length; i++){
                 // if the ball is on the right, moving right, run collision detection for each paddle on the right
                 collisionDistance = this.collision(this.rightPlayers[i], -1);
-                if(collisionDistance){
+                if(collisionDistance != null){
                     // if there was a collision, turn the ball around and then do our non-physical deflection
                     this.ballDirection = this.normalize(Math.PI - this.ballDirection);
                     this.ballSpeed += this.ballSpeedIncreasePerBounce;
@@ -157,7 +159,7 @@ function Multipong(){
 
     // checks for a collision between the ball and the given paddle in the given direction. The ball only collides
     // with a paddle if it hits it from the front. Returns the distance above center of the paddle where the ball hit
-    // if there is a collision, returns false if there is no collision
+    // if there is a collision, returns null if there is no collision
     this.collision = function(player, direction){
         var paddleTop = player.y;
         var paddleBottom = player.y + this.paddleWidth;
@@ -170,7 +172,7 @@ function Multipong(){
                 return (paddleTop + paddleBottom)/2 - this.ballLocationY;
             }
         }
-        return false;
+        return null;
     };
 
     // deflects the ball in a non-physical fashion, to make the game more interesting. If the ball hits the center

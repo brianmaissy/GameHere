@@ -1,14 +1,17 @@
 var multipong = require("../static/multipong/multipong");
-var game = multipong.createGame();
+var game;
 var Bond = require("../static/bond").Bond;
 
 exports.testMultipong = {
     setUp: function (callback) {
         Bond.start();
+        game = multipong.createGame();
+        game.startDelay = 0;
         callback();
     },
     tearDown: function (callback) {
         // clean up
+        game.stop();
         callback();
     },
     countStarts: function(test){
@@ -23,8 +26,8 @@ exports.testMultipong = {
         test.equals(Bond.seenTimes('gameStart', {started: true}), 2);
         test.done();
     },
-    countPlayersCreated: function(test){
-        test.expect(7);
+    testPlayersAdded: function(test){
+        test.expect(11);
         new multipong.Player('brian', '', game);
         test.ok(Bond.seen('playerInstantiated', {name: 'brian'}));
         test.ok(Bond.seen('playerInstantiated', {name__begins_with: 'br'}));
@@ -32,8 +35,89 @@ exports.testMultipong = {
         test.ok(Bond.seen('playerInstantiated', {name__contains: 'ia'}));
         test.ok(Bond.seen('playerInstantiated', {name__neq: 'joe'}));
         test.ok(Bond.seen('playerInstantiated', {name__in: ['brian', 'george']}));
-        game.newPlayer('george');
-        test.equals(Bond.seenTimes('playerInstantiated', {}), 2);
+        var lefty = game.newPlayer('george');
+        game.newPlayer('right');
+        var newLefty = game.newPlayer('secondOnLeft');
+        test.ok(!game.availableColors.contains(lefty.color));
+        test.equals(newLefty.position, 2);
+        game.removePlayer(lefty);
+        test.ok(game.availableColors.contains(lefty.color));
+        test.equals(newLefty.position, 1);
+        test.equals(Bond.seenTimes('playerInstantiated', {}), 4);
         test.done();
+    },
+    testGameStartsStopsAndPauses: function(test){
+        test.expect(6);
+        var lefty;
+        game.onStart = function(){
+            test.ok(game.started);
+            var oldX = game.ballLocationX;
+            game.tick();
+            test.notEqual(oldX, game.ballLocationX);
+            var oldY = lefty.y;
+            lefty.move({y: 1});
+            test.notEqual(oldY, lefty.y);
+            game.pause();
+            test.ok(game.paused);
+            oldY = lefty.y;
+            lefty.move({y: 1});
+            test.equals(oldY, lefty.y);
+            game.removePlayer(lefty);
+            test.ok(!game.started);
+            test.done();
+        };
+        // adding two players should start the game automatically
+        lefty = game.newPlayer('a');
+        game.newPlayer('b');
+    },
+    testBallBouncesStraight: function(test){
+        test.expect(1);
+        game.onStart = function(){
+            game.ballDirection = 0;
+            while(game.ballDirection == 0){
+                game.tick();
+            }
+            test.equals(game.ballDirection, Math.PI);
+            test.done();
+        };
+        // adding two players should start the game automatically
+        game.newPlayer('a');
+        game.newPlayer('b');
+    },
+    testScoring: function(test){
+        test.expect(1);
+        game.onStart = function(){
+            game.ballDirection = Math.PI/6;
+            while(game.ballDirection == Math.PI/6){
+                game.tick();
+            }
+            test.equals(game.leftScore, 1);
+            test.done();
+        };
+        // adding two players should start the game automatically
+        game.newPlayer('a');
+        game.newPlayer('b');
+    },
+    testNonPhysicalBounce: function(test){
+        test.expect(2);
+        var lefty, dir;
+        game.onStart = function(){
+            dir = game.ballDirection = Math.PI/10;
+            while(game.ballDirection == dir){
+                game.tick();
+            }
+            test.ok(Bond.seen("deflectTowardTangent"));
+            for(var i=0; i<7; i++) lefty.move({y: 1});
+            dir = game.ballDirection;
+            var bounces = Bond.seenTimes("divertedDirection");
+            while(Bond.seenTimes("divertedDirection") == bounces){
+                game.tick();
+            }
+            test.ok(Bond.seen("deflectTowardNormal"));
+            test.done();
+        };
+        // adding two players should start the game automatically
+        lefty = game.newPlayer('a');
+        game.newPlayer('b');
     }
 };
