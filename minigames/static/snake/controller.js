@@ -21,17 +21,22 @@ $(document).ready(function(){
 $(document).keypress(function(event) {
     var deltaY = 0;
     var deltaX = 0;
+	console.log(event.keyCode)
     switch(parseInt(event.keyCode)){
-        case 37:
+        case 37: //left arrow
+		case 97:
             deltaX = -1;
             break;
-        case 38:
+        case 38: //up arrow
+		case 119:
             deltaY = -1;
             break;
-        case 39:
+        case 39: //right arrow
+		case 100:
             deltaX = 1;
             break;
-        case 40:
+        case 40: //down arrow
+		case 115:
             deltaY = 1;
             break;
         case 0:

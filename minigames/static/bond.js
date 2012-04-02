@@ -16,11 +16,11 @@ var Bond = {
 Bond.start = function(){
     Bond.observations = [];
     // clear log file
-    fs.createWriteStream('./BondLogs/log.txt', {
-        flags: 'w',
-        encoding: "utf8",
-        mode: 0666
-    }).write("");
+    //fs.createWriteStream('./BondLogs/log.txt', {
+    //    flags: 'w',
+    //    encoding: "utf8",
+    //    mode: 0666
+   // }).write("");
 };
 
 // Call this to change to remote reporting mode, and pass the socket.io socket of the testing server.
@@ -50,12 +50,12 @@ Bond.spy = function(location, observations){
         Bond.observations[location].push(observations);
 
         // write to log file
-        fs.createWriteStream('./BondLogs/log.txt', {
-            flags: 'a',
-            encoding: "utf8",
-            mode: 0666
-        }).write(location + ": " + JSON.stringify(observations) + "\n");
-    }
+        // fs.createWriteStream('./BondLogs/log.txt', {
+        //            flags: 'a',
+        //            encoding: "utf8",
+        //            mode: 0666
+        //        }).write(location + ": " + JSON.stringify(observations) + "\n");
+           }
 };
 
 // Ask Bond if he has seen something with a call to Bond.seen(location, observations) where 'location' is a string

@@ -21,12 +21,12 @@ $(document).ready(function(){
 $(document).keypress(function(event) {
     var deltaY = 0;
     switch(parseInt(event.keyCode)){
-        case 38:
-        case 97:
+        case 38: //up arrow
+        case 97: //numpad1
             deltaY = -1;
             break;
-        case 40:
-        case 122:
+        case 40:  //down arrow
+        case 122: //f11
             deltaY = 1;
             break;
         case 0:

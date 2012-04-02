@@ -29,7 +29,19 @@ function Player(name, color, game){
 
     // motion function based on an input of 1 or -1 in x or y
     this.move = function(motion){
-        //TODO: implement motion. basically just set nextDirection
+	     //implement motion. basically just set nextDirection
+		if (motion.x == -1 && motion.y == 0)
+		{
+			this.direction == "left";
+		} else if (motion.x == 1 && motion.y == 0) {
+			this.direction == "right";
+		} else if (motion.x == 0 && motion.y == 1) {
+			this.direction == "down"
+		} else {
+			this.direction == "up"
+		}
+		console.log("move:", motion);
+
     };
 }
 
@@ -58,6 +70,11 @@ function Snake(){
 
     this.start = function(){
         var game = this;
+		var i;
+		for (i = 0; i < players.length ; i++)
+		{
+			players[i].direction = "right";
+		}
         // TODO: initialize the players' positions, directions, etc
         Bond.spy('gameStart', {started: true, placedFood: true});
         // wait around for 2 seconds and then start the game
