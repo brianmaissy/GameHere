@@ -49,3 +49,60 @@ $(document).keypress(function(event) {
         socket.emit('move', {x: deltaX, y: deltaY});
     }
 });
+
+//TODO: add touch input
+var fingerDown = false;
+var dir = false;
+var startY = 0;
+var startX = 0;
+var moveY = 0;
+var moveX = 0;
+var moveThreshold = 10;
+var deltaX = 0;
+var deltaY = 0;
+
+console.log("test");
+
+document.addEventListener('touchstart', function(e) {
+    startY = e.touches[0].pageY;
+	startX = e.touches[0].pageX;
+});
+document.addEventListener('touchmove', function(e) {
+    moveY = e.touches[0].pageY;
+	moveX = e.touches[0].pageX;
+    if(Math.abs(moveY - startY) > moveThreshold) {
+        dir = (moveY > startY) ? 'down' : 'up';
+        if (dir == 'up')
+        {
+            deltaY = -1;
+			deltaX = 0;
+        }
+        else
+        {
+            deltaY = 1;
+			deltaX = 0;
+        }
+    } else if(Math.abs(moveX - startX) > moveThreshold) {
+        dir = (moveX > startX) ? 'right' : 'left';
+        if (dir == 'left')
+        {
+            deltaX = -1;
+			deltaY = 0;
+        }
+        else
+        {
+            deltaX = 1;
+			deltaY = 0;
+        }
+    }
+    else { //doesnt pass threshold
+		deltaY = 0;
+		deltaX = 0;
+    }
+    socket.emit('move', {x: deltaX, y: deltaY});
+});
+document.addEventListener('touchend', function(e) {
+    deltaY = 0;
+	deltaX = 0;
+    socket.emit('move', {x: deltaX, y: deltaY});
+});

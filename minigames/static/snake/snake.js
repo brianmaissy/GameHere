@@ -122,7 +122,6 @@ function Snake(){
 			var positionY = player.controlSquares.last().y;
 			if (player.nextDirection == "right")
 			{
-				console.log("position x:", positionX);
 				if (positionX >= 49)
 				{	
 					console.log("right boundary check");
