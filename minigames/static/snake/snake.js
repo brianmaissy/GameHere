@@ -72,7 +72,7 @@ function Snake(){
 		for (i = 0; i < game.players.length ; i++)
 		{
 			game.players[i].direction = "right";
-			game.players[i].nextDirection = "";
+			game.players[i].nextDirection = game.players[i].direction;
 		}
         // TODO: initialize the players' positions, directions, etc
         Bond.spy('gameStart', {started: true, placedFood: true});
@@ -117,18 +117,22 @@ function Snake(){
 		for (i = 0; i < this.players.length; i++) 
 		{
 			var player = this.players[i];
+			console.log("nextDirection:",player.nextDirection);
 			if (player.nextDirection == "right")
 			{
-				player.controlSquares.last().x += 10;
+				player.controlSquares.last().x += 1;
 			} else if (player.nextDirection == "left") {
-				player.controlSquares.last().x -= 10;
+				player.controlSquares.last().x -= 1;
 			} else if (player.nextDirection == "up") {
-				player.controlSquares.last().y -= 10;
+				player.controlSquares.last().y -= 1;
 			} else if (player.nextDirection == "down") {
-				player.controlSquares.last().y += 10;
+				player.controlSquares.last().y += 1;
 			} else {
 				console.log("nextDirection is not being set");
 			}
+			player.direction = player.nextDirection;
+//			player.nextDirection = "";
+//			console.log("new:",player.controlSquares);
 		}	
 		
         // TODO: for each player, turn if necessary, move him forward, detect collisions, and kill anyone if they collided into someone else

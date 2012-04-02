@@ -57,12 +57,12 @@ document.addEventListener("DOMContentLoaded", function(){
     Bond.startRemoteClient(socket);
 
     // start ticking away
-    setInterval(tick, 2000);
+    setInterval(tick, 200);
 }, false);
 
 function tick(){
     // tick the game
-    game.tick();
+    game.tick(); //changes nextDirection
     // update the display
     var i;
     // update the flash
@@ -87,6 +87,7 @@ function tick(){
         }
     }
     for(i=0; i<game.players.length; i++){
+		console.log("befor drawPlayer");
         drawPlayer(game.players[i], i);
     }
     document.getElementById("players").innerHTML = playerList;
@@ -113,6 +114,9 @@ function drawPlayer(player, number){
 
     div.style.backgroundColor = player.color;
     div.style.display = "block";
+    div.style.top = player.controlSquares.last().y * squareHeight;
+    div.style.left = player.controlSquares.last().x * squareWidth;
+
 }
 
 function drawFood(food){
