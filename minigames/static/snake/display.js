@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function(){
     Bond.startRemoteClient(socket);
 
     // start ticking away
-    setInterval(tick, 20);
+    setInterval(tick, 2000);
 }, false);
 
 function tick(){

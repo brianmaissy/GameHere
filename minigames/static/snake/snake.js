@@ -23,7 +23,7 @@ function Player(name, color, game){
     this.nextDirection = this.direction;    // the direction to go when the current head square is full
     this.color = color;
     this.score = 0;                         // a positive or negative integer. increases by eating, decreases by dying
-
+	this.test = "right"
     // give it an initial control point
     this.controlSquares.push(game.randomPoint());
 
@@ -32,16 +32,14 @@ function Player(name, color, game){
 	     //implement motion. basically just set nextDirection
 		if (motion.x == -1 && motion.y == 0)
 		{
-			this.direction == "left";
+			this.nextDirection = "left";
 		} else if (motion.x == 1 && motion.y == 0) {
-			this.direction == "right";
+			this.nextDirection = "right";
 		} else if (motion.x == 0 && motion.y == 1) {
-			this.direction == "down"
+			this.nextDirection = "down"
 		} else {
-			this.direction == "up"
+			this.nextDirection = "up"
 		}
-		console.log("move:", motion);
-
     };
 }
 
@@ -71,9 +69,10 @@ function Snake(){
     this.start = function(){
         var game = this;
 		var i;
-		for (i = 0; i < players.length ; i++)
+		for (i = 0; i < game.players.length ; i++)
 		{
-			players[i].direction = "right";
+			game.players[i].direction = "right";
+			game.players[i].nextDirection = "";
 		}
         // TODO: initialize the players' positions, directions, etc
         Bond.spy('gameStart', {started: true, placedFood: true});
@@ -105,12 +104,33 @@ function Snake(){
     // the tick function is called by the server every so often to tell it that time is moving. This design
     // was intentional, to decouple the game logic from the server logic, and time seems like a server thing
     this.tick = function(){
-        if(this.started && !this.paused) this.updatePlayerPositions();
+        if(this.started && !this.paused)
+		{
+			this.updatePlayerPositions();
+		} 
     };
 
     // logic for moving the players around
 
     this.updatePlayerPositions = function(){
+		var i;
+		for (i = 0; i < this.players.length; i++) 
+		{
+			var player = this.players[i];
+			if (player.nextDirection == "right")
+			{
+				player.controlSquares.last().x += 10;
+			} else if (player.nextDirection == "left") {
+				player.controlSquares.last().x -= 10;
+			} else if (player.nextDirection == "up") {
+				player.controlSquares.last().y -= 10;
+			} else if (player.nextDirection == "down") {
+				player.controlSquares.last().y += 10;
+			} else {
+				console.log("nextDirection is not being set");
+			}
+		}	
+		
         // TODO: for each player, turn if necessary, move him forward, detect collisions, and kill anyone if they collided into someone else
     };
 
