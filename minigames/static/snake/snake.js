@@ -117,19 +117,45 @@ function Snake(){
 		for (i = 0; i < this.players.length; i++) 
 		{
 			var player = this.players[i];
-			console.log("nextDirection:",player.nextDirection);
+			//console.log("nextDirection:",player.nextDirection);
+			var positionX = player.controlSquares.last().x;
+			var positionY = player.controlSquares.last().y;
 			if (player.nextDirection == "right")
 			{
-				player.controlSquares.last().x += 1;
+				console.log("position x:", positionX);
+				if (positionX >= 49)
+				{	
+					console.log("right boundary check");
+					positionX = 0;					
+				} else {
+					positionX += 1;
+				}
 			} else if (player.nextDirection == "left") {
-				player.controlSquares.last().x -= 1;
+				if (positionX <= 0)
+				{
+					positionX = 49;					
+				} else {
+					positionX -= 1;
+				}
 			} else if (player.nextDirection == "up") {
-				player.controlSquares.last().y -= 1;
+				if (positionY <= 0)
+				{
+					positionY = 49;
+				} else {
+					positionY -= 1;
+				}
 			} else if (player.nextDirection == "down") {
-				player.controlSquares.last().y += 1;
+				if (positionY >= 49)
+				{
+					positionY = 0;
+				} else {		
+					positionY += 1;
+				}
 			} else {
 				console.log("nextDirection is not being set");
 			}
+			player.controlSquares.last().x = positionX;
+			player.controlSquares.last().y = positionY;
 			player.direction = player.nextDirection;
 //			player.nextDirection = "";
 //			console.log("new:",player.controlSquares);

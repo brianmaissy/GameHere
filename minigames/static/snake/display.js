@@ -87,7 +87,6 @@ function tick(){
         }
     }
     for(i=0; i<game.players.length; i++){
-		console.log("befor drawPlayer");
         drawPlayer(game.players[i], i);
     }
     document.getElementById("players").innerHTML = playerList;
@@ -111,7 +110,8 @@ function drawPlayer(player, number){
         div.style.left = player.controlSquares.last().x * squareWidth;
         document.getElementById("field").appendChild(div);
     }
-
+	console.log("top:",div.style.top);
+	console.log("left:",div.style.left);
     div.style.backgroundColor = player.color;
     div.style.display = "block";
     div.style.top = player.controlSquares.last().y * squareHeight;
