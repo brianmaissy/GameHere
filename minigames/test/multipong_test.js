@@ -1,6 +1,7 @@
 var multipong = require("../static/multipong/multipong");
 var game;
 var Bond = require("../static/bond").Bond;
+var pathToTraces = "../test/traces/";
 
 exports.testMultipong = {
     setUp: function (callback) {
@@ -139,5 +140,16 @@ exports.testMultipong = {
         // adding two players should start the game automatically
         game.newPlayer('a');
         game.newPlayer('b');
+    },
+    replayTrace: function(test){                                // Use of manually recorded fixtures in regression tests
+        Bond.spy("hello!");
+        test.expect(1);
+        Bond.readRecords(pathToTraces + 'deflection1.trace', function(){        // Import the record
+            Bond.replayAt("deflectBall");                                       // Switch to replay mode
+            game.deflectBall(null, null);                                       // Call the function to be replayed
+            test.ok(Bond.seen("deflectTowardTangent", {byAdding: '-0.23pi'}));  // Test we get the expected result
+            test.done();
+        });
+
     }
 };

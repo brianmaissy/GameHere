@@ -1,0 +1,21 @@
+<html>
+<head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        var socket;
+        document.addEventListener("DOMContentLoaded", function(){
+            socket = io.connect('http://' + window.location.host);
+        });
+        function BondCommand(command, parameters){
+            if(!parameters) parameters = {};
+            parameters.command = command;
+            socket.emit('bond', parameters);
+        }
+    </script>
+</head>
+<body>
+<h1>Bond Control Panel</h1>
+Record at: <input type="text" id="recordAt" value="deflectBall"> <input type="button" value="Record" onclick="BondCommand('recordAt', {location: document.getElementById('recordAt').value})"><br>
+Save record as: <input type="text" id="saveRecords" value="deflection.trace"> <input type="button" value="Save" onclick="BondCommand('saveRecords', {filename: document.getElementById('saveRecords').value})">
+</body>
+</html>

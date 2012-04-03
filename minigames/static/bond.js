@@ -16,11 +16,10 @@ var Bond = {
 Bond.start = function(){
     Bond.observations = [];
     // clear log file
-    //fs.createWriteStream('./BondLogs/log.txt', {
-    //    flags: 'w',
-    //    encoding: "utf8",
-    //    mode: 0666
-   // }).write("");
+    fs.createWriteStream('./BondLogs/default.log', {
+        flags: 'w',
+        encoding: "utf8"
+    }).write("");
 };
 
 // Call this to change to remote reporting mode, and pass the socket.io socket of the testing server.
@@ -34,6 +33,18 @@ Bond.startRemoteClient = function(socket){
 Bond.startRemoteServer = function(socket){
     socket.on('Bond.spy', function(data){
         Bond.spy(data.location, data.observations);
+    });
+    socket.on('Bond.recordAt', function(data){
+        Bond.recordAt(data.location);
+    });
+    socket.on('Bond.replayAt', function(data){
+        Bond.replayAt(data.location);
+    });
+    socket.on('Bond.dontRecord', function(data){
+        Bond.dontRecord(data.location);
+    });
+    socket.on('Bond.recordingPoint', function(data){
+        Bond.recordingPoint(data.location, data.state, data.params);
     });
 };
 
@@ -50,12 +61,11 @@ Bond.spy = function(location, observations){
         Bond.observations[location].push(observations);
 
         // write to log file
-        // fs.createWriteStream('./BondLogs/log.txt', {
-        //            flags: 'a',
-        //            encoding: "utf8",
-        //            mode: 0666
-        //        }).write(location + ": " + JSON.stringify(observations) + "\n");
-           }
+        fs.createWriteStream('./BondLogs/default.log', {
+            flags: 'a',
+            encoding: "utf8"
+        }).write(location + ": " + JSON.stringify(observations) + "\n");
+    }
 };
 
 // Ask Bond if he has seen something with a call to Bond.seen(location, observations) where 'location' is a string
@@ -132,30 +142,75 @@ Bond.seenTimes = function(location, observations){
 // Allows for the recording and replaying of execution by recording and reinstating objects.
 // Turn on recording for a point with a call to Bond.recordAt(location) and then turn on replay with
 // Bond.replayAt(location). Cancel with Bond.dontRecord(location).
+// Can be used in local or remote mode, but in remote mode replaying doesn't work.
 Bond.recordAt = function(location){
-    this.recordingModes[location] = "record";
+    if(this.remote){
+        this.socket.emit('Bond.recordAt', {location: location});
+    }else{
+        this.recordingModes[location] = "record";
+    }
 };
 Bond.replayAt = function(location){
-    this.recordingModes[location] = "replay";
+    if(this.remote){
+        this.socket.emit('Bond.replayAt', {location: location});
+    }else{
+        this.recordingModes[location] = "replay";
+    }
 };
 Bond.dontRecord = function(location){
-    this.recordingModes[location] = "";
+    if(this.remote){
+        this.socket.emit('Bond.dontRecord', {location: location});
+    }else{
+        this.recordingModes[location] = "";
+    }
 };
 // Set up recording points with a call to Bond.recordingPoint(location, state, params), where location is a string that
 // labels the recording location, state is an object which will be directly recorded and modified (eg pass 'this'), and
 // params is a map (object) of parameters which will be returned as is from the recordingPoint call during replay.
 Bond.recordingPoint = function(location, state, params){
-    if(this.recordingModes[location] == "record"){
-        this.recordedStates[location] = JSON.stringify(state);
-        this.recordedParams[location] = JSON.stringify(params);
-    }else if(this.recordingModes[location] == "replay"){
-        if(this.recordedStates[location]){
-            var recorded = JSON.parse(this.recordedStates[location]);
-            unpack(recorded, state);
+    if(this.remote){
+        this.socket.emit('Bond.recordingPoint', {location: location, state: state, params: params});
+        return null;
+    }else{
+        if(this.recordingModes[location] == "record"){
+            this.recordedStates[location] = JSON.parse(JSON.stringify(state));
+            this.recordedParams[location] = JSON.parse(JSON.stringify(params));
+        }else if(this.recordingModes[location] == "replay"){
+            if(this.recordedStates[location]){
+                var recorded = this.recordedStates[location];
+                unpack(recorded, state);
+            }
+            return this.recordedParams[location];
         }
-        return JSON.parse(this.recordedParams[location]);
+        return null;
     }
-    return null;
+};
+
+Bond.readRecords = function(filename, callback){
+    var bond = this;
+    fs.readFile('./BondLogs/' + filename, function (err, data) {
+        if (err) throw err;
+        var records = JSON.parse(data);
+        bond.recordedStates = records.states;
+        bond.recordedParams = records.params;
+        callback();
+    });
+}
+
+Bond.saveRecords = function(filename){
+    if(!filename) filename = "record.trace"
+    fs.createWriteStream('./BondLogs/' + filename, {
+        flags: 'w',
+        encoding: "utf8"
+    }).write(JSON.stringify({states: this.recordedStates, params: this.recordedParams}));
+};
+
+Bond.controlPanelCommand = function(data){
+    if(data.command == "recordAt"){
+        this.recordAt(data.location);
+    }else if(data.command == "saveRecords"){
+        this.saveRecords(data.filename);
+    }
 };
 
 // Helper functions
