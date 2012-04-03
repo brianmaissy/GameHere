@@ -106,3 +106,8 @@ document.addEventListener('touchend', function(e) {
 	deltaX = 0;
     socket.emit('move', {x: deltaX, y: deltaY});
 });
+
+function blockMove() {
+	event.preventDefault();
+}
+

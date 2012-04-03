@@ -1,12 +1,22 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="apple-mobile-web-app-capable" content="yes" /> 
         <link rel="stylesheet" type="text/css" href="snake.css" />
         <script src="/jquery-1.7.1.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script src="controller.js"></script>
+	<script> // When ready...
+	window.addEventListener("load",function() {
+  		// Set a timeout...
+  		setTimeout(function(){
+    			// Hide the address bar!
+    			window.scrollTo(0, 1);
+  		}, 0);
+	}); 
+	</script>
     </head>
-    <body>
+    <body ontouchmove="blockMove()">
         <div id="message">Not Connected</div>
         <!-- TODO: show some sort of display explaining how to use the interface -->
 		<div id ="directions">

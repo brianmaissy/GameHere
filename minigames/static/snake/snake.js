@@ -156,6 +156,8 @@ function Snake(){
 			player.controlSquares.last().x = positionX;
 			player.controlSquares.last().y = positionY;
 			player.direction = player.nextDirection;
+			console.log("direction:", player.direction);
+			console.log("nextDirection:", player.nextDirection);
 //			player.nextDirection = "";
 //			console.log("new:",player.controlSquares);
 		}	

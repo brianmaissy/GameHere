@@ -1,5 +1,6 @@
 body{
     background-color: #000000;
+    min-height: 800px;
 }
 div#message {
     color: #FFFFFF;
