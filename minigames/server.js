@@ -71,6 +71,11 @@ io.sockets.on('connection', function (socket) {
     socket.on('pause', function(){
        if(display) display.emit('pause');
     });
+    // send commands to the server instance of Bond
+    socket.on('bond', function(data){
+        Bond.controlPanelCommand(data);
+        console.log('Bond command received:' + JSON.stringify(data));
+    });
 	socket.on('touchstart' , function() {
 		console.log('touchstart reached');
 		
