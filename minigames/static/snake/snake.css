@@ -4,6 +4,9 @@ body{
 div#message {
     color: #FFFFFF;
 }
+div#directions{
+	color: #FFFFFF;
+}
 div#flash{
     position: absolute;
     top: 30%;
