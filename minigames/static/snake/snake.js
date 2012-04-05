@@ -19,11 +19,10 @@ function Player(name, color, game){
     this.name = name;
     this.controlSquares = [];    // list of squares, the first is the tail of the snake and the last is the head
     this.headProgress = 0.0;    // a float which represents the percentage of its current square the head has filled
-    this.direction = "";                    // a string, either "left", "right", "up", or "down"
+    this.direction = "right";                    // a string, either "left", "right", "up", or "down"
     this.nextDirection = this.direction;    // the direction to go when the current head square is full
     this.color = color;
     this.score = 0;                         // a positive or negative integer. increases by eating, decreases by dying
-	this.test = "right"
     // give it an initial control point
     this.controlSquares.push(game.randomPoint());
 
@@ -32,13 +31,13 @@ function Player(name, color, game){
 	     //implement motion. basically just set nextDirection
 		if (motion.x == -1 && motion.y == 0)
 		{
-			this.nextDirection = "left";
+			this.direction = "left";
 		} else if (motion.x == 1 && motion.y == 0) {
-			this.nextDirection = "right";
+			this.direction = "right";
 		} else if (motion.x == 0 && motion.y == 1) {
-			this.nextDirection = "down"
-		} else {
-			this.nextDirection = "up"
+			this.direction = "down";
+		} else if (motion.x == 0 && motion.y == -1){
+			this.direction = "up";
 		}
     };
 }
@@ -72,8 +71,8 @@ function Snake(){
 		for (i = 0; i < game.players.length ; i++)
 		{
 			game.players[i].direction = "right";
-			game.players[i].nextDirection = game.players[i].direction;
 		}
+		
         // TODO: initialize the players' positions, directions, etc
         Bond.spy('gameStart', {started: true, placedFood: true});
         // wait around for 2 seconds and then start the game
@@ -117,10 +116,9 @@ function Snake(){
 		for (i = 0; i < this.players.length; i++) 
 		{
 			var player = this.players[i];
-			//console.log("nextDirection:",player.nextDirection);
 			var positionX = player.controlSquares.last().x;
 			var positionY = player.controlSquares.last().y;
-			if (player.nextDirection == "right")
+			if (player.direction == "right")
 			{
 				if (positionX >= 49)
 				{	
@@ -129,21 +127,21 @@ function Snake(){
 				} else {
 					positionX += 1;
 				}
-			} else if (player.nextDirection == "left") {
+			} else if (player.direction == "left") {
 				if (positionX <= 0)
 				{
 					positionX = 49;					
 				} else {
 					positionX -= 1;
 				}
-			} else if (player.nextDirection == "up") {
+			} else if (player.direction == "up") {
 				if (positionY <= 0)
 				{
 					positionY = 49;
 				} else {
 					positionY -= 1;
 				}
-			} else if (player.nextDirection == "down") {
+			} else if (player.direction == "down") {
 				if (positionY >= 49)
 				{
 					positionY = 0;
@@ -151,14 +149,11 @@ function Snake(){
 					positionY += 1;
 				}
 			} else {
-				console.log("nextDirection is not being set");
+				console.log("direction is not being set");
 			}
 			player.controlSquares.last().x = positionX;
 			player.controlSquares.last().y = positionY;
-			player.direction = player.nextDirection;
-			console.log("direction:", player.direction);
-			console.log("nextDirection:", player.nextDirection);
-//			player.nextDirection = "";
+			
 //			console.log("new:",player.controlSquares);
 		}	
 		

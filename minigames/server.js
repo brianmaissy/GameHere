@@ -60,7 +60,7 @@ io.sockets.on('connection', function (socket) {
         });
     });
     socket.on('move', function(data) {
-		console.log(data);
+		console.log("move:", data);
         socket.get('controllerID', function(err, controllerID){
             if (controllerID){
                 data.controllerID = controllerID;

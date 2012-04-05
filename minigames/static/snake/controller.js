@@ -21,7 +21,6 @@ $(document).ready(function(){
 $(document).keypress(function(event) {
     var deltaY = 0;
     var deltaX = 0;
-	console.log(event.keyCode)
     switch(parseInt(event.keyCode)){
         case 37: //left arrow
 		case 97:
@@ -57,7 +56,7 @@ var startY = 0;
 var startX = 0;
 var moveY = 0;
 var moveX = 0;
-var moveThreshold = 10;
+var moveThreshold = 50;
 var deltaX = 0;
 var deltaY = 0;
 
@@ -74,13 +73,13 @@ document.addEventListener('touchmove', function(e) {
         dir = (moveY > startY) ? 'down' : 'up';
         if (dir == 'up')
         {
-            deltaY = -1;
 			deltaX = 0;
+            deltaY = -1;			
         }
         else
         {
+			deltaX = 0;	
             deltaY = 1;
-			deltaX = 0;
         }
     } else if(Math.abs(moveX - startX) > moveThreshold) {
         dir = (moveX > startX) ? 'right' : 'left';
