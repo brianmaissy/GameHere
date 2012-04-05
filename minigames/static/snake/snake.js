@@ -109,10 +109,50 @@ function Snake(){
 		} 
     };
 
-    // logic for moving the players around
+    //collision detection
+	this.collide = function(player, direction) {
+		var head = player.controlSquares.last(); //position of head
+		var newX, newY;
+		switch(direction) {
+			case 'right':
+				newX = head.x + 1;
+				this.collideWithFood(player, newX, head.y)
+				break;
+			case 'left':
+				newX = head.x - 1;
+				this.collideWithFood(player, newX, head.y);
+				break;
+			case 'down':
+				newY = head.y + 1;
+				this.collideWithFood(player, head.x, newY);
+				break;
+			case 'up':
+				newY = head.y - 1;
+				this.collideWithFood(player, head.x, newY);
+				break;
+		}
+	};	
+	
+	//checks to see if the new location has a food, if so change position of food
+	this.collideWithFood = function(player, x, y) {
+		var i;
+		for (i = 0; i < this.food.length; i++) {
+			var location = this.food[i];
+			if (location.x == x && location.y == y)
+			{
+				player.score += 1; //increment score for eating a food
+				console.log("playerScore:", player.score);
+				this.food.splice(i,i);
+				this.placeRandomFood();				
+				break;
+			}
+		}
+	};
 
+	// logic for moving the players around
     this.updatePlayerPositions = function(){
 		var i;
+		console.log("food position:", this.food);
 		for (i = 0; i < this.players.length; i++) 
 		{
 			var player = this.players[i];
@@ -122,11 +162,11 @@ function Snake(){
 			{
 				if (positionX >= 49)
 				{	
-					console.log("right boundary check");
 					positionX = 0;					
 				} else {
 					positionX += 1;
 				}
+				this.collide(player,"right");
 			} else if (player.direction == "left") {
 				if (positionX <= 0)
 				{
@@ -134,6 +174,7 @@ function Snake(){
 				} else {
 					positionX -= 1;
 				}
+				this.collide(player,"left");
 			} else if (player.direction == "up") {
 				if (positionY <= 0)
 				{
@@ -141,6 +182,7 @@ function Snake(){
 				} else {
 					positionY -= 1;
 				}
+				this.collide(player,"up");
 			} else if (player.direction == "down") {
 				if (positionY >= 49)
 				{
@@ -148,6 +190,7 @@ function Snake(){
 				} else {		
 					positionY += 1;
 				}
+				this.collide(player,"down");
 			} else {
 				console.log("direction is not being set");
 			}
