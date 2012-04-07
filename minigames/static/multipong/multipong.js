@@ -13,20 +13,20 @@ function Player(name, color, game){
     this.y = .5 - game.paddleWidth/2;
     this.position = 0;  // the position of the player on the field, a positive nonzero integer
     this.color = color;
-
+   // this.nextY = .5 - game.paddleWidth/2;
+	this.direction = "stop"; //up, down, or stop
     // motion function based on an input of 1 or -1
     // move the paddle up or down unless we are at the edge of the field
     this.move = function(motion){
-        if(!game.paused){
-            if((motion.y == -1 && this.y >= game.moveDistance) ||
-           (motion.y == 1 && this.y <= 1 - game.moveDistance - game.paddleWidth)){
+            if(motion.y == -1 && this.y >= game.moveDistance) {
+            	this.direction = "up";
+            } else if (motion.y == 1 && this.y <= 1 - game.moveDistance - game.paddleWidth){
+            	this.direction = "down";
                 /*BOND*/ Bond.spy("move", {player: this.name, direction: motion.y});
-                this.y += game.moveDistance * motion.y;
-                // this is here to avoid numerical issues. We want to make sure players can move all the way to the edges
-                // of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
-                this.y = Math.round(this.y*100)/100;
+
+            } else {
+            	this.direction = "stop";
             }
-        }
     }
 }
 
@@ -66,6 +66,7 @@ function Multipong(){
 
     this.start = function(){
         var game = this;
+        var i;
         game.ballSpeed = game.startingSpeed;
         // initialize the ball's direction randomly between -pi/4 and pi/4 or 3pi/4 and 5pi/4
         game.ballDirection = Math.random() * Math.PI/2 - Math.PI/4;
@@ -102,9 +103,39 @@ function Multipong(){
     // the tick function is called by the server every so often to tell it that time is moving. This design
     // was intentional, to decouple the game logic from the server logic, and time seems like a server thing
     this.tick = function(){
-        if(this.started && !this.paused) this.updateBallPosition();
+        if(this.started && !this.paused){
+    		this.updatePlayerPosition();    
+	        this.updateBallPosition();
+        }
     };
-
+	
+	this.updatePlayerPosition = function(){
+		var i;
+		for (i = 0; i < this.leftPlayers.length; i++){
+			var player = this.leftPlayers[i];
+			if (player.direction == "up") 
+			{
+				player.y -= this.moveDistance;
+//this is here to avoid numerical issues. We want to make sure players can move all the way to the edges
+// of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
+				player.y = Math.round(player.y*100)/100;
+			} else if (player.direction == "down") {
+				player.y += this.moveDistance;
+				player.y = Math.round(player.y*100)/100;
+			} 
+		}	
+		for (i = 0; i < this.rightPlayers.length; i++){
+			var player = this.rightPlayers[i];
+			if (player.direction == "up") 
+			{
+				player.y -= this.moveDistance;
+				player.y = Math.round(player.y*100)/100;
+			} else if (player.direction == "down") {
+				player.y += this.moveDistance;
+				player.y = Math.round(player.y*100)/100;
+			} 			
+		}
+	};
     // logic for moving the ball around
 
     // updating the ball position, and detecting and handling collisions

@@ -95,8 +95,8 @@ function tick(){
         playerList += '<span style="color:' + game.rightPlayers[i].color + ';">' + game.rightPlayers[i].name + '</span><br>';
     }
     document.getElementById("rightPlayers").innerHTML = playerList;
-
 }
+
 function drawPlayer(player, side, number){
     // create a div if it doesn't yet exist, then adjust its position and color
     var div = document.getElementById(side + number);
@@ -117,7 +117,7 @@ function drawPlayer(player, side, number){
     }else{
         div.style.left = w * (player.x - game.paddleThickness/2);
     }
-    div.style.top = h * player.y + 1;
+	div.style.top = h * player.y + 1;
     div.style.borderColor = player.color;
     div.style.display = "block";
 }

@@ -50,7 +50,6 @@ $(document).keypress(function(event) {
 });
 
 //TODO: add touch input
-var fingerDown = false;
 var dir = false;
 var startY = 0;
 var startX = 0;
@@ -59,8 +58,6 @@ var moveX = 0;
 var moveThreshold = 50;
 var deltaX = 0;
 var deltaY = 0;
-
-console.log("test");
 
 document.addEventListener('touchstart', function(e) {
     startY = e.touches[0].pageY;
