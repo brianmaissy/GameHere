@@ -103,37 +103,39 @@ function Multipong(){
     // the tick function is called by the server every so often to tell it that time is moving. This design
     // was intentional, to decouple the game logic from the server logic, and time seems like a server thing
     this.tick = function(){
-        if(this.started && !this.paused){
-    		this.updatePlayerPosition();    
+        if(this.started && !this.paused){   
 	        this.updateBallPosition();
         }
     };
-	
+    
 	this.updatePlayerPosition = function(){
-		var i;
-		for (i = 0; i < this.leftPlayers.length; i++){
-			var player = this.leftPlayers[i];
-			if (player.direction == "up") 
-			{
-				player.y -= this.moveDistance;
-//this is here to avoid numerical issues. We want to make sure players can move all the way to the edges
-// of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
-				player.y = Math.round(player.y*100)/100;
-			} else if (player.direction == "down") {
-				player.y += this.moveDistance;
-				player.y = Math.round(player.y*100)/100;
-			} 
-		}	
-		for (i = 0; i < this.rightPlayers.length; i++){
-			var player = this.rightPlayers[i];
-			if (player.direction == "up") 
-			{
-				player.y -= this.moveDistance;
-				player.y = Math.round(player.y*100)/100;
-			} else if (player.direction == "down") {
-				player.y += this.moveDistance;
-				player.y = Math.round(player.y*100)/100;
-			} 			
+		if(this.started && !this.paused){
+			var i;
+			for (i = 0; i < this.leftPlayers.length; i++){
+				var player = this.leftPlayers[i];
+				if (player.direction == "up") 
+				{
+					player.y -= this.moveDistance;
+	//this is here to avoid numerical issues. We want to make sure players can move all the way to the edges
+	// of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
+					player.y = Math.round(player.y*100)/100;
+				} else if (player.direction == "down") {
+					player.y += this.moveDistance;
+					player.y = Math.round(player.y*100)/100;
+				} 
+			}
+				
+			for (i = 0; i < this.rightPlayers.length; i++){
+				var player = this.rightPlayers[i];
+				if (player.direction == "up") 
+				{
+					player.y -= this.moveDistance;
+					player.y = Math.round(player.y*100)/100;
+				} else if (player.direction == "down") {
+					player.y += this.moveDistance;
+					player.y = Math.round(player.y*100)/100;
+				} 			
+			}
 		}
 	};
     // logic for moving the ball around

@@ -45,7 +45,7 @@ $(document).keypress(function(event) {
 var dir = false;
 var startY = 0;
 var moveY = 0;
-var moveThreshold = 30;
+var moveThreshold = 50;
 var deltaY = 0;
 
 document.addEventListener('touchstart', function(e) {

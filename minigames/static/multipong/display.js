@@ -53,8 +53,13 @@ document.addEventListener("DOMContentLoaded", function(){
     Bond.startRemoteClient(socket);
 
     // start ticking away
+    setInterval(updatePlayerPosition, 80); //player updates a little slower
     setInterval(tick, 20);
+   
 }, false);
+function updatePlayerPosition(){
+	game.updatePlayerPosition();
+}
 
 function tick(){
     // tick the game
