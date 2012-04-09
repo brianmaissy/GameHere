@@ -113,31 +113,30 @@ function Multipong(){
 			var i;
 			for (i = 0; i < this.leftPlayers.length; i++){
 				var player = this.leftPlayers[i];
-				if (player.direction == "up") 
-				{
-					player.y -= this.moveDistance;
-	//this is here to avoid numerical issues. We want to make sure players can move all the way to the edges
-	// of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
-					player.y = Math.round(player.y*100)/100;
-				} else if (player.direction == "down") {
-					player.y += this.moveDistance;
-					player.y = Math.round(player.y*100)/100;
-				} 
+				this.move(player);
 			}
 				
 			for (i = 0; i < this.rightPlayers.length; i++){
 				var player = this.rightPlayers[i];
-				if (player.direction == "up") 
-				{
-					player.y -= this.moveDistance;
-					player.y = Math.round(player.y*100)/100;
-				} else if (player.direction == "down") {
-					player.y += this.moveDistance;
-					player.y = Math.round(player.y*100)/100;
-				} 			
+				this.move(player);		
 			}
 		}
 	};
+	
+	//how to move the player
+	this.move = function(player) {
+		if (player.direction == "up") 
+		{
+			player.y -= this.moveDistance;
+	//this is to avoid numerical issues. We want to make sure players can move all the way to the edges
+	// of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
+			player.y = Math.round(player.y*100)/100;
+		} else if (player.direction == "down") {
+			player.y += this.moveDistance;
+			player.y = Math.round(player.y*100)/100;
+		} 
+	};
+	
     // logic for moving the ball around
 
     // updating the ball position, and detecting and handling collisions
