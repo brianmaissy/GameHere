@@ -17,14 +17,12 @@ function Player(name, color, game){
     // state variables
 
     this.name = name;
-    this.controlSquares = [];    // list of squares, the first is the tail of the snake and the last is the head
-    this.headProgress = 0.0;    // a float which represents the percentage of its current square the head has filled
+    this.segments = [];     // list of segments (squares), the first is the tail of the snake and the last is the head
     this.direction = "right";                    // a string, either "left", "right", "up", or "down"
-    this.nextDirection = this.direction;    // the direction to go when the current head square is full
     this.color = color;
     this.score = 0;                         // a positive or negative integer. increases by eating, decreases by dying
     // give it an initial control point
-    this.controlSquares.push(game.randomPoint());
+    this.segments.push(game.randomPoint());
 
     // motion function based on an input of 1 or -1 in x or y
     this.move = function(motion){
@@ -50,7 +48,6 @@ function Snake(){
     this.title = 'Snake';
     this.fieldWidth = 50;  // the field is an array of discrete squares
     this.fieldHeight = 50;
-    this.speed = .01;       // in terms of squares per time step
     this.foodValue = 1;
     this.deathValue = -5;
 
@@ -111,26 +108,23 @@ function Snake(){
 
     //collision detection
 	this.collide = function(player, direction) {
-		var head = player.controlSquares.last(); //position of head
-		var newX, newY;
+		var head = player.segments.last(); //position of head
+		var newX = head.x, newY = head.y;
 		switch(direction) {
 			case 'right':
-				newX = head.x + 1;
-				this.collideWithFood(player, newX, head.y)
+				newX += 1;
 				break;
 			case 'left':
-				newX = head.x - 1;
-				this.collideWithFood(player, newX, head.y);
+                newX -= 1;
 				break;
 			case 'down':
-				newY = head.y + 1;
-				this.collideWithFood(player, head.x, newY);
+				newY += 1;
 				break;
 			case 'up':
-				newY = head.y - 1;
-				this.collideWithFood(player, head.x, newY);
+				newY -= 1;
 				break;
 		}
+        this.collideWithFood(player, newX, newY);
 	};	
 	
 	//checks to see if the new location has a food, if so change position of food
@@ -152,12 +146,12 @@ function Snake(){
 	// logic for moving the players around
     this.updatePlayerPositions = function(){
 		var i;
-		console.log("food position:", this.food);
+		//console.log("food position:", this.food);
 		for (i = 0; i < this.players.length; i++) 
 		{
 			var player = this.players[i];
-			var positionX = player.controlSquares.last().x;
-			var positionY = player.controlSquares.last().y;
+			var positionX = player.segments.last().x;
+			var positionY = player.segments.last().y;
 			if (player.direction == "right")
 			{
 				if (positionX >= 49)
@@ -194,10 +188,10 @@ function Snake(){
 			} else {
 				console.log("direction is not being set");
 			}
-			player.controlSquares.last().x = positionX;
-			player.controlSquares.last().y = positionY;
+			player.segments.last().x = positionX;
+			player.segments.last().y = positionY;
 			
-//			console.log("new:",player.controlSquares);
+//			console.log("new:",player.segments);
 		}	
 		
         // TODO: for each player, turn if necessary, move him forward, detect collisions, and kill anyone if they collided into someone else

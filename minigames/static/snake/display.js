@@ -3,6 +3,7 @@ var game;
 var players = {};
 var h = 0;
 var w = 0;
+var foodStyle;
 var squareHeight;
 var squareWidth;
 document.addEventListener("DOMContentLoaded", function(){
@@ -20,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function(){
     food.style.borderRadius = radius;
     food.style.mozBorderRadius = radius;
     food.style.display = "none";
+    foodStyle = food.style.cssText;
 
     // start the socket.io connection and set up the handlers
     socket = io.connect('http://' + window.location.host);
@@ -57,13 +59,14 @@ document.addEventListener("DOMContentLoaded", function(){
     Bond.startRemoteClient(socket);
 
     // start ticking away
-    setInterval(tick, 200);
+    setInterval(tick, 100);
 }, false);
 
 function tick(){
     // tick the game
     game.tick(); //changes nextDirection
     // update the display
+    document.getElementById("field").innerHTML = '<div id="flash"></div><div class="food" id="food" style="' + foodStyle + '"></div>';
     var i;
     // update the flash
     var flash = document.getElementById("flash");
@@ -74,20 +77,14 @@ function tick(){
     }else{
         flash.innerHTML = "";
     }
-    // write the playerlist and scores
+    // write the player list and scores
     var playerList = '';
     for(i=0; i< game.players.length; i++){
         playerList += '<span style="color:' + game.players[i].color + ';">' + game.players[i].name + ': ' + game.players[i].score + '</span><br>';
     }
     // draw the players
-    var players = document.getElementsByClassName("player");
-    if(players.length > 0){
-        for(i=0; i<players.length; i++){
-            players[i].style.display = "none";
-        }
-    }
     for(i=0; i<game.players.length; i++){
-        drawPlayer(game.players[i], i);
+        drawPlayer(game.players[i]);
     }
     document.getElementById("players").innerHTML = playerList;
     // draw the food
@@ -96,25 +93,35 @@ function tick(){
     }
 }
 
-function drawPlayer(player, number){
-    // just draws the full head square for now. TODO: draw entire snake, including partial head and tail
+// draws a snake from scratch, square by square.
+// future optimization: keep old snake divs and modify them appropriately
+// and possibly combine squares into segments to use less divs
+function drawPlayer(player){
     // create a div if it doesn't yet exist, then adjust its position and color
-    var div = document.getElementById(number);
-    if(!div){
-        div = document.createElement('div');
-        div.setAttribute('class', 'playerSegment');
-        div.setAttribute('id', number);
-        div.style.height = squareHeight;
-        div.style.width = squareWidth;
-        div.style.top = player.controlSquares.last().y * squareHeight;
-        div.style.left = player.controlSquares.last().x * squareWidth;
-        document.getElementById("field").appendChild(div);
+    var backFill, frontFill;
+    for(var i=0; i<player.segments.length; i++){
+        backFill = frontFill = 1;
+        if(i==0){
+            backFill = 1 - player.headProgress;
+        }
+        if(i == player.segments.length-1){
+            frontFill = player.headProgress;
+        }
+        drawSquare(player.color, player.segments[i]);
     }
-    div.style.backgroundColor = player.color;
-    div.style.display = "block";
-    div.style.top = player.controlSquares.last().y * squareHeight;
-    div.style.left = player.controlSquares.last().x * squareWidth;
+}
 
+// draws a snake square
+function drawSquare(color, square){
+    var div = document.createElement('div');
+    div.setAttribute('class', 'playerSegment');
+    div.style.backgroundColor = color;
+    div.style.display = "block";
+    div.style.width = squareWidth;
+    div.style.height = squareHeight;
+    div.style.left = square.x * squareWidth;
+    div.style.top = square.y * squareHeight;
+    document.getElementById("field").appendChild(div);
 }
 
 function drawFood(food){
