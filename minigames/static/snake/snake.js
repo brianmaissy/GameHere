@@ -21,6 +21,7 @@ function Player(name, color, game){
     this.length = 1;            // the length of the snake (sometimes the actual size lags behind this length
     this.direction = "right";   // a string, either "left", "right", "up", or "down"
     this.nextDirection = "none";// direction to turn next time step. domain same as direction, but can also be "none"
+    this.secondNextDirection = "none"   // similar to nextDirection, but allows the game to remember 2 pending turns
     this.color = color;
     this.score = 0;             // a positive or negative integer. increases by eating, decreases by dying
     // give it an initial control point
@@ -28,17 +29,32 @@ function Player(name, color, game){
 
     // motion function based on an input of 1 or -1 in x or y
     this.move = function(motion){
-	     //implement motion. basically just set nextDirection
-		if (motion.x == -1 && motion.y == 0 && this.direction != "right") {
-			this.nextDirection = "left";
-		} else if (motion.x == 1 && motion.y == 0 && this.direction != "left") {
-			this.nextDirection = "right";
-		} else if (motion.x == 0 && motion.y == 1 && this.direction != "up") {
-			this.nextDirection = "down";
-		} else if (motion.x == 0 && motion.y == -1 && this.direction != "down"){
-			this.nextDirection = "up";
-		}else{
-            this.nextDirection = "none";
+        if(this.nextDirection == "none"){
+            if (motion.x == -1 && motion.y == 0 && this.direction != "right") {
+                this.nextDirection = "left";
+            } else if (motion.x == 1 && motion.y == 0 && this.direction != "left") {
+                this.nextDirection = "right";
+            } else if (motion.x == 0 && motion.y == 1 && this.direction != "up") {
+                this.nextDirection = "down";
+            } else if (motion.x == 0 && motion.y == -1 && this.direction != "down"){
+                this.nextDirection = "up";
+            }else{
+                this.nextDirection = "none";
+            }
+        }else{
+            if(this.secondNextDirection == "none"){
+                if (motion.x == -1 && motion.y == 0 && this.nextDirection != "right") {
+                    this.secondNextDirection = "left";
+                } else if (motion.x == 1 && motion.y == 0 && this.nextDirection != "left") {
+                    this.secondNextDirection = "right";
+                } else if (motion.x == 0 && motion.y == 1 && this.nextDirection != "up") {
+                    this.secondNextDirection = "down";
+                } else if (motion.x == 0 && motion.y == -1 && this.nextDirection != "down"){
+                    this.secondNextDirection = "up";
+                }else{
+                    this.secondNextDirection = "none";
+                }
+            }
         }
     };
 }
@@ -123,6 +139,8 @@ function Snake(){
 			var player = this.players[i];
             if(player.nextDirection != "none"){
                 player.direction = player.nextDirection;
+                player.nextDirection = player.secondNextDirection;
+                player.secondNextDirection = "none";
             }
 			var head = player.segments[0];
             var newSquare = new Square(head.x, head.y);
