@@ -17,10 +17,11 @@ function Player(name, color, game){
     // state variables
 
     this.name = name;
-    this.segments = [];     // list of segments (squares), the first is the tail of the snake and the last is the head
-    this.direction = "right";                    // a string, either "left", "right", "up", or "down"
+    this.segments = [];         // list of segments (squares), the first is the head of the snake and the last is the tail
+    this.length = 1;            // the length of the snake (sometimes the actual size lags behind this length
+    this.direction = "right";   // a string, either "left", "right", "up", or "down"
     this.color = color;
-    this.score = 0;                         // a positive or negative integer. increases by eating, decreases by dying
+    this.score = 0;             // a positive or negative integer. increases by eating, decreases by dying
     // give it an initial control point
     this.segments.push(game.randomPoint());
 
@@ -48,8 +49,10 @@ function Snake(){
     this.title = 'Snake';
     this.fieldWidth = 50;  // the field is an array of discrete squares
     this.fieldHeight = 50;
-    this.foodValue = 1;
+    this.foodScoreValue = 1;
+    this.foodGrowthValue = 1;
     this.deathValue = -5;
+    this.foodLimit = 2;
 
     // state variables
 
@@ -78,7 +81,9 @@ function Snake(){
             if(game.starting){
                 game.started = true;
                 game.starting = false;
-                game.placeRandomFood();
+                for(var i = 0; i < game.foodLimit; i++){
+                    game.placeRandomFood();
+                }
             }
         }, 2000);
     };
@@ -106,95 +111,67 @@ function Snake(){
 		} 
     };
 
-    //collision detection
-	this.collide = function(player, direction) {
-		var head = player.segments.last(); //position of head
-		var newX = head.x, newY = head.y;
-		switch(direction) {
-			case 'right':
-				newX += 1;
-				break;
-			case 'left':
-                newX -= 1;
-				break;
-			case 'down':
-				newY += 1;
-				break;
-			case 'up':
-				newY -= 1;
-				break;
-		}
-        this.collideWithFood(player, newX, newY);
-	};	
-	
-	//checks to see if the new location has a food, if so change position of food
-	this.collideWithFood = function(player, x, y) {
-		var i;
-		for (i = 0; i < this.food.length; i++) {
-			var location = this.food[i];
-			if (location.x == x && location.y == y)
-			{
-				player.score += 1; //increment score for eating a food
-				console.log("playerScore:", player.score);
-				this.food.splice(i,i);
-				this.placeRandomFood();				
-				break;
-			}
-		}
-	};
-
-	// logic for moving the players around
+	// logic for moving the players around. for each player, move him forward and detect collisions
     this.updatePlayerPositions = function(){
 		var i;
 		//console.log("food position:", this.food);
 		for (i = 0; i < this.players.length; i++) 
 		{
 			var player = this.players[i];
-			var positionX = player.segments.last().x;
-			var positionY = player.segments.last().y;
+			var head = player.segments[0];
+            var newSquare = new Square(head.x, head.y);
 			if (player.direction == "right")
 			{
-				if (positionX >= 49)
-				{	
-					positionX = 0;					
+				if (head.x >= this.fieldWidth - 1){
+					newSquare.x = 0;
 				} else {
-					positionX += 1;
+                    newSquare.x += 1;
 				}
-				this.collide(player,"right");
 			} else if (player.direction == "left") {
-				if (positionX <= 0)
-				{
-					positionX = 49;					
+				if (head.x <= 0){
+                    newSquare.x = this.fieldWidth - 1;
 				} else {
-					positionX -= 1;
+                    newSquare.x -= 1;
 				}
-				this.collide(player,"left");
 			} else if (player.direction == "up") {
-				if (positionY <= 0)
-				{
-					positionY = 49;
+				if (head.y <= 0){
+                    newSquare.y = this.fieldHeight - 1;
 				} else {
-					positionY -= 1;
+					newSquare.y -= 1;
 				}
-				this.collide(player,"up");
 			} else if (player.direction == "down") {
-				if (positionY >= 49)
-				{
-					positionY = 0;
-				} else {		
-					positionY += 1;
+				if (head.y >= this.fieldHeight - 1){
+                    newSquare.y = 0;
+				} else {
+                    newSquare.y += 1;
 				}
-				this.collide(player,"down");
 			} else {
 				console.log("direction is not being set");
 			}
-			player.segments.last().x = positionX;
-			player.segments.last().y = positionY;
-			
-//			console.log("new:",player.segments);
-		}	
-		
-        // TODO: for each player, turn if necessary, move him forward, detect collisions, and kill anyone if they collided into someone else
+            player.segments.unshift(newSquare);
+            if(player.segments.length > player.length){
+                player.segments.splice(player.segments.length - 1, 1);
+            }
+            this.collideWithFood(player);
+		}
+        if (this.food.length < this.foodLimit){
+            this.placeRandomFood();
+        }
+    };
+
+    this.collideWithFood = function(player) {
+        var i;
+        var head = player.segments[0];
+        for (i = 0; i < this.food.length; i++) {
+            var location = this.food[i];
+            if (location.x == head.x && location.y == head.y)
+            {
+                player.score += this.foodScoreValue;         //increase score for eating a food
+                player.length += this.foodGrowthValue;  // increase size for eating a food
+                //console.log("playerScore:", player.score);
+                this.food.splice(i,1);
+            }
+        }
     };
 
     this.placeRandomFood = function(){

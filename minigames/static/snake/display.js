@@ -3,9 +3,10 @@ var game;
 var players = {};
 var h = 0;
 var w = 0;
-var foodStyle;
+var radius;
 var squareHeight;
 var squareWidth;
+
 document.addEventListener("DOMContentLoaded", function(){
     // create the game and initialize things based on it
     game = createGame();
@@ -14,14 +15,7 @@ document.addEventListener("DOMContentLoaded", function(){
     h = field.offsetHeight;
     squareHeight = h / game.fieldHeight;
     squareWidth = w / game.fieldWidth;
-    var food = document.getElementById("food");
-    food.style.width = squareWidth-2;   // we want it to be slightly smaller than the square
-    food.style.height = squareHeight-2;
-    var radius = Math.min(squareWidth-2, squareHeight-2)/2;
-    food.style.borderRadius = radius;
-    food.style.mozBorderRadius = radius;
-    food.style.display = "none";
-    foodStyle = food.style.cssText;
+    radius = Math.min(squareWidth-2, squareHeight-2)/2;
 
     // start the socket.io connection and set up the handlers
     socket = io.connect('http://' + window.location.host);
@@ -66,7 +60,7 @@ function tick(){
     // tick the game
     game.tick(); //changes nextDirection
     // update the display
-    document.getElementById("field").innerHTML = '<div id="flash"></div><div class="food" id="food" style="' + foodStyle + '"></div>';
+    document.getElementById("field").innerHTML = '<div id="flash"></div>';
     var i;
     // update the flash
     var flash = document.getElementById("flash");
@@ -116,7 +110,6 @@ function drawSquare(color, square){
     var div = document.createElement('div');
     div.setAttribute('class', 'playerSegment');
     div.style.backgroundColor = color;
-    div.style.display = "block";
     div.style.width = squareWidth;
     div.style.height = squareHeight;
     div.style.left = square.x * squareWidth;
@@ -125,8 +118,13 @@ function drawSquare(color, square){
 }
 
 function drawFood(food){
-    var div = document.getElementById("food");
+    var div = document.createElement('div');
+    div.setAttribute('class', 'food');
+    div.style.width = squareWidth-2;   // we want it to be slightly smaller than the square
+    div.style.height = squareHeight-2;
+    div.style.borderRadius = radius;
+    div.style.mozBorderRadius = radius;
     div.style.top = food.y * squareHeight + 1; // it is slightly smaller than the square, but we want it centered
     div.style.left = food.x * squareWidth + 1;
-    div.style.display = "block";
+    document.getElementById("field").appendChild(div);
 }
