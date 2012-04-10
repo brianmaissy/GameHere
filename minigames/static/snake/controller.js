@@ -66,7 +66,7 @@ document.addEventListener('touchstart', function(e) {
 document.addEventListener('touchmove', function(e) {
     moveY = e.touches[0].pageY;
 	moveX = e.touches[0].pageX;
-    if(Math.abs(moveY - startY) > moveThreshold) {
+    if(Math.abs(moveY - startY) > moveThreshold && Math.abs(moveY - startY) > Math.abs(moveX - startX)) {
         dir = (moveY > startY) ? 'down' : 'up';
         if (dir == 'up')
         {

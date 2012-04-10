@@ -20,6 +20,7 @@ function Player(name, color, game){
     this.segments = [];         // list of segments (squares), the first is the head of the snake and the last is the tail
     this.length = 1;            // the length of the snake (sometimes the actual size lags behind this length
     this.direction = "right";   // a string, either "left", "right", "up", or "down"
+    this.nextDirection = "none";// direction to turn next time step. domain same as direction, but can also be "none"
     this.color = color;
     this.score = 0;             // a positive or negative integer. increases by eating, decreases by dying
     // give it an initial control point
@@ -28,16 +29,17 @@ function Player(name, color, game){
     // motion function based on an input of 1 or -1 in x or y
     this.move = function(motion){
 	     //implement motion. basically just set nextDirection
-		if (motion.x == -1 && motion.y == 0)
-		{
-			this.direction = "left";
-		} else if (motion.x == 1 && motion.y == 0) {
-			this.direction = "right";
-		} else if (motion.x == 0 && motion.y == 1) {
-			this.direction = "down";
-		} else if (motion.x == 0 && motion.y == -1){
-			this.direction = "up";
-		}
+		if (motion.x == -1 && motion.y == 0 && this.direction != "right") {
+			this.nextDirection = "left";
+		} else if (motion.x == 1 && motion.y == 0 && this.direction != "left") {
+			this.nextDirection = "right";
+		} else if (motion.x == 0 && motion.y == 1 && this.direction != "up") {
+			this.nextDirection = "down";
+		} else if (motion.x == 0 && motion.y == -1 && this.direction != "down"){
+			this.nextDirection = "up";
+		}else{
+            this.nextDirection = "none";
+        }
     };
 }
 
@@ -111,13 +113,17 @@ function Snake(){
 		} 
     };
 
-	// logic for moving the players around. for each player, move him forward and detect collisions
+	// logic for moving the players around. for each player, turn if necessary, move forward, and detect collisions
+    // then refill food
     this.updatePlayerPositions = function(){
 		var i;
 		//console.log("food position:", this.food);
 		for (i = 0; i < this.players.length; i++) 
 		{
 			var player = this.players[i];
+            if(player.nextDirection != "none"){
+                player.direction = player.nextDirection;
+            }
 			var head = player.segments[0];
             var newSquare = new Square(head.x, head.y);
 			if (player.direction == "right")
