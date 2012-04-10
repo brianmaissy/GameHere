@@ -19,13 +19,22 @@ function Player(name, color, game){
     this.name = name;
     this.segments = [];         // list of segments (squares), the first is the head of the snake and the last is the tail
     this.length = 1;            // the length of the snake (sometimes the actual size lags behind this length
-    this.direction = "right";   // a string, either "left", "right", "up", or "down"
+    this.dead = false;
+    this.direction = "none";   // a string, either "left", "right", "up", or "down"
     this.nextDirection = "none";// direction to turn next time step. domain same as direction, but can also be "none"
     this.secondNextDirection = "none"   // similar to nextDirection, but allows the game to remember 2 pending turns
     this.color = color;
     this.score = 0;             // a positive or negative integer. increases by eating, decreases by dying
-    // give it an initial control point
-    this.segments.push(game.randomPoint());
+
+    this.reset = function(){
+        this.dead = false;
+        this.length = 1;
+        this.segments = [];
+        this.segments.push(game.randomPoint());
+        this.direction = game.randomDirection();
+        this.nextDirection = this.secondNextDirection = "none";
+    };
+    this.reset();
 
     // motion function based on an input of 1 or -1 in x or y
     this.move = function(motion){
@@ -69,7 +78,7 @@ function Snake(){
     this.fieldHeight = 50;
     this.foodScoreValue = 1;
     this.foodGrowthValue = 1;
-    this.deathValue = -5;
+    this.deathScoreValue = -5;
     this.foodLimit = 2;
 
     // state variables
@@ -85,13 +94,6 @@ function Snake(){
 
     this.start = function(){
         var game = this;
-		var i;
-		for (i = 0; i < game.players.length ; i++)
-		{
-			game.players[i].direction = "right";
-		}
-		
-        // TODO: initialize the players' positions, directions, etc
         Bond.spy('gameStart', {started: true, placedFood: true});
         // wait around for 2 seconds and then start the game
         game.starting = true;
@@ -177,7 +179,18 @@ function Snake(){
                 player.segments.splice(player.segments.length - 1, 1);
             }
             this.collideWithFood(player);
+            this.collideWithPlayers(player);
 		}
+        // penalize and reset the dead players
+        for (i = 0; i < this.players.length; i++)
+        {
+            var player = this.players[i];
+            if(player.dead){
+                player.score += this.deathScoreValue;
+                player.reset();
+            }
+        }
+        // refill the food
         if (this.food.length < this.foodLimit){
             this.placeRandomFood();
         }
@@ -192,8 +205,23 @@ function Snake(){
             {
                 player.score += this.foodScoreValue;         //increase score for eating a food
                 player.length += this.foodGrowthValue;  // increase size for eating a food
-                //console.log("playerScore:", player.score);
                 this.food.splice(i,1);
+            }
+        }
+    };
+
+    this.collideWithPlayers = function(player){
+        var i, j;
+        var head = player.segments[0];
+        for (i = 0; i < this.players.length; i++)
+        {
+            var other = this.players[i];
+            for (j = 0; j < other.segments.length; j++){
+                if(head.x == other.segments[j].x && head.y == other.segments[j].y){
+                    if(other != player || j != 0){
+                        player.dead = true;
+                    }
+                }
             }
         }
     };
@@ -217,7 +245,7 @@ function Snake(){
         var player = new Player(name, color, this);
         this.players.push(player);
         // start the game if it isn't started yet and we have two or more players
-        if (!this.started && !this.starting && this.players.length >= 2){
+        if (!this.started && !this.starting && this.players.length >= 1){
             this.start();
         }
         // return the Player object, so the server can associate it with a socket
@@ -231,7 +259,7 @@ function Snake(){
         // remove the player from the players array
         this.players.splice(this.players.indexOf(player), 1);
         // stop the game if it is in progress and we have less than two players
-        if ((this.started || this.starting) && this.players.length < 2) {
+        if ((this.started || this.starting) && this.players.length < 1) {
             this.stop();
         }
     };
@@ -241,6 +269,11 @@ function Snake(){
     this.randomPoint = function(){
         return new Square(Math.floor(Math.random()*this.fieldWidth), Math.floor(Math.random()*this.fieldHeight));
     };
+
+    this.randomDirection = function(){
+        var directions = ["left", "right", "up", "down"];
+        return directions[Math.floor(Math.random()*directions.length)];
+    }
 }
 
 // utility functions
