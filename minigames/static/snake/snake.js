@@ -94,16 +94,14 @@ function Snake(){
 
     this.start = function(){
         var game = this;
-        Bond.spy('gameStart', {started: true, placedFood: true});
+        this.refillFood();
+        Bond.spy('gameStart', {started: true});
         // wait around for 2 seconds and then start the game
         game.starting = true;
         setTimeout(function(){
             if(game.starting){
                 game.started = true;
                 game.starting = false;
-                for(var i = 0; i < game.foodLimit; i++){
-                    game.placeRandomFood();
-                }
             }
         }, 2000);
     };
@@ -129,6 +127,12 @@ function Snake(){
 		{
 			this.updatePlayerPositions();
 		} 
+    };
+
+    this.refillFood = function(){
+        while (this.food.length < this.foodLimit){
+            this.placeRandomFood();
+        }
     };
 
 	// logic for moving the players around. for each player, turn if necessary, move forward, and detect collisions
@@ -182,18 +186,20 @@ function Snake(){
             this.collideWithPlayers(player);
 		}
         // penalize and reset the dead players
+        var anyDead = false;
         for (i = 0; i < this.players.length; i++)
         {
             var player = this.players[i];
             if(player.dead){
                 player.score += this.deathScoreValue;
                 player.reset();
+                anyDead = true;
             }
         }
-        // refill the food
-        if (this.food.length < this.foodLimit){
-            this.placeRandomFood();
+        if(anyDead){
+            this.restart();
         }
+        this.refillFood();
     };
 
     this.collideWithFood = function(player) {
@@ -218,8 +224,13 @@ function Snake(){
             var other = this.players[i];
             for (j = 0; j < other.segments.length; j++){
                 if(head.x == other.segments[j].x && head.y == other.segments[j].y){
+                    // don't collide with your own head
                     if(other != player || j != 0){
                         player.dead = true;
+                    }
+                    // kill the other guy too if we hit head on
+                    if(j == 0 && opposite(player.direction, other.direction)){
+                        other.dead = true;
                     }
                 }
             }
@@ -273,7 +284,8 @@ function Snake(){
     this.randomDirection = function(){
         var directions = ["left", "right", "up", "down"];
         return directions[Math.floor(Math.random()*directions.length)];
-    }
+    };
+
 }
 
 // utility functions
@@ -281,6 +293,20 @@ function Snake(){
 Array.prototype.last = function(){
     return this[this.length-1];
 };
+
+function opposite(dir1, dir2){
+    if(dir1 == "left"){
+        return dir2 == "right";
+    }else if(dir1 == "right"){
+        return dir2 == "left";
+    }else if(dir1 == "up"){
+        return dir2 == "down";
+    }else if(dir1 == "down"){
+        return dir2 == "up";
+    }else{
+        return false;
+    }
+}
 
 // return a single instance of a Multipong object
 function createGame(){
