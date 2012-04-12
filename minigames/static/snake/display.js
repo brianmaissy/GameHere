@@ -39,6 +39,9 @@ document.addEventListener("DOMContentLoaded", function(){
             game.removePlayer(players[data.controllerID]);
         }
     });
+    socket.on('disconnect', function(){
+       game.stop();
+    });
     // motion input from a controller through the server
     socket.on('move', function(data){
         // ignore it if the message is from a controllerID that doesn't correspond to one of our players
