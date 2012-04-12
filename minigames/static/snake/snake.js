@@ -10,6 +10,12 @@ function Square(x, y){
     this.y = y;
 }
 
+function Item(square, type){
+    this.x = square.x;
+    this.y = square.y;
+    this.type = type;
+}
+
 // The Player object constructor
 function Player(name, color, game){
     Bond.spy('playerInstantiated', {name: name});
@@ -30,8 +36,8 @@ function Player(name, color, game){
         this.dead = false;
         this.length = 1;
         this.segments = [];
-        this.segments.push(game.randomPoint());
-        this.direction = game.randomDirection();
+        this.segments.push(game.randomEmptySquare());
+        this.direction = randomDirection();
         this.nextDirection = this.secondNextDirection = "none";
     };
     this.reset();
@@ -88,7 +94,7 @@ function Snake(){
     this.starting = false;
     this.paused = false;
     this.players = [];
-    this.food = [];
+    this.items = [];
 
     // game lifecycle methods
 
@@ -129,18 +135,11 @@ function Snake(){
 		} 
     };
 
-    this.refillFood = function(){
-        while (this.food.length < this.foodLimit){
-            this.placeRandomFood();
-        }
-    };
-
 	// logic for moving the players around. for each player, turn if necessary, move forward, and detect collisions
     // then refill food
     this.updatePlayerPositions = function(){
 		var i;
-		//console.log("food position:", this.food);
-		for (i = 0; i < this.players.length; i++) 
+		for (i = 0; i < this.players.length; i++)
 		{
 			var player = this.players[i];
             if(player.nextDirection != "none"){
@@ -175,8 +174,6 @@ function Snake(){
 				} else {
                     newSquare.y += 1;
 				}
-			} else {
-				console.log("direction is not being set");
 			}
             player.segments.unshift(newSquare);
             if(player.segments.length > player.length){
@@ -205,13 +202,13 @@ function Snake(){
     this.collideWithFood = function(player) {
         var i;
         var head = player.segments[0];
-        for (i = 0; i < this.food.length; i++) {
-            var location = this.food[i];
-            if (location.x == head.x && location.y == head.y)
+        for (i = 0; i < this.items.length; i++) {
+            var item = this.items[i];
+            if (item.type == "food" && item.x == head.x && item.y == head.y)
             {
                 player.score += this.foodScoreValue;         //increase score for eating a food
                 player.length += this.foodGrowthValue;  // increase size for eating a food
-                this.food.splice(i,1);
+                this.items.splice(i,1);
             }
         }
     };
@@ -237,8 +234,23 @@ function Snake(){
         }
     };
 
-    this.placeRandomFood = function(){
-        this.food.push(this.randomPoint());
+    // logic for placing items
+
+    this.refillFood = function(){
+        var foodCount = 0;
+        for(var i = 0; i < this.items.length; i++){
+            if(this.items[i].type == "food"){
+                foodCount++;
+            }
+        }
+        while (foodCount < this.foodLimit){
+            this.placeRandom("food");
+            foodCount++;
+        }
+    };
+
+    this.placeRandom = function(type){
+        this.items.push(new Item(this.randomEmptySquare(), type));
     };
 
     // logic for managing the players
@@ -277,15 +289,31 @@ function Snake(){
 
     // utility functions
 
+    this.randomEmptySquare = function(){
+        var taken = true;
+        var point;
+        var i, j;
+        while(taken){
+            point = this.randomPoint();
+            taken = false;
+            for (i = 0; i < this.items.length; i++) {
+                if (this.items[i].x == point.x && this.items[i].y == point.y)
+                    taken = true;
+            }
+            for (i = 0; i < this.players.length; i++) {;
+                for (j = 0; j < this.players[i].segments.length; j++){
+                    if(point.x == this.players[i].segments[j].x && point.y == this.players[i].segments[j].y){
+                        taken = true;
+                    }
+                }
+            }
+        }
+        return point;
+    };
+
     this.randomPoint = function(){
         return new Square(Math.floor(Math.random()*this.fieldWidth), Math.floor(Math.random()*this.fieldHeight));
     };
-
-    this.randomDirection = function(){
-        var directions = ["left", "right", "up", "down"];
-        return directions[Math.floor(Math.random()*directions.length)];
-    };
-
 }
 
 // utility functions
@@ -293,6 +321,11 @@ function Snake(){
 Array.prototype.last = function(){
     return this[this.length-1];
 };
+
+function randomDirection(){
+    var directions = ["left", "right", "up", "down"];
+    return directions[Math.floor(Math.random()*directions.length)];
+}
 
 function opposite(dir1, dir2){
     if(dir1 == "left"){
@@ -308,7 +341,7 @@ function opposite(dir1, dir2){
     }
 }
 
-// return a single instance of a Multipong object
+// return a single instance of a Snake object
 function createGame(){
     return new Snake();
 }

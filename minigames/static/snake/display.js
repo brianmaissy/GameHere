@@ -81,9 +81,11 @@ function tick(){
         drawPlayer(game.players[i]);
     }
     document.getElementById("players").innerHTML = playerList;
-    // draw the food
-    for(i=0; i<game.food.length; i++){
-        drawFood(game.food[i]);
+    // draw the items
+    for(i=0; i<game.items.length; i++){
+        if(game.items[i].type == "food"){
+            drawFood(game.items[i]);
+        }
     }
 }
 

@@ -60,7 +60,7 @@ io.sockets.on('connection', function (socket) {
         });
     });
     socket.on('move', function(data) {
-		console.log("move:", data);
+		//console.log("move:", data);
         socket.get('controllerID', function(err, controllerID){
             if (controllerID){
                 data.controllerID = controllerID;
@@ -77,7 +77,7 @@ io.sockets.on('connection', function (socket) {
         console.log('Bond command received:' + JSON.stringify(data));
     });
 	socket.on('touchstart' , function() {
-		console.log('touchstart reached');
+		//console.log('touchstart reached');
 		
 	});
 });
