@@ -8,6 +8,7 @@ if (typeof window === 'undefined'){
 function Square(x, y){
     this.x = x;
     this.y = y;
+    this.direction = "none";
 }
 
 function Item(square, type){
@@ -24,7 +25,9 @@ function Player(name, color, game){
 
     this.name = name;
     this.segments = [];     // list of segments (squares), the first is the head of the snake and the last is the tail
-    this.length = 1;        // the length of the snake (sometimes the actual size lags behind this length
+    this.length = 2;        // the length of the snake (sometimes the actual size lags behind this length
+    this.headProgress = 0;      // fraction of the head square that is filled so far
+    this.growing = false;       // whether or not the snake is actively growing at the moment
     this.dead = false;
     this.direction = "none";    // a string, either "left", "right", "up", or "down"
     this.nextDirection = "none";// direction to turn next time step. domain same as direction, but can also be "none"
@@ -34,7 +37,7 @@ function Player(name, color, game){
 
     this.reset = function(){
         this.dead = false;
-        this.length = 1;
+        this.length = 2;
         this.segments = [];
         this.segments.push(game.randomEmptySquare());
         this.direction = randomDirection();
@@ -80,11 +83,12 @@ function Snake(){
     // constants
 
     this.title = 'Snake';
-    this.fieldWidth = 50;  // the field is an array of discrete squares
+    this.fieldWidth = 50;   // the field is an array of discrete squares
     this.fieldHeight = 50;
     this.foodScoreValue = 1;
     this.foodGrowthValue = 1;
     this.deathScoreValue = -5;
+    this.speed = .2;        // in terms of squares per time step
     this.foodLimit = 2;
 
     // state variables
@@ -142,42 +146,49 @@ function Snake(){
 		for (i = 0; i < this.players.length; i++)
 		{
 			player = this.players[i];
-            if(player.nextDirection != "none"){
-                player.direction = player.nextDirection;
-                player.nextDirection = player.secondNextDirection;
-                player.secondNextDirection = "none";
-            }
-			var head = player.segments[0];
-            var newSquare = new Square(head.x, head.y);
-			if (player.direction == "right")
-			{
-				if (head.x >= this.fieldWidth - 1){
-					newSquare.x = 0;
-				} else {
-                    newSquare.x += 1;
-				}
-			} else if (player.direction == "left") {
-				if (head.x <= 0){
-                    newSquare.x = this.fieldWidth - 1;
-				} else {
-                    newSquare.x -= 1;
-				}
-			} else if (player.direction == "up") {
-				if (head.y <= 0){
-                    newSquare.y = this.fieldHeight - 1;
-				} else {
-					newSquare.y -= 1;
-				}
-			} else if (player.direction == "down") {
-				if (head.y >= this.fieldHeight - 1){
-                    newSquare.y = 0;
-				} else {
-                    newSquare.y += 1;
-				}
-			}
-            player.segments.unshift(newSquare);
-            if(player.segments.length > player.length){
-                player.segments.splice(player.segments.length - 1, 1);
+            player.headProgress += this.speed;
+            if(player.headProgress >= 1){
+                player.headProgress = 0;
+                if(player.nextDirection != "none"){
+                    player.direction = player.nextDirection;
+                    player.nextDirection = player.secondNextDirection;
+                    player.secondNextDirection = "none";
+                }
+                var head = player.segments[0];
+                var newSquare = new Square(head.x, head.y);
+                if (player.direction == "right")
+                {
+                    if (head.x >= this.fieldWidth - 1){
+                        newSquare.x = 0;
+                    } else {
+                        newSquare.x += 1;
+                    }
+                } else if (player.direction == "left") {
+                    if (head.x <= 0){
+                        newSquare.x = this.fieldWidth - 1;
+                    } else {
+                        newSquare.x -= 1;
+                    }
+                } else if (player.direction == "up") {
+                    if (head.y <= 0){
+                        newSquare.y = this.fieldHeight - 1;
+                    } else {
+                        newSquare.y -= 1;
+                    }
+                } else if (player.direction == "down") {
+                    if (head.y >= this.fieldHeight - 1){
+                        newSquare.y = 0;
+                    } else {
+                        newSquare.y += 1;
+                    }
+                }
+                player.segments[0].direction = player.direction;
+                newSquare.direction = player.direction;
+                player.segments.unshift(newSquare);
+                if(player.segments.length > player.length){
+                    player.segments.splice(player.segments.length - 1, 1);
+                    player.growing = false;
+                }
             }
             this.collideWithFood(player);
             this.collideWithPlayers(player);
@@ -208,6 +219,7 @@ function Snake(){
             {
                 player.score += this.foodScoreValue;         //increase score for eating a food
                 player.length += this.foodGrowthValue;  // increase size for eating a food
+                player.growing = true;
                 this.items.splice(i,1);
             }
         }
@@ -222,11 +234,14 @@ function Snake(){
             for (j = 0; j < other.segments.length; j++){
                 if(head.x == other.segments[j].x && head.y == other.segments[j].y){
                     // don't collide with your own head
-                    if(other != player || j != 0){
-                        player.dead = true;
+                    if(!(other == player && j == 0)){
+                        // don't collide with a tail that isn't there
+                        if(!(j == other.segments.length - 1 && player.direction == other.direction && player.headProgress > other.headProgress)){
+                            player.dead = true;
+                        }
                     }
                     // kill the other guy too if we hit head on
-                    if(j == 0 && opposite(player.direction, other.direction)){
+                    if(j == 0 && opposite(player.direction) == other.direction){
                         other.dead = true;
                     }
                 }
@@ -328,15 +343,15 @@ function randomDirection(){
     return directions[Math.floor(Math.random()*directions.length)];
 }
 
-function opposite(dir1, dir2){
-    if(dir1 == "left"){
-        return dir2 == "right";
-    }else if(dir1 == "right"){
-        return dir2 == "left";
-    }else if(dir1 == "up"){
-        return dir2 == "down";
-    }else if(dir1 == "down"){
-        return dir2 == "up";
+function opposite(dir){
+    if(dir == "left"){
+        return "right";
+    }else if(dir == "right"){
+        return "left";
+    }else if(dir == "up"){
+        return "down";
+    }else if(dir == "down"){
+        return "up";
     }else{
         return false;
     }
@@ -351,4 +366,5 @@ if (typeof window === 'undefined'){
     exports.Snake = Snake;
     exports.Player = Player;
     exports.createGame = createGame;
+    exports.opposite = opposite;
 }

@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function(){
     Bond.startRemoteClient(socket);
 
     // start ticking away
-    setInterval(tick, 100);
+    setInterval(tick, 40);
 }, false);
 
 function tick(){
@@ -97,21 +97,44 @@ function tick(){
 // and possibly combine squares into segments to use less divs
 function drawPlayer(player){
     // create a div if it doesn't yet exist, then adjust its position and color
-    for(var i=0; i<player.segments.length; i++){
-        drawSquare(player.color, player.segments[i]);
+    drawSquare(player.color, player.segments[0], player.direction, 1-player.headProgress);
+    for(var i=1; i<player.segments.length-1; i++){
+        drawSquare(player.color, player.segments[i], "none", 0);
+    }
+    var tail = player.segments[player.segments.length-1];
+    if(player.growing){
+        drawSquare(player.color, tail, "none", 0);
+    }else{
+        drawSquare(player.color, tail, opposite(tail.direction), player.headProgress);
     }
 }
 
-// draws a snake square
-function drawSquare(color, square){
+// draws a snake square (and returns it)
+function drawSquare(color, square, trimDirection, trimAmount){
     var div = document.createElement('div');
     div.setAttribute('class', 'playerSegment');
     div.style.backgroundColor = color;
-    div.style.width = squareWidth;
-    div.style.height = squareHeight;
-    div.style.left = square.x * squareWidth;
-    div.style.top = square.y * squareHeight;
+    var w = squareWidth;
+    var h = squareHeight;
+    var l = square.x * squareWidth;
+    var t = square.y * squareHeight;
+    if(trimDirection == "left"){
+        l += trimAmount * squareWidth;
+        w -= trimAmount * squareWidth;
+    }else if(trimDirection == "right"){
+        w -= trimAmount * squareWidth;
+    }else if(trimDirection == "up"){
+        t += trimAmount * squareHeight;
+        h -= trimAmount * squareHeight;
+    }else if(trimDirection == "down"){
+        h -= trimAmount * squareHeight;
+    }
+    div.style.width = w;
+    div.style.height = h;
+    div.style.left = l;
+    div.style.top = t;
     document.getElementById("field").appendChild(div);
+    return div;
 }
 
 function drawFood(food){
