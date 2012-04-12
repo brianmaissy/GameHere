@@ -18,15 +18,18 @@ function Player(name, color, game){
     // motion function based on an input of 1 or -1
     // move the paddle up or down unless we are at the edge of the field
     this.move = function(motion){
-            if(motion.y == -1 && this.y >= game.moveDistance) {
-            	this.direction = "up";
-            } else if (motion.y == 1 && this.y <= 1 - game.moveDistance - game.paddleWidth){
-            	this.direction = "down";
-                /*BOND*/ Bond.spy("move", {player: this.name, direction: motion.y});
-
-            } else {
-            	this.direction = "stop";
-            }
+    	if(!game.paused){
+            if((motion.y == -1 && this.y >= game.moveDistance) ||
+            (motion.y == 1 && this.y <= 1 - game.moveDistance - game.paddleWidth)){
+            
+		        this.y += motion.y * game.moveDistance;
+		//this is to avoid numerical issues. We want to make sure players can move all the way to the edges
+		// of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
+				this.y = Math.round(this.y*100)/100;
+				 /*BOND*/ Bond.spy("move", {player: this.name, direction: motion.y});
+           
+            } 
+        }
     }
 }
 
@@ -107,35 +110,6 @@ function Multipong(){
 	        this.updateBallPosition();
         }
     };
-    
-	this.updatePlayerPosition = function(){
-		if(this.started && !this.paused){
-			var i;
-			for (i = 0; i < this.leftPlayers.length; i++){
-				var player = this.leftPlayers[i];
-				this.move(player);
-			}
-				
-			for (i = 0; i < this.rightPlayers.length; i++){
-				var player = this.rightPlayers[i];
-				this.move(player);		
-			}
-		}
-	};
-	
-	//how to move the player
-	this.move = function(player) {
-		if (player.direction == "up") 
-		{
-			player.y -= this.moveDistance;
-	//this is to avoid numerical issues. We want to make sure players can move all the way to the edges
-	// of the screen. To do that we need to keep the move distance a fraction of the paddle size, and round here
-			player.y = Math.round(player.y*100)/100;
-		} else if (player.direction == "down") {
-			player.y += this.moveDistance;
-			player.y = Math.round(player.y*100)/100;
-		} 
-	};
 	
     // logic for moving the ball around
 
