@@ -23,12 +23,12 @@ function Player(name, color, game){
     // state variables
 
     this.name = name;
-    this.segments = [];         // list of segments (squares), the first is the head of the snake and the last is the tail
-    this.length = 1;            // the length of the snake (sometimes the actual size lags behind this length
+    this.segments = [];     // list of segments (squares), the first is the head of the snake and the last is the tail
+    this.length = 1;        // the length of the snake (sometimes the actual size lags behind this length
     this.dead = false;
-    this.direction = "none";   // a string, either "left", "right", "up", or "down"
+    this.direction = "none";    // a string, either "left", "right", "up", or "down"
     this.nextDirection = "none";// direction to turn next time step. domain same as direction, but can also be "none"
-    this.secondNextDirection = "none"   // similar to nextDirection, but allows the game to remember 2 pending turns
+    this.secondNextDirection = "none";  // similar to nextDirection, but allows the game to remember 2 pending turns
     this.color = color;
     this.score = 0;             // a positive or negative integer. increases by eating, decreases by dying
 
@@ -138,10 +138,10 @@ function Snake(){
 	// logic for moving the players around. for each player, turn if necessary, move forward, and detect collisions
     // then refill food
     this.updatePlayerPositions = function(){
-		var i;
+		var i, player;
 		for (i = 0; i < this.players.length; i++)
 		{
-			var player = this.players[i];
+			player = this.players[i];
             if(player.nextDirection != "none"){
                 player.direction = player.nextDirection;
                 player.nextDirection = player.secondNextDirection;
@@ -186,7 +186,7 @@ function Snake(){
         var anyDead = false;
         for (i = 0; i < this.players.length; i++)
         {
-            var player = this.players[i];
+            player = this.players[i];
             if(player.dead){
                 player.score += this.deathScoreValue;
                 player.reset();
@@ -300,7 +300,7 @@ function Snake(){
                 if (this.items[i].x == point.x && this.items[i].y == point.y)
                     taken = true;
             }
-            for (i = 0; i < this.players.length; i++) {;
+            for (i = 0; i < this.players.length; i++) {
                 for (j = 0; j < this.players[i].segments.length; j++){
                     if(point.x == this.players[i].segments[j].x && point.y == this.players[i].segments[j].y){
                         taken = true;

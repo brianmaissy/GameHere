@@ -94,15 +94,7 @@ function tick(){
 // and possibly combine squares into segments to use less divs
 function drawPlayer(player){
     // create a div if it doesn't yet exist, then adjust its position and color
-    var backFill, frontFill;
     for(var i=0; i<player.segments.length; i++){
-        backFill = frontFill = 1;
-        if(i==0){
-            backFill = 1 - player.headProgress;
-        }
-        if(i == player.segments.length-1){
-            frontFill = player.headProgress;
-        }
         drawSquare(player.color, player.segments[i]);
     }
 }
