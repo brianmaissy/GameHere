@@ -17,11 +17,12 @@ div#flash{
     text-align: center;
     font-size: xx-large;
     font-weight: bold;
+    z-index: 1;
 }
 div#game{
     position: relative;
     top: 50px;
-    left: 0px;
+    left: 0;
     background-color: #000000;
     width: 400px;
     height: 400px;
@@ -49,7 +50,7 @@ div.playerSegment{
     background-color: #0000FF;
     opacity: .75;
 }
-div.food{
+div.item{
     position: absolute;
-    background-color: #FFFFFF;
+    border: 1px solid #FFFFFF;
 }

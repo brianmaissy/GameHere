@@ -6,6 +6,7 @@ var w = 0;
 var radius;
 var squareHeight;
 var squareWidth;
+var flashCounter = 0;
 
 document.addEventListener("DOMContentLoaded", function(){
     // create the game and initialize things based on it
@@ -15,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function(){
     h = field.offsetHeight;
     squareHeight = h / game.fieldHeight;
     squareWidth = w / game.fieldWidth;
-    radius = Math.min(squareWidth-2, squareHeight-2)/2;
+    radius = Math.min(squareWidth, squareHeight)/2;
 
     // start the socket.io connection and set up the handlers
     socket = io.connect('http://' + window.location.host);
@@ -62,6 +63,8 @@ document.addEventListener("DOMContentLoaded", function(){
 function tick(){
     // tick the game
     game.tick(); //changes nextDirection
+    // flip the flash counter
+    flashCounter++;
     // update the display
     document.getElementById("field").innerHTML = '<div id="flash"></div>';
     var i;
@@ -86,9 +89,7 @@ function tick(){
     document.getElementById("players").innerHTML = playerList;
     // draw the items
     for(i=0; i<game.items.length; i++){
-        if(game.items[i].type == "food"){
-            drawFood(game.items[i]);
-        }
+        drawItem(game.items[i]);
     }
 }
 
@@ -97,23 +98,28 @@ function tick(){
 // and possibly combine squares into segments to use less divs
 function drawPlayer(player){
     // create a div if it doesn't yet exist, then adjust its position and color
-    drawSquare(player.color, player.segments[0], player.direction, 1-player.headProgress);
+    drawSquare(player, player.segments[0], player.direction, 1-player.headProgress);
     for(var i=1; i<player.segments.length-1; i++){
-        drawSquare(player.color, player.segments[i], "none", 0);
+        drawSquare(player, player.segments[i], "none", 0);
     }
     var tail = player.segments[player.segments.length-1];
     if(player.growing){
-        drawSquare(player.color, tail, "none", 0);
+        drawSquare(player, tail, "none", 0);
     }else{
-        drawSquare(player.color, tail, opposite(tail.direction), player.headProgress);
+        drawSquare(player, tail, opposite(tail.direction), player.headProgress);
     }
 }
 
 // draws a snake square (and returns it)
-function drawSquare(color, square, trimDirection, trimAmount){
+function drawSquare(player, square, trimDirection, trimAmount){
     var div = document.createElement('div');
     div.setAttribute('class', 'playerSegment');
-    div.style.backgroundColor = color;
+    div.style.backgroundColor = player.color;
+    if(player.invincibilityTimeRemaining > 0){
+        if((player.invincibilityTimeRemaining <= game.invincibilityTime / 4.0 && flashCounter % 2 == 0) ||
+            (player.invincibilityTimeRemaining > game.invincibilityTime / 4.0 && flashCounter % 4 < 2))
+                div.style.opacity = .25;
+    }
     var w = squareWidth;
     var h = squareHeight;
     var l = square.x * squareWidth;
@@ -137,14 +143,23 @@ function drawSquare(color, square, trimDirection, trimAmount){
     return div;
 }
 
-function drawFood(food){
+function drawItem(item){
     var div = document.createElement('div');
-    div.setAttribute('class', 'food');
-    div.style.width = squareWidth-2;   // we want it to be slightly smaller than the square
+    div.setAttribute('class', 'item');
+    div.style.width = squareWidth-2;   // we want it to be slightly smaller than the square, the border keeps it centered
     div.style.height = squareHeight-2;
     div.style.borderRadius = radius;
+    if(item.type == "food"){
+        div.style.backgroundColor = "#FFFFFF";
+    }else if(item.type == "invincibility"){
+        div.style.backgroundColor = "#FF8800";
+    }else if(item.type == "superfood"){
+        div.style.backgroundColor = "#FF00FF";
+    }else {
+        div.style.backgroundColor = "#000000";
+    }
     div.style.mozBorderRadius = radius;
-    div.style.top = food.y * squareHeight + 1; // it is slightly smaller than the square, but we want it centered
-    div.style.left = food.x * squareWidth + 1;
+    div.style.top = item.y * squareHeight;
+    div.style.left = item.x * squareWidth;
     document.getElementById("field").appendChild(div);
 }

@@ -16,6 +16,7 @@ div#flash{
     text-align: center;
     font-size: xx-large;
     font-weight: bold;
+    z-index: 1;
 }
 div#game{
     position: relative;

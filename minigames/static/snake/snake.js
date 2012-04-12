@@ -15,6 +15,7 @@ function Item(square, type){
     this.x = square.x;
     this.y = square.y;
     this.type = type;
+    this.timeRemaining = -1;
 }
 
 // The Player object constructor
@@ -34,6 +35,9 @@ function Player(name, color, game){
     this.secondNextDirection = "none";  // similar to nextDirection, but allows the game to remember 2 pending turns
     this.color = color;
     this.score = 0;             // a positive or negative integer. increases by eating, decreases by dying
+
+    //items
+    this.invincibilityTimeRemaining = 0;
 
     this.reset = function(){
         this.dead = false;
@@ -89,16 +93,23 @@ function Snake(){
     this.foodGrowthValue = 1;
     this.deathScoreValue = -5;
     this.speed = .2;        // in terms of squares per time step
-    this.foodLimit = 2;
 
     // state variables
 
-    this.availableColors = ["#FF0000", "#FFFFFF", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF"];
+    this.availableColors = ["#FF0000", "#AAAAAA", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF"];
     this.started = false;
     this.starting = false;
     this.paused = false;
     this.players = [];
     this.items = [];
+
+    // items
+    this.itemProbability = 1.0/500;
+    this.itemTimeLimit = 500;
+    this.numberOfItems = 2;
+    this.invincibilityTime = 250;
+    this.invincibilityActive = false;
+    this.superFoodScoreValue = 5;
 
     // game lifecycle methods
 
@@ -136,15 +147,15 @@ function Snake(){
         if(this.started && !this.paused)
 		{
 			this.updatePlayerPositions();
-		} 
+            this.manageItems();
+		}
     };
 
 	// logic for moving the players around. for each player, turn if necessary, move forward, and detect collisions
     // then refill food
     this.updatePlayerPositions = function(){
 		var i, player;
-		for (i = 0; i < this.players.length; i++)
-		{
+		for (i = 0; i < this.players.length; i++) {
 			player = this.players[i];
             player.headProgress += this.speed;
             if(player.headProgress >= 1){
@@ -156,8 +167,7 @@ function Snake(){
                 }
                 var head = player.segments[0];
                 var newSquare = new Square(head.x, head.y);
-                if (player.direction == "right")
-                {
+                if (player.direction == "right") {
                     if (head.x >= this.fieldWidth - 1){
                         newSquare.x = 0;
                     } else {
@@ -190,13 +200,12 @@ function Snake(){
                     player.growing = false;
                 }
             }
-            this.collideWithFood(player);
+            this.collideWithItems(player);
             this.collideWithPlayers(player);
 		}
         // penalize and reset the dead players
         var anyDead = false;
-        for (i = 0; i < this.players.length; i++)
-        {
+        for (i = 0; i < this.players.length; i++) {
             player = this.players[i];
             if(player.dead){
                 player.score += this.deathScoreValue;
@@ -210,16 +219,21 @@ function Snake(){
         this.refillFood();
     };
 
-    this.collideWithFood = function(player) {
+    this.collideWithItems = function(player) {
         var i;
         var head = player.segments[0];
         for (i = 0; i < this.items.length; i++) {
             var item = this.items[i];
-            if (item.type == "food" && item.x == head.x && item.y == head.y)
-            {
-                player.score += this.foodScoreValue;         //increase score for eating a food
-                player.length += this.foodGrowthValue;  // increase size for eating a food
-                player.growing = true;
+            if (item.x == head.x && item.y == head.y) {
+                if(item.type == "food") {
+                    player.score += this.foodScoreValue;    //increase score for eating a food
+                    player.length += this.foodGrowthValue;  // increase size for eating a food
+                    player.growing = true;
+                } else if(item.type == "invincibility") {
+                    player.invincibilityTimeRemaining = this.invincibilityTime;
+                } else if(item.type == "superfood"){
+                    player.score += this.superFoodScoreValue;
+                }
                 this.items.splice(i,1);
             }
         }
@@ -233,16 +247,22 @@ function Snake(){
             var other = this.players[i];
             for (j = 0; j < other.segments.length; j++){
                 if(head.x == other.segments[j].x && head.y == other.segments[j].y){
-                    // don't collide with your own head
-                    if(!(other == player && j == 0)){
-                        // don't collide with a tail that isn't there
-                        if(!(j == other.segments.length - 1 && player.direction == other.direction && player.headProgress > other.headProgress)){
-                            player.dead = true;
+                    if(player.invincibilityTimeRemaining > 0){
+                        if(other != player){
+                            other.dead = true;
                         }
-                    }
-                    // kill the other guy too if we hit head on
-                    if(j == 0 && opposite(player.direction) == other.direction){
-                        other.dead = true;
+                    }else{
+                        // don't collide with your own head
+                        if(!(other == player && j == 0)){
+                            // don't collide with a tail that isn't there
+                            if(!(j == other.segments.length - 1 && player.direction == other.direction && player.headProgress > other.headProgress)){
+                                player.dead = true;
+                            }
+                        }
+                        // kill the other guy too if we hit head on
+                        if(j == 0 && opposite(player.direction) == other.direction){
+                            other.dead = true;
+                        }
                     }
                 }
             }
@@ -250,6 +270,40 @@ function Snake(){
     };
 
     // logic for placing items
+
+    this.manageItems = function(){
+        var i;
+        // decrement the time items have remaining
+        for (i = 0; i < this.items.length; i++){
+            if(this.items[i].timeRemaining > 0){
+                this.items[i].timeRemaining--;
+            }
+        }
+        // remove expired items
+        for (i = 0; i < this.items.length; i++){
+            if(this.items[i].timeRemaining == 0){
+                this.items.splice(i, 1);
+            }
+        }
+        // place invincibility
+        if(!this.invincibilityActive && Math.random() < this.itemProbability / this.numberOfItems){
+            this.placeRandom("invincibility");
+            this.invincibilityActive = true;
+        }
+        // decrement the time invincibility lasts
+        for (i = 0; i < this.players.length; i++) {
+            if(this.players[i].invincibilityTimeRemaining > 0){
+                this.players[i].invincibilityTimeRemaining--;
+                if(this.players[i].invincibilityTimeRemaining <= 0){
+                    this.invincibilityActive = false;
+                }
+            }
+        }
+        // place superfood
+        if(Math.random() < this.itemProbability / this.numberOfItems){
+            this.placeRandom("superfood");
+        }
+    };
 
     this.refillFood = function(){
         var foodCount = 0;
@@ -266,7 +320,11 @@ function Snake(){
     };
 
     this.placeRandom = function(type){
-        this.items.push(new Item(this.randomEmptySquare(), type));
+        var item = new Item(this.randomEmptySquare(), type);
+        if(item.type != "food"){
+            item.timeRemaining = this.itemTimeLimit;
+        }
+        this.items.push(item);
     };
 
     // logic for managing the players
