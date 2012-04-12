@@ -238,12 +238,13 @@ function Snake(){
 
     this.refillFood = function(){
         var foodCount = 0;
+        var foodLimit = Math.floor(this.players.length / 2) + 1;
         for(var i = 0; i < this.items.length; i++){
             if(this.items[i].type == "food"){
                 foodCount++;
             }
         }
-        while (foodCount < this.foodLimit){
+        while (foodCount < foodLimit){
             this.placeRandom("food");
             foodCount++;
         }
