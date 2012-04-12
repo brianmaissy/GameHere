@@ -39,6 +39,7 @@ $(document).keypress(function(event) {
             deltaY = 1;
             break;
         case 0:
+        case 112:
             if(event.charCode == 112) socket.emit('pause');
             break;
         default:
@@ -55,7 +56,7 @@ var startY = 0;
 var startX = 0;
 var moveY = 0;
 var moveX = 0;
-var moveThreshold = 50;
+var moveThreshold = 20;
 var deltaX = 0;
 var deltaY = 0;
 
