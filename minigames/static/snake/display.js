@@ -7,6 +7,8 @@ var radius;
 var squareHeight;
 var squareWidth;
 var flashCounter = 0;
+var timer;
+var disabled;
 
 document.addEventListener("DOMContentLoaded", function(){
     // create the game and initialize things based on it
@@ -18,12 +20,26 @@ document.addEventListener("DOMContentLoaded", function(){
     squareWidth = w / game.fieldWidth;
     radius = Math.min(squareWidth, squareHeight)/2;
 
+    // set up the key with examples of items in the right size
+    var items = document.getElementsByClassName("item");
+    for(var i=0; i<items.length; i++){
+        var div = items[i];
+        div.style.width = squareWidth-2;   // we want it to be slightly smaller than the square, the border keeps it centered
+        div.style.height = squareHeight-2;
+        div.style.borderRadius = radius;
+        div.style.mozBorderRadius = radius;
+        div.style.position = "relative";
+        div.style.backgroundColor = getItemColor(items[i].attributes.type.value);
+    }
+
     // start the socket.io connection and set up the handlers
     socket = io.connect('http://' + window.location.host);
     // the display's own connection handshake
     socket.on('connect', function(){
-        document.getElementById("message").innerHTML = 'Display connected to server';
-        socket.emit('newDisplay', {title: game.title});
+        if(!disabled){
+            document.getElementById("message").innerHTML = 'Display connected to server';
+            socket.emit('newDisplay', {title: game.title});
+        }
     });
     // a new controller has connected through the server, create a player for it
     socket.on('newPlayer', function(data){
@@ -41,7 +57,10 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
     socket.on('disconnect', function(){
-       game.stop();
+        document.getElementById("message").innerHTML = 'Display disconnected from server';
+        document.getElementById("flash").innerHTML = "GAME OVER";
+        clearTimeout(timer);
+        disabled = true;
     });
     // motion input from a controller through the server
     socket.on('move', function(data){
@@ -57,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function(){
     Bond.startRemoteClient(socket);
 
     // start ticking away
-    setInterval(tick, 40);
+    timer = setInterval(tick, 40);
 }, false);
 
 function tick(){
@@ -149,17 +168,32 @@ function drawItem(item){
     div.style.width = squareWidth-2;   // we want it to be slightly smaller than the square, the border keeps it centered
     div.style.height = squareHeight-2;
     div.style.borderRadius = radius;
-    if(item.type == "food"){
-        div.style.backgroundColor = "#FFFFFF";
-    }else if(item.type == "invincibility"){
-        div.style.backgroundColor = "#FF8800";
-    }else if(item.type == "superfood"){
-        div.style.backgroundColor = "#FF00FF";
-    }else {
-        div.style.backgroundColor = "#000000";
-    }
     div.style.mozBorderRadius = radius;
     div.style.top = item.y * squareHeight;
     div.style.left = item.x * squareWidth;
+    div.style.backgroundColor = getItemColor(item.type);
+    if(item.timeRemaining > 0 && item.timeRemaining <= game.itemTimeLimit / 4.0 && flashCounter % 2 == 0){
+        div.style.opacity = .5;
+    }
     document.getElementById("field").appendChild(div);
+}
+
+function getItemColor(type){
+    if(type == "food"){
+        return "#FFFFFF";
+    }else if(type == "superfood"){
+        return "#FF99FF";
+    }else if(type == "speedup"){
+        return "#339900";
+    }else if(type == "slowdown"){
+        return "#CC0000";
+    }else if(type == "grow"){
+        return "#0000CC";
+    }else if(type == "shrink"){
+        return "#FFFF33";
+    }else if(type == "invincibility"){
+        return "#FF9900";
+    }else {
+        return "#000000";
+    }
 }

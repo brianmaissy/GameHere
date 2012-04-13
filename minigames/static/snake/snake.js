@@ -28,6 +28,7 @@ function Player(name, color, game){
     this.segments = [];     // list of segments (squares), the first is the head of the snake and the last is the tail
     this.length = 2;        // the length of the snake (sometimes the actual size lags behind this length
     this.headProgress = 0;      // fraction of the head square that is filled so far
+    this.speed = game.defaultSpeed;
     this.growing = false;       // whether or not the snake is actively growing at the moment
     this.dead = false;
     this.direction = "none";    // a string, either "left", "right", "up", or "down"
@@ -92,7 +93,7 @@ function Snake(){
     this.foodScoreValue = 1;
     this.foodGrowthValue = 1;
     this.deathScoreValue = -5;
-    this.speed = .2;        // in terms of squares per time step
+    this.defaultSpeed = .2;        // in terms of squares per time step
 
     // state variables
 
@@ -104,12 +105,13 @@ function Snake(){
     this.items = [];
 
     // items
-    this.itemProbability = 1.0/500;
+    this.itemProbability = 1.0/250;
     this.itemTimeLimit = 500;
-    this.numberOfItems = 2;
+    this.numberOfItems = 6;
     this.invincibilityTime = 250;
-    this.invincibilityActive = false;
     this.superFoodScoreValue = 5;
+    this.speedChangeFactor = 1.5;
+    this.sizeChangeInterval = 5;
 
     // game lifecycle methods
 
@@ -157,7 +159,7 @@ function Snake(){
 		var i, player;
 		for (i = 0; i < this.players.length; i++) {
 			player = this.players[i];
-            player.headProgress += this.speed;
+            player.headProgress += player.speed;
             if(player.headProgress >= 1){
                 player.headProgress = 0;
                 if(player.nextDirection != "none"){
@@ -233,6 +235,19 @@ function Snake(){
                     player.invincibilityTimeRemaining = this.invincibilityTime;
                 } else if(item.type == "superfood"){
                     player.score += this.superFoodScoreValue;
+                } else if(item.type == "speedup"){
+                    player.speed *= this.speedChangeFactor;
+                } else if(item.type == "slowdown"){
+                    player.speed /= this.speedChangeFactor;
+                } else if(item.type == "grow"){
+                    player.length += this.sizeChangeInterval;
+                    player.growing = true;
+                } else if(item.type == "shrink"){
+                    player.length -= this.sizeChangeInterval;
+                    if(player.length < 2)
+                        player.length = 2;
+                    while(player.segments.length > player.length)
+                        player.segments.splice(player.segments.length - 1, 1);
                 }
                 this.items.splice(i,1);
             }
@@ -248,7 +263,7 @@ function Snake(){
             for (j = 0; j < other.segments.length; j++){
                 if(head.x == other.segments[j].x && head.y == other.segments[j].y){
                     if(player.invincibilityTimeRemaining > 0){
-                        if(other != player){
+                        if(other != player && other.invincibilityTimeRemaining <= 0){
                             other.dead = true;
                         }
                     }else{
@@ -285,24 +300,26 @@ function Snake(){
                 this.items.splice(i, 1);
             }
         }
-        // place invincibility
-        if(!this.invincibilityActive && Math.random() < this.itemProbability / this.numberOfItems){
-            this.placeRandom("invincibility");
-            this.invincibilityActive = true;
-        }
         // decrement the time invincibility lasts
         for (i = 0; i < this.players.length; i++) {
             if(this.players[i].invincibilityTimeRemaining > 0){
                 this.players[i].invincibilityTimeRemaining--;
-                if(this.players[i].invincibilityTimeRemaining <= 0){
-                    this.invincibilityActive = false;
-                }
             }
         }
-        // place superfood
-        if(Math.random() < this.itemProbability / this.numberOfItems){
+        // randomly place items
+        var itemProbability = this.itemProbability * (Math.floor(this.players.length / 2) + 1) / this.numberOfItems;
+        if(Math.random() < itemProbability)
+            this.placeRandom("invincibility");
+        if(Math.random() < itemProbability)
             this.placeRandom("superfood");
-        }
+        if(Math.random() < itemProbability)
+            this.placeRandom("speedup");
+        if(Math.random() < itemProbability)
+            this.placeRandom("slowdown");
+        if(Math.random() < itemProbability)
+            this.placeRandom("grow");
+        if(Math.random() < itemProbability)
+            this.placeRandom("shrink");
     };
 
     this.refillFood = function(){

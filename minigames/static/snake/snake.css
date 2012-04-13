@@ -1,12 +1,7 @@
 body{
     background-color: #000000;
-    min-height: 800px;
-}
-div#message {
     color: #FFFFFF;
-}
-div#directions{
-	color: #FFFFFF;
+    min-height: 800px;
 }
 div#flash{
     position: absolute;
@@ -44,6 +39,19 @@ div.players{
     color: #0000FF;
     margin-left: 10px;
     word-wrap: break-word;
+}
+div#key{
+    position: absolute;
+    bottom: 0;
+    right: -261px;
+    width: 250px;
+    margin-left: 10px;
+    opacity: 1;
+}
+div#key table {
+    border-spacing: 10px;
+    margin: -10px;
+    font-size: small;
 }
 div.playerSegment{
     position: absolute;
