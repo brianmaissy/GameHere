@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", function(){
     // a new controller has connected through the server, create a player for it
     socket.on('newPlayer', function(data){
         players[data.controllerID] = game.newPlayer(data.name);
+        players[data.controllerID].controllerID = data.controllerID;
         if(players[data.controllerID]){
             socket.emit('playerConnected', {controllerID: data.controllerID, title: game.title});
         }else{
@@ -69,6 +70,18 @@ document.addEventListener("DOMContentLoaded", function(){
             if(!game.paused) players[data.controllerID].move(data);
         }
     });
+    socket.on('useItem', function(data){
+        // ignore it if the message is from a controllerID that doesn't correspond to one of our players
+        if(players[data.controllerID]){
+            if(!game.paused) game.useItem(players[data.controllerID], data.item);
+        }
+    });
+    socket.on('dropItem', function(data){
+        // ignore it if the message is from a controllerID that doesn't correspond to one of our players
+        if(players[data.controllerID]){
+            if(!game.paused) game.dropItem(players[data.controllerID], data.item);
+        }
+    });
     socket.on('pause', function(){
         game.pause();
     });
@@ -80,13 +93,19 @@ document.addEventListener("DOMContentLoaded", function(){
 }, false);
 
 function tick(){
+    var i;
+    // update the controllers if any of the inventories have changed
+    for(i=0; i<game.players.length; i++){
+        if(game.players[i].inventoryModified){
+            socket.emit('inventory', {controllerID: game.players[i].controllerID, inventory: game.players[i].inventory});
+        }
+    }
     // tick the game
     game.tick(); //changes nextDirection
     // flip the flash counter
     flashCounter++;
     // update the display
     document.getElementById("field").innerHTML = '<div id="flash"></div>';
-    var i;
     // update the flash
     var flash = document.getElementById("flash");
     if(game.paused){
@@ -176,24 +195,4 @@ function drawItem(item){
         div.style.opacity = .5;
     }
     document.getElementById("field").appendChild(div);
-}
-
-function getItemColor(type){
-    if(type == "food"){
-        return "#FFFFFF";
-    }else if(type == "superfood"){
-        return "#FF99FF";
-    }else if(type == "speedup"){
-        return "#339900";
-    }else if(type == "slowdown"){
-        return "#CC0000";
-    }else if(type == "grow"){
-        return "#0000CC";
-    }else if(type == "shrink"){
-        return "#FFFF33";
-    }else if(type == "invincibility"){
-        return "#FF9900";
-    }else {
-        return "#000000";
-    }
 }

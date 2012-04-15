@@ -11,10 +11,14 @@ function Square(x, y){
     this.direction = "none";
 }
 
+var nextItemId = 1;
+
 function Item(square, type){
     this.x = square.x;
     this.y = square.y;
     this.type = type;
+    this.itemId = nextItemId;
+    nextItemId++;
     this.timeRemaining = -1;
 }
 
@@ -25,6 +29,9 @@ function Player(name, color, game){
     // state variables
 
     this.name = name;
+    this.color = color;
+    this.controllerID;
+
     this.segments = [];     // list of segments (squares), the first is the head of the snake and the last is the tail
     this.length = 2;        // the length of the snake (sometimes the actual size lags behind this length
     this.headProgress = 0;      // fraction of the head square that is filled so far
@@ -34,10 +41,12 @@ function Player(name, color, game){
     this.direction = "none";    // a string, either "left", "right", "up", or "down"
     this.nextDirection = "none";// direction to turn next time step. domain same as direction, but can also be "none"
     this.secondNextDirection = "none";  // similar to nextDirection, but allows the game to remember 2 pending turns
-    this.color = color;
+
     this.score = 0;             // a positive or negative integer. increases by eating, decreases by dying
 
     //items
+    this.inventory = [];
+    this.inventoryModified = false;
     this.invincibilityTimeRemaining = 0;
 
     this.reset = function(){
@@ -47,6 +56,8 @@ function Player(name, color, game){
         this.segments.push(game.randomEmptySquare());
         this.direction = randomDirection();
         this.nextDirection = this.secondNextDirection = "none";
+        this.inventory = [];
+        this.inventoryModified = true;
     };
     this.reset();
 
@@ -79,6 +90,14 @@ function Player(name, color, game){
                 }
             }
         }
+    };
+
+    this.acquireItem = function(item){
+        item.timeRemaining = -1;
+        item.x = -1;
+        item.y = -1;
+        this.inventory.push(item);
+        this.inventoryModified = true;
     };
 }
 
@@ -159,6 +178,7 @@ function Snake(){
 		var i, player;
 		for (i = 0; i < this.players.length; i++) {
 			player = this.players[i];
+            player.inventoryModified = false;
             player.headProgress += player.speed;
             if(player.headProgress >= 1){
                 player.headProgress = 0;
@@ -231,23 +251,10 @@ function Snake(){
                     player.score += this.foodScoreValue;    //increase score for eating a food
                     player.length += this.foodGrowthValue;  // increase size for eating a food
                     player.growing = true;
-                } else if(item.type == "invincibility") {
-                    player.invincibilityTimeRemaining = this.invincibilityTime;
-                } else if(item.type == "superfood"){
-                    player.score += this.superFoodScoreValue;
-                } else if(item.type == "speedup"){
-                    player.speed *= this.speedChangeFactor;
-                } else if(item.type == "slowdown"){
-                    player.speed /= this.speedChangeFactor;
-                } else if(item.type == "grow"){
-                    player.length += this.sizeChangeInterval;
-                    player.growing = true;
-                } else if(item.type == "shrink"){
-                    player.length -= this.sizeChangeInterval;
-                    if(player.length < 2)
-                        player.length = 2;
-                    while(player.segments.length > player.length)
-                        player.segments.splice(player.segments.length - 1, 1);
+                } else if (item.type == "superfood"){
+                    this.useItem(player, item);
+                }else {
+                    player.acquireItem(item);
                 }
                 this.items.splice(i,1);
             }
@@ -257,8 +264,7 @@ function Snake(){
     this.collideWithPlayers = function(player){
         var i, j;
         var head = player.segments[0];
-        for (i = 0; i < this.players.length; i++)
-        {
+        for (i = 0; i < this.players.length; i++) {
             var other = this.players[i];
             for (j = 0; j < other.segments.length; j++){
                 if(head.x == other.segments[j].x && head.y == other.segments[j].y){
@@ -284,7 +290,7 @@ function Snake(){
         }
     };
 
-    // logic for placing items
+    // logic for placing and managing items
 
     this.manageItems = function(){
         var i;
@@ -307,7 +313,7 @@ function Snake(){
             }
         }
         // randomly place items
-        var itemProbability = this.itemProbability * (Math.floor(this.players.length / 2) + 1) / this.numberOfItems;
+        var itemProbability = (this.itemProbability / this.numberOfItems) * (.5 + this.players.length / 2);
         if(Math.random() < itemProbability)
             this.placeRandom("invincibility");
         if(Math.random() < itemProbability)
@@ -320,6 +326,34 @@ function Snake(){
             this.placeRandom("grow");
         if(Math.random() < itemProbability)
             this.placeRandom("shrink");
+    };
+
+    this.useItem = function(player, item){
+        if(item.type == "invincibility") {
+            player.invincibilityTimeRemaining = this.invincibilityTime;
+        } else if(item.type == "superfood"){
+            player.score += this.superFoodScoreValue;
+        } else if(item.type == "speedup"){
+            player.speed *= this.speedChangeFactor;
+        } else if(item.type == "slowdown"){
+            player.speed /= this.speedChangeFactor;
+        } else if(item.type == "grow"){
+            player.length += this.sizeChangeInterval;
+            player.growing = true;
+        } else if(item.type == "shrink"){
+            player.length -= this.sizeChangeInterval;
+            if(player.length < 2)
+                player.length = 2;
+            while(player.segments.length > player.length)
+                player.segments.splice(player.segments.length - 1, 1);
+        }
+        player.inventory.removeItem(item);
+        player.inventoryModified = true;
+    };
+
+    this.dropItem = function(player, item){
+        player.inventory.removeItem(item);
+        player.inventoryModified = true;
     };
 
     this.refillFood = function(){
@@ -413,6 +447,19 @@ Array.prototype.last = function(){
     return this[this.length-1];
 };
 
+Array.prototype.removeItem = function(element){
+    var toRemove = -1;
+    for(var i=0; i<this.length; i++){
+        if(this[i].itemId == element.itemId){
+            toRemove = i;
+            break;
+        }
+    }
+    if(toRemove >= 0){
+        this.splice(toRemove, 1);
+    }
+};
+
 function randomDirection(){
     var directions = ["left", "right", "up", "down"];
     return directions[Math.floor(Math.random()*directions.length)];
@@ -432,6 +479,26 @@ function opposite(dir){
     }
 }
 
+function getItemColor(type){
+    if(type == "food"){
+        return "#FFFFFF";
+    }else if(type == "superfood"){
+        return "#FF6699";
+    }else if(type == "speedup"){
+        return "#339900";
+    }else if(type == "slowdown"){
+        return "#CC0000";
+    }else if(type == "grow"){
+        return "#0000CC";
+    }else if(type == "shrink"){
+        return "#FFFF33";
+    }else if(type == "invincibility"){
+        return "#FF9900";
+    }else {
+        return "#000000";
+    }
+}
+
 // return a single instance of a Snake object
 function createGame(){
     return new Snake();
@@ -442,4 +509,5 @@ if (typeof window === 'undefined'){
     exports.Player = Player;
     exports.createGame = createGame;
     exports.opposite = opposite;
+    exports.getItemColor = getItemColor;
 }

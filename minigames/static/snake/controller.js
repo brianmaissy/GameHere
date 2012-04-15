@@ -1,5 +1,6 @@
 var socket;
 var name;
+var itemMode = "use";
 $(document).ready(function(){
     name = prompt("What is your name?", "anonymous");
 
@@ -16,6 +17,9 @@ $(document).ready(function(){
         }else{
             $('div#message').html(data.title + ' controller connected to display as player ' + name);
         }
+    });
+    socket.on('inventory', function(data){
+        drawInventory(data);
     });
 });
 $(document).keypress(function(event) {
@@ -108,3 +112,39 @@ function blockMove() {
 	event.preventDefault();
 }
 
+function drawInventory(inventory){
+    var inv = document.getElementById('inventory');
+    inv.innerHTML = "";
+    for(var i=0; i<inventory.length; i++){
+        var item = inventory[i];
+        var div = document.createElement('div');
+        div.setAttribute('class', 'item');
+        var container = document.createElement('div');
+        container.setAttribute('class', 'itemContainer');
+        div.style.backgroundColor = getItemColor(item.type);
+        container.item = item;
+        container.onmousedown = clickItem;
+        container.appendChild(div);
+        inv.appendChild(container);
+    }
+}
+
+function clickItem(){
+    if(itemMode == "drop") {
+        socket.emit('dropItem', {item: this.item});
+    } else {
+        socket.emit('useItem', {item: this.item});
+    }
+}
+
+function toggleItemMode(){
+    if(itemMode == "use"){
+        itemMode = "drop";
+        document.getElementById("itemMode").innerHTML = "Click on items to drop them. [SWITCH TO USE MODE]";
+        document.getElementById("inventory").style.backgroundColor = "red";
+    } else if(itemMode == "drop"){
+        itemMode = "use";
+        document.getElementById("itemMode").innerHTML = "Click on items to use them. [SWITCH TO DROP MODE]";
+        document.getElementById("inventory").style.backgroundColor = "transparent";
+    }
+}

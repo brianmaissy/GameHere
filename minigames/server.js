@@ -68,6 +68,25 @@ io.sockets.on('connection', function (socket) {
             }
         });
     });
+    socket.on('useItem', function(data) {
+        socket.get('controllerID', function(err, controllerID){
+            if (controllerID){
+                data.controllerID = controllerID;
+                if(display) display.emit('useItem', data);
+            }
+        });
+    });
+    socket.on('dropItem', function(data) {
+        socket.get('controllerID', function(err, controllerID){
+            if (controllerID){
+                data.controllerID = controllerID;
+                if(display) display.emit('dropItem', data);
+            }
+        });
+    });
+    socket.on('inventory', function(data){
+        controllers[data.controllerID].emit('inventory', data.inventory);
+    });
     socket.on('pause', function(){
        if(display) display.emit('pause');
     });

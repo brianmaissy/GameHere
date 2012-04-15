@@ -6,6 +6,7 @@
         <link rel="stylesheet" type="text/css" href="snake.css" />
         <script src="/jquery-1.7.1.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="snake.js"></script>
         <script src="controller.js"></script>
 	<script> // When ready...
 	window.addEventListener("load",function() {
@@ -19,10 +20,11 @@
     </head>
     <body ontouchmove="blockMove()">
         <div id="message">Not Connected</div>
-        <!-- TODO: show some sort of display explaining how to use the interface -->
 		<div id ="directions">
 			<h1>How to Use Your Phone As A Controller</h1>
 			<p> Swipe up/down and left/right to change the direction of the snake. </p>
 		</div>
+        <a id="itemMode" onclick="toggleItemMode();">Click on items to use them. [SWITCH TO DROP MODE]</a>
+        <div id="inventory"></div>
     </body>
 </html>
