@@ -22,6 +22,7 @@ $(document).ready(function(){
         drawInventory(data);
     });
 	initTouch();
+	initOrientation();
 });
 $(document).keypress(function(event) {
     var deltaY = 0;
@@ -195,6 +196,49 @@ function initTouch()
    document.addEventListener("touchmove", touchHandler, true);
    document.addEventListener("touchend", touchHandler, true);
    document.addEventListener("touchcancel", touchHandler, true);
+}
+
+var rotateThreshold = 10;
+var d;
+
+function orientationHandler(event) {
+	event.preventDefault();
+
+	var fb = event.beta;
+	var lr = event.gamma;
+
+	if(d) d.parentNode.removeChild(d);	
+	d = document.createElement('p');
+	d.innerHTML = Math.round(fb) + ' ' + Math.round(lr);
+	document.body.appendChild(d);
+
+	if(lr > rotateThreshold) {
+		deltaX = 1;
+		deltaY = 0;
+	}
+	else if(lr < -rotateThreshold) {
+		deltaX = -1;
+		deltaY = 0;
+	}
+	else if(fb > rotateThreshold) {
+		deltaX = 0;
+		deltaY = 1;
+	}
+	else if(fb < -rotateThreshold) {
+		deltaX = 0;
+		deltaY = -1;
+	}
+	else {
+		deltaX = 0;
+		deltaY = 0;
+	}
+    socket.emit('move', {x: deltaX, y: deltaY});
+
+}
+
+function initOrientation()
+{
+	window.addEventListener('deviceorientation', orientationHandler, true);
 }
 
 function drawInventory(inventory){
