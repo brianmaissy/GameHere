@@ -66,51 +66,6 @@ var moveThreshold = 20;
 var deltaX = 0;
 var deltaY = 0;
 
-// document.addEventListener('touchstart', function(e) {
-//     startY = e.touches[0].pageY;
-// 	startX = e.touches[0].pageX;
-// });
-// document.addEventListener('touchmove', function(e) {
-//     moveY = e.touches[0].pageY;
-// 	moveX = e.touches[0].pageX;
-//     if(Math.abs(moveY - startY) > moveThreshold && Math.abs(moveY - startY) > Math.abs(moveX - startX)) {
-//         dir = (moveY > startY) ? 'down' : 'up';
-//         if (dir == 'up')
-//         {
-// 			deltaX = 0;
-//             deltaY = -1;			
-//         }
-//         else
-//         {
-// 			deltaX = 0;	
-//             deltaY = 1;
-//         }
-//     } else if(Math.abs(moveX - startX) > moveThreshold) {
-//         dir = (moveX > startX) ? 'right' : 'left';
-//         if (dir == 'left')
-//         {
-//             deltaX = -1;
-// 			deltaY = 0;
-//         }
-//         else
-//         {
-//             deltaX = 1;
-// 			deltaY = 0;
-//         }
-//     }
-//     else { //doesnt pass threshold
-// 		deltaY = 0;
-// 		deltaX = 0;
-//     }
-//     socket.emit('move', {x: deltaX, y: deltaY});
-// });
-// document.addEventListener('touchend', function(e) {
-//     deltaY = 0;
-// 	deltaX = 0;
-//     socket.emit('move', {x: deltaX, y: deltaY});
-// });
-
-
 function touchHandler(event)
 {
     var touches = event.changedTouches,
