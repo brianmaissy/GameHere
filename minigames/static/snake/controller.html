@@ -25,7 +25,7 @@
 			<h1>How to Use Your Phone As A Controller</h1>
 			<p> Swipe up/down and left/right to change the direction of the snake. </p>
 		</div>
-        <a id="itemMode" onclick="toggleItemMode();">Click on items to use them. [SWITCH TO DROP MODE]</a>
+        <!--<a id="itemMode" onclick="toggleItemMode();">Click on items to use them. [SWITCH TO DROP MODE]</a>-->
 
 			<div id="itemContainer0">
 	        <div id="id0" class="touchBox clearfix"></div>
@@ -53,14 +53,18 @@
 		   $("#id0, #id1, #id2, #id3, #id4, #id5").draggable({revert:true});
 		$("#drop").droppable({
 		    drop: function( event, ui ) {
-		        $(ui.draggable).remove();
-				console.log($(ui.draggable).parentNode);
+		    	//$(ui.draggable).css("background-color", "transparent");
+		    	//console.log($(ui.draggable));
 		        $(this).css({'border':'#777 dashed 3px','background':'#eee'});
 		    },
 		    over: function(event, ui) {
+				console.log("before:", $(ui.draggable).parent()[0].onmouseup);
+		        $(ui.draggable).parent()[0].onmouseup = dblclickItem;
+				console.log("after:", $(ui.draggable).parent()[0].onmouseup);
 		        $(this).css({'border':'#a33 dashed 3px','background':'#faa'});
 		    },
 		    out: function (event, ui){
+		    	$(ui.draggable).parent()[0].onmouseup = clickItem;
 		        $(this).css({'border':'#777 dashed 3px','background':'#eee'});
 		    }
 		});

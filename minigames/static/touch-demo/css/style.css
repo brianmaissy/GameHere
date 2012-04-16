@@ -1,0 +1,76 @@
+@charset "utf-8";
+/* CSS Document */
+
+body,td,th {
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color:#555;
+}
+body {
+	position:relative;
+	margin: 0px;
+	padding: 0px;
+}
+.notes{
+	text-align:center;
+	padding:5px;
+	font-size:14px;
+	font-weight:bold;
+}
+h1{
+	margin:5px 0;
+}
+#touchme1, #touchme2, #touchme3 {
+	cursor: move;
+	position:absolute;
+	z-index:50;
+}
+#touchme1{
+	top:100px;
+	left:10px;
+}
+#touchme2{
+	top:100px;
+	left:600px;
+}
+#touchme3{
+	top:350px;
+	left:300px;
+}
+.touchBox {
+	width: 100px;
+	height:100px;
+	margin: 10px;
+	background-color:#999;
+	font-weight: bold;
+	font-size: 14px;
+	color: #FFF;
+	opacity: .75;
+	filter: alpha(opacity = 75);
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius:10px;
+	text-align: center;
+}
+.largetouchbox b, .dropArea b{
+	line-height: 40px;
+}
+.largetouchbox span{
+	display:block;
+	text-align:center;
+	font-size: 10px;
+	line-height:40px;
+}
+.dropArea{
+	position:absolute;
+	top:100px;
+	left:300px;
+	width:200px;
+	height:200px;
+	background:#eee;
+	border:#777 dashed 3px;
+	text-align:center;
+}
+.dhover{
+	border:#f66 dotted 3px;
+}

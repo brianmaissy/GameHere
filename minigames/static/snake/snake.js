@@ -93,11 +93,13 @@ function Player(name, color, game){
     };
 
     this.acquireItem = function(item){
+    	if (this.inventory.length <= 6) { //only let player have 6 items for now
         item.timeRemaining = -1;
         item.x = -1;
         item.y = -1;
         this.inventory.push(item);
         this.inventoryModified = true;
+        }
     };
 }
 

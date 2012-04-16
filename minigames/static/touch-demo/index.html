@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <title>jQuery Touch Demo</title>
+    <script type="text/javascript" src="js/head.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+</head>
+
+<body>
+    <div class="notes"><h1>Drag and Drop for touch devices example</h1>
+        Darg boxes into middle box to remove them.</div>
+        <div id="touchme1" class="touchBox"><span>Box 1</span><b>Drag.</b></div>
+        <div id="touchme2" class="touchBox"><span>Box 2</span><b>Drag</b></div>
+        <div id="touchme3" class="touchBox"><span>Box 3</span><b>Drag</b></div>
+    <div id="drop" class="dropArea"><b>Drop here</b></div>
+<script>
+head.js("https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js","js/ui.js","js/touch.js", function (){
+   $("#touchme1, #touchme2, #touchme3").draggable({revert:true});
+$("#drop").droppable({
+    drop: function( event, ui ) {
+        $(ui.draggable).remove();
+        console.log($(ui.draggable));
+        $(this).css({'border':'#777 dashed 3px','background':'#eee'});
+    },
+    over: function(event, ui) {
+    	console.log("over");
+        $(this).css({'border':'#a33 dashed 3px','background':'#faa'});
+    },
+    out: function (event, ui){
+        $(this).css({'border':'#777 dashed 3px','background':'#eee'});
+    }
+});
+});
+</script>
+</body>
+</html>

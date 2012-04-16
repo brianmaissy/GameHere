@@ -246,9 +246,14 @@ function blockMove() {
 function drawInventory(inventory){
     var inv = document.getElementById('inventory');
     // inv.innerHTML = "";
+	for(var j=0; j < 6; j++){
+		var div = document.getElementById('id'+j);
+		div.style.backgroundColor = "transparent";
+	}
     for(var i=0; i<inventory.length; i++){
         var item = inventory[i];
 		var div = document.getElementById('id'+i);
+
         // var div = document.createElement('div');
 		// div.setAttribute('class', 'item');
 		// div.setAttribute('id', i);
