@@ -207,11 +207,6 @@ function orientationHandler(event) {
 	var fb = event.beta;
 	var lr = event.gamma;
 
-	if(d) d.parentNode.removeChild(d);	
-	d = document.createElement('p');
-	d.innerHTML = Math.round(fb) + ' ' + Math.round(lr);
-	document.body.appendChild(d);
-
 	if(lr > rotateThreshold) {
 		deltaX = 1;
 		deltaY = 0;
