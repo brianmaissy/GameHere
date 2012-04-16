@@ -74,6 +74,7 @@ io.sockets.on('connection', function (socket) {
                 data.controllerID = controllerID;
                 if(display) display.emit('useItem', data);
             }
+			console.log("useitem");
         });
     });
     socket.on('dropItem', function(data) {
@@ -82,6 +83,7 @@ io.sockets.on('connection', function (socket) {
                 data.controllerID = controllerID;
                 if(display) display.emit('dropItem', data);
             }
+			console.log("dropitem");
         });
     });
     socket.on('inventory', function(data){

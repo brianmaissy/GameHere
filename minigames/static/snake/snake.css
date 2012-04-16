@@ -2,6 +2,7 @@ body{
     background-color: #000000;
     color: #FFFFFF;
     min-height: 800px;
+	position: relative;
 }
 div#flash{
     position: absolute;
@@ -53,18 +54,18 @@ div#key table {
     margin: -10px;
     font-size: small;
 }
-div#inventory div.itemContainer{
+/*div#inventory div.itemContainer{
     position: relative;
     display: inline-block;
 }
 div#inventory div.item{
     position: relative;
-    margin: 10px;
-    height: 10px;
-    width: 10px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-}
+    margin: 50px;
+    height: 50px;
+    width: 50px;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+}*/
 div.playerSegment{
     position: absolute;
     background-color: #0000FF;
@@ -73,4 +74,63 @@ div.playerSegment{
 div.item{
     position: absolute;
     border: 1px solid #FFFFFF;
+}
+.dropArea{
+	position:absolute;
+	top:900px;
+	left:600px;
+	width:200px;
+	height:200px;
+	background:#eee;
+	border:#777 dashed 3px;
+	text-align:center;
+}
+
+#id0, #id1, #id2, #id3, #id4, #id5{
+	width:50px;
+	height:50px;
+	cursor: move;
+	position:absolute;
+	z-index:50;
+	left:100px;
+}
+#id0{
+	top:150px;	
+}
+#id1{
+	top:200px;
+}
+#id2{
+	top:250px;
+}
+#id3{
+	top:300px;
+}
+#id4{
+	top:350px;
+}
+#id5{
+	top:400px;
+}
+
+
+.clearfix:after {
+    content: &quot;.&quot;;
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+ 
+.clearfix {
+    display: inline-block;
+}
+ 
+html[xmlns] .clearfix {
+    display: block;
+}
+ 
+* html .clearfix {
+    height: 1%;
 }
