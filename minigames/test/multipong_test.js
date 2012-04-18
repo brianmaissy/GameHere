@@ -57,13 +57,11 @@ exports.testMultipong = {
             test.notEqual(oldX, game.ballLocationX);
             var oldY = lefty.y;
             lefty.move({y: 1});
-            game.updatePlayerPosition();
             test.notEqual(oldY, lefty.y);
             game.pause();
             test.ok(game.paused);
             oldY = lefty.y;
             lefty.move({y: 1});
-            game.updatePlayerPosition();
             test.equals(oldY, lefty.y);
             game.removePlayer(lefty);
             test.ok(!game.started);
@@ -112,7 +110,6 @@ exports.testMultipong = {
             test.ok(Bond.seen("deflectTowardTangent"));
             for(var i=0; i<7; i++){
                 lefty.move({y: 1});
-                game.updatePlayerPosition();
             }
             dir = game.ballDirection;
             var bounces = Bond.seenTimes("hitPaddle");
