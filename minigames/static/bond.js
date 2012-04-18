@@ -195,10 +195,10 @@ Bond.readRecords = function(filename, callback){
         bond.recordedParams = records.params;
         callback();
     });
-}
+};
 
 Bond.saveRecords = function(filename){
-    if(!filename) filename = "record.trace"
+    if(!filename) filename = "record.trace";
     fs.createWriteStream('./BondLogs/' + filename, {
         flags: 'w',
         encoding: "utf8"
@@ -250,10 +250,24 @@ function unpack(from, to){
     }
 }
 
+// this is still pseudocode
+Bond.compareNotes = function(logName, obsPoint, relevantFields, filters){
+    var recorded = readLog(logName);    // import the saved log
+    if(recorded){                       // if it exists
+        if(logFilesEqual()){            // compare with the current log.
+            return true;                // if equal, the test is considered passed
+        }else{                          // otherwise,
+            launchQueryBuilder();       // launch the query builder by sending an http request to a certain port
+            return false;               // consider the test failed
+        }
+    }else{                              // if it doesn't exist
+        saveLogFile(logName);           // save the current log
+        return true;
+    }
+};
+
 var fs;
 if (typeof window === 'undefined'){
     exports.Bond = Bond;
     fs = require('fs');
-}else{
-    this.Bond = Bond;
 }

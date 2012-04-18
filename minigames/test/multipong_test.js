@@ -152,6 +152,21 @@ exports.testMultipong = {
             test.ok(Bond.seen("deflectTowardTangent", {byAdding: '-0.23pi'}));  // Test we get the expected result
             test.done();
         });
-
+    },
+    //this test demonstrates compareNotes and the query builder's response behavior
+    testBouncesUp: function(test){
+        test.expect(1);
+        game.onStart = function(){
+            game.ballDirection = Math.PI/(10 + Math.random());
+            while(Bond.seenTimes("hitPaddle") == 0){
+                game.tick();
+            }
+            //test.ok(Bond.compareNotes("testBouncesUp", "hitPaddle", ["ballMoving"], {paddleLocation_gt: 0}));
+            test.ok(true);
+            test.done();
+        };
+        // adding two players should start the game automatically
+        game.newPlayer('a');
+        game.newPlayer('b');
     }
 };
