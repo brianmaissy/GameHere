@@ -201,18 +201,24 @@ function drawInventory(inventory){
     for(var i=0; i<inventory.length; i++){
         var item = inventory[i];
 
-        var div = document.createElement('div');
-		div.setAttribute('class', 'item');
-		//div.setAttribute('class','clearfix');
-		//div.setAttribute('id', i);
+        //var div = $(document.createElement('div'));
+		//div.attr('class', 'item');
+		//div.attr('id', i);
 		//div.draggable({revert:true});
+        //div.css('background-color', getItemColor(item.type));
+
+		var div = document.createElement('div');
+		div.setAttribute('class', 'item');
+		div.setAttribute('id', 'id'+i);
+		div.style.backgroundColor = getItemColor(item.type);
+		
 		var container = document.createElement('div');
 		container.setAttribute('class', 'itemContainer');
-        div.style.backgroundColor = getItemColor(item.type);
-        container.item = item;
+		container.item = item;
         container.onmouseup = clickItem;
         container.appendChild(div);
         inv.appendChild(container);
+		$('#id'+i).draggable({revert:true});
     }
 
 }
