@@ -56,7 +56,6 @@ $(document).keypress(function(event) {
     }
 });
 
-//TODO: add touch input
 var dir = false;
 var startY = 0;
 var startX = 0;
@@ -194,18 +193,9 @@ function initOrientation()
 function drawInventory(inventory){
     var inv = document.getElementById('inventory');
     inv.innerHTML = "";
-	//for(var j=0; j < 6; j++){
-	//	var div = document.getElementById('id'+j);
-	//	div.style.backgroundColor = "transparent";
-	//}
+
     for(var i=0; i<inventory.length; i++){
         var item = inventory[i];
-
-        //var div = $(document.createElement('div'));
-		//div.attr('class', 'item');
-		//div.attr('id', i);
-		//div.draggable({revert:true});
-        //div.css('background-color', getItemColor(item.type));
 
 		var div = document.createElement('div');
 		div.setAttribute('class', 'item');
@@ -220,7 +210,6 @@ function drawInventory(inventory){
         inv.appendChild(container);
 		$('#id'+i).draggable({revert:true});
     }
-
 }
 
 function clickItem(){
@@ -229,16 +218,4 @@ function clickItem(){
 
 function dropItem(){
 	socket.emit('dropItem', {item: this.item});	
-}
-
-function toggleItemMode(){
-    if(itemMode == "use"){
-        itemMode = "drop";
-        document.getElementById("itemMode").innerHTML = "Click on items to drop them. [SWITCH TO USE MODE]";
-        document.getElementById("inventory").style.backgroundColor = "red";
-    } else if(itemMode == "drop"){
-        itemMode = "use";
-        document.getElementById("itemMode").innerHTML = "Click on items to use them. [SWITCH TO DROP MODE]";
-        document.getElementById("inventory").style.backgroundColor = "transparent";
-    }
 }
