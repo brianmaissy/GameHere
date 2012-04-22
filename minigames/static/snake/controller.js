@@ -193,28 +193,26 @@ function initOrientation()
 
 function drawInventory(inventory){
     var inv = document.getElementById('inventory');
-    // inv.innerHTML = "";
-	for(var j=0; j < 6; j++){
-		var div = document.getElementById('id'+j);
-		div.style.backgroundColor = "transparent";
-	}
+    inv.innerHTML = "";
+	//for(var j=0; j < 6; j++){
+	//	var div = document.getElementById('id'+j);
+	//	div.style.backgroundColor = "transparent";
+	//}
     for(var i=0; i<inventory.length; i++){
         var item = inventory[i];
-		var div = document.getElementById('id'+i);
 
-        // var div = document.createElement('div');
-		// div.setAttribute('class', 'item');
-		// div.setAttribute('id', i);
-		// var container = document.createElement('div');
-		var container = document.getElementById("itemContainer"+i);
-		// container.setAttribute('class', 'itemContainer');
+        var div = document.createElement('div');
+		div.setAttribute('class', 'item');
+		//div.setAttribute('class','clearfix');
+		//div.setAttribute('id', i);
+		//div.draggable({revert:true});
+		var container = document.createElement('div');
+		container.setAttribute('class', 'itemContainer');
         div.style.backgroundColor = getItemColor(item.type);
-		
         container.item = item;
         container.onmouseup = clickItem;
-		//container.doubletap = dblclickItem;
-        // container.appendChild(div);
-        // inv.appendChild(container);
+        container.appendChild(div);
+        inv.appendChild(container);
     }
 
 }
@@ -223,7 +221,7 @@ function clickItem(){
     socket.emit('useItem', {item: this.item});
 }
 
-function dblclickItem(){
+function dropItem(){
 	socket.emit('dropItem', {item: this.item});	
 }
 

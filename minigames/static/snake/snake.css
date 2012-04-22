@@ -54,7 +54,7 @@ div#key table {
     margin: -10px;
     font-size: small;
 }
-/*div#inventory div.itemContainer{
+div#inventory div.itemContainer{
     position: relative;
     display: inline-block;
 }
@@ -65,7 +65,7 @@ div#inventory div.item{
     width: 50px;
     border-radius: 10px;
     -moz-border-radius: 10px;
-}*/
+}
 div.playerSegment{
     position: absolute;
     background-color: #0000FF;
@@ -84,33 +84,6 @@ div.item{
 	background:#eee;
 	border:#777 dashed 3px;
 	text-align:center;
-}
-
-#id0, #id1, #id2, #id3, #id4, #id5{
-	width:50px;
-	height:50px;
-	cursor: move;
-	position:absolute;
-	z-index:50;
-	left:100px;
-}
-#id0{
-	top:600px;	
-}
-#id1{
-	top:660px;
-}
-#id2{
-	top:720px;
-}
-#id3{
-	top:780px;
-}
-#id4{
-	top:840px;
-}
-#id5{
-	top:900px;
 }
 
 

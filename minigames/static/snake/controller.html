@@ -6,9 +6,12 @@
         <link rel="stylesheet" type="text/css" href="snake.css" />
         <script src="/jquery-1.7.1.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="touch.js"></script>
+        <script type="text/javascript" src="head.min.js"></script>
+        <script src="ui.js"></script>
         <script src="snake.js"></script>
         <script src="controller.js"></script>
-		<script type="text/javascript" src="head.min.js"></script>
+		
 	<script> // When ready...
 	window.addEventListener("load",function() {
   		// Set a timeout...
@@ -26,32 +29,15 @@
 			<p> Swipe up/down and left/right to change the direction of the snake. </p>
 			<p> Tap on item to use. Drag item to box to discard. </p>
 		</div>
-        <!--<a id="itemMode" onclick="toggleItemMode();">Click on items to use them. [SWITCH TO DROP MODE]</a>-->
-
-			<div id="itemContainer0">
-	        <div id="id0" class="touchBox clearfix"></div>
-			</div>
-			<div id="itemContainer1">
-	        <div id="id1" class="touchBox clearfix"></div>
-			</div>
-			<div id="itemContainer2">
-	        <div id="id2" class="touchBox clearfix"></div> 
-			</div>
-	 		<div id="itemContainer3">
-			<div id="id3" class="touchBox clearfix"></div>
-			</div>
-			<div id="itemContainer4">
-	        <div id="id4" class="touchBox clearfix"></div>
-			</div>
-			<div id="itemContainer5">
-	        <div id="id5" class="touchBox clearfix"></div>  
-	    	</div>
-
+		
+		<div id="inventory"></div>
+			
+			
 		<div id="drop" class="dropArea"><b>Drop here</b></div>
 		
 		<script>
-		head.js("https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js","ui.js","touch.js", function (){
-		   $("#id0, #id1, #id2, #id3, #id4, #id5").draggable({revert:true});
+		   <!--$("#id0, #id1, #id2, #id3, #id4, #id5").draggable({revert:true});-->
+		   
 		$("#drop").droppable({
 		    drop: function( event, ui ) {
 		    	//$(ui.draggable).css("background-color", "transparent");
@@ -60,7 +46,7 @@
 		    },
 		    over: function(event, ui) {
 				console.log("before:", $(ui.draggable).parent()[0].onmouseup);
-		        $(ui.draggable).parent()[0].onmouseup = dblclickItem;
+		        $(ui.draggable).parent()[0].onmouseup = dropItem;
 				console.log("after:", $(ui.draggable).parent()[0].onmouseup);
 		        $(this).css({'border':'#a33 dashed 3px','background':'#faa'});
 		    },
@@ -69,7 +55,7 @@
 		        $(this).css({'border':'#777 dashed 3px','background':'#eee'});
 		    }
 		});
-		});
+
 		</script>
 		
     </body>

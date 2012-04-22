@@ -93,13 +93,11 @@ function Player(name, color, game){
     };
 
     this.acquireItem = function(item){
-    	if (this.inventory.length <= 6) { //only let player have 6 items for now
         item.timeRemaining = -1;
         item.x = -1;
         item.y = -1;
         this.inventory.push(item);
         this.inventoryModified = true;
-        }
     };
 }
 
@@ -124,6 +122,7 @@ function Snake(){
     this.paused = false;
     this.players = [];
     this.items = [];
+    this.wall = [];
 
     // items
     this.itemProbability = 1.0/250;
@@ -378,6 +377,23 @@ function Snake(){
             item.timeRemaining = this.itemTimeLimit;
         }
         this.items.push(item);
+    };
+    
+    this.createWall = function(){
+  		var startingPoint = this.randomPoint();
+    	for (var i = 0; i < 100; i++) {
+    		var random = Math.random();
+    		if (random < 0.25){
+    		
+    		} else if (random < 0.50) {
+    		
+    		} else if (random < 0.75) {
+    		
+    		} else {
+    		
+    		}
+    		
+    	}
     };
 
     // logic for managing the players
