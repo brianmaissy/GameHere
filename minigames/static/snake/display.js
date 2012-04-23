@@ -129,6 +129,10 @@ function tick(){
     for(i=0; i<game.items.length; i++){
         drawItem(game.items[i]);
     }
+    
+    for(i=0; i<game.walls.length; i++){
+    	drawWall(game.walls[i]);
+    }
 }
 
 // draws a snake from scratch, square by square.
@@ -179,6 +183,17 @@ function drawSquare(player, square, trimDirection, trimAmount){
     div.style.top = t;
     document.getElementById("field").appendChild(div);
     return div;
+}
+
+function drawWall(wall) {
+	var div = document.createElement('div');
+	div.setAttribute('class', 'walls');
+	div.style.top = wall.y * squareHeight;
+	div.style.left = wall.x * squareWidth;
+	div.style.width = squareWidth * wall.lenX;
+	div.style.height = squareHeight * wall.lenY;
+	div.style.backgroundColor = 'grey';
+	document.getElementById("field").appendChild(div);
 }
 
 function drawItem(item){

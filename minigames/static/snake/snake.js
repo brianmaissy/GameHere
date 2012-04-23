@@ -11,6 +11,15 @@ function Square(x, y){
     this.direction = "none";
 }
 
+
+//lenX and lenY cannot be 0.
+function Wall(square, lenX, lenY) {
+	this.x = square.x;
+	this.y = square.y;
+	this.lenX = lenX;
+	this.lenY = lenY;
+}
+
 var nextItemId = 1;
 
 function Item(square, type){
@@ -53,7 +62,7 @@ function Player(name, color, game){
         this.dead = false;
         this.length = 2;
         this.segments = [];
-        this.segments.push(game.randomEmptySquare());
+        this.segments.push(game.randomEmptySquare(5));
         this.direction = randomDirection();
         this.nextDirection = this.secondNextDirection = "none";
         this.inventory = [];
@@ -122,7 +131,7 @@ function Snake(){
     this.paused = false;
     this.players = [];
     this.items = [];
-    this.wall = [];
+    this.walls = []; //most recent coordinate is last entry
 
     // items
     this.itemProbability = 1.0/250;
@@ -138,6 +147,7 @@ function Snake(){
     this.start = function(){
         var game = this;
         this.refillFood();
+        this.createWall();
         Bond.spy('gameStart', {started: true});
         // wait around for 2 seconds and then start the game
         game.starting = true;
@@ -225,6 +235,7 @@ function Snake(){
             }
             this.collideWithItems(player);
             this.collideWithPlayers(player);
+            this.collideWithWalls(player);
 		}
         // penalize and reset the dead players
         var anyDead = false;
@@ -260,6 +271,17 @@ function Snake(){
                 this.items.splice(i,1);
             }
         }
+    };
+    
+    this.collideWithWalls = function(player){
+    	var head = player.segments[0];
+    	for (i = 0; i < this.walls.length; i++) {
+    		var wall = this.walls[i];
+    		if ((head.x >= wall.x) && (head.x <= (wall.x + wall.lenX - 1)) 
+    		&& (head.y >= wall.y) && (head.y <= (wall.y + wall.lenY - 1))) {
+    			player.dead = true;
+    		}	
+    	}
     };
 
     this.collideWithPlayers = function(player){
@@ -372,7 +394,7 @@ function Snake(){
     };
 
     this.placeRandom = function(type){
-        var item = new Item(this.randomEmptySquare(), type);
+        var item = new Item(this.randomEmptySquare(0), type);
         if(item.type != "food"){
             item.timeRemaining = this.itemTimeLimit;
         }
@@ -380,20 +402,10 @@ function Snake(){
     };
     
     this.createWall = function(){
-  		var startingPoint = this.randomPoint();
-    	for (var i = 0; i < 100; i++) {
-    		var random = Math.random();
-    		if (random < 0.25){
-    		
-    		} else if (random < 0.50) {
-    		
-    		} else if (random < 0.75) {
-    		
-    		} else {
-    		
-    		}
-    		
-    	}
+    	this.walls = [];
+  		this.walls.push(new Wall(new Square(13,5), 5, 20));
+  		this.walls.push(new Wall(new Square(26,15), 5, 20));
+  		this.walls.push(new Wall(new Square(39,25), 5, 20));  		
     };
 
     // logic for managing the players
@@ -432,7 +444,7 @@ function Snake(){
 
     // utility functions
 
-    this.randomEmptySquare = function(){
+    this.randomEmptySquare = function(buffer){
         var taken = true;
         var point;
         var i, j;
@@ -450,6 +462,14 @@ function Snake(){
                     }
                 }
             }
+            for (i = 0; i < this.walls.length; i++) {
+            	var wall = this.walls[i];
+            	if ((point.x >= (wall.x - buffer)) && (point.x <= (wall.x + wall.lenX - 1 + buffer*2)) 
+	    		&& (point.y >= (wall.y - buffer)) && (point.y <= (wall.y + wall.lenY - 1 + buffer*2))) {
+	    			taken = true;
+    	        }
+            
+        	}
         }
         return point;
     };
