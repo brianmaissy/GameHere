@@ -1,0 +1,14 @@
+.clip {
+	position: absolute;
+	width: 400px;
+	height: 300px;
+	top: 171px;
+	left: 88px;
+	overflow: hidden;
+}
+
+.view {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+}
+
