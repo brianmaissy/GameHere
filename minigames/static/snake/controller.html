@@ -12,29 +12,56 @@
         <script src="ui.js"></script>
         <script src="snake.js"></script>
         <script src="controller.js"></script>
-		
-	<script> // When ready...
-	window.addEventListener("load",function() {
-  		// Set a timeout...
-  		setTimeout(function(){
-    			// Hide the address bar!
-    			window.scrollTo(0, 1);
-  		}, 0);
-	}); 
+	
+	<!-- // <script> // When ready...
+	// window.addEventListener("load",function() {
+	//   		// Set a timeout...
+	//   		setTimeout(function(){
+	//     			// Hide the address bar!
+	//     			window.scrollTo(0, 1);
+	//   		}, 0);
+	// }); 
+	// 
+	// </script> -->
+	<script type="text/javascript">
+		window.addEventListener('load', function() {
+			var inventory = document.querySelector('#inventory');
+			Scrollview(inventory);
+		});
+		window.addEventListener('touchstart', function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+		});
+		window.addEventListener('touchmove', function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+		});
 	</script>
     </head>
     <body ontouchmove="blockMove()">
         <div id="message">Not Connected</div>
-		<div id ="directions">
-			<h1>How to Use Your Phone As A Controller</h1>
-			<p> Swipe up/down and left/right to change the direction of the snake. </p>
-			<p> Tap on item to use. Drag item to box to discard. </p>
+		
+		
+		<div class="clip">
+			<div id="inventory" class="view">
+			
+			</div>			
 		</div>
 		
-		<div id="inventory"></div>
-			
+		<!--	<div class="clip">
+				<div id="testView" class="view">
+					<h1>Lorem Ipsum</h1>
+					<p>Lorem ipsum sit dolor amet. Awesome stuff here. This is some filler text. I really should use a generator but am way too lazy to open a browser.</p>
+					<h1>Lorem Ipsum</h1>
+					<p>Lorem ipsum sit dolor amet. Awesome stuff here. This is some filler text. I really should use a generator but am way too lazy to open a browser.</p>
+					<h1>Lorem Ipsum</h1>
+					<p>Lorem ipsum sit dolor amet. Awesome stuff here. This is some filler text. I really should use a generator but am way too lazy to open a browser.</p>
+				</div>
+			</div> -->
+		
 		<div id="drop" class="dropArea"><b>Drop here</b></div>
 		
+		<div id="touchArea" class="clearfix"></div>
 		<script>
 		$("#drop").droppable({
 		    drop: function( event, ui ) {
@@ -55,6 +82,9 @@
 		});
 
 		</script>
+		
+		
+	
 		
     </body>
 </html>

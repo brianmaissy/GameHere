@@ -55,15 +55,30 @@ div#key table {
     font-size: small;
 }
 
+
+.clip {
+	position: absolute;
+	width: 400px;
+	height: 300px;
+	top: 50px;
+	left: 10px;
+	overflow: hidden;
+}
+
+.view {
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+}
+
+
 div#inventory div.itemContainer{
     position: relative;
     display: inline-block;
-    
-
 }
+
 div#inventory div.item{
     position: relative;
-    margin: 50px;
+    margin: 25px;
     height: 50px;
     width: 50px;
     border-radius: 10px;
@@ -81,6 +96,21 @@ div.item{
 
 div.walls{
     position: absolute;
+}
+
+#directions{
+	position: absolute;
+	top: 50px;
+	left: 600px;
+	
+}
+
+#touchArea{
+	position: absolute;
+	height: 200px;
+	width: 200px;
+	top: 300px;
+	background-color: white;
 }
 
 .dropArea{

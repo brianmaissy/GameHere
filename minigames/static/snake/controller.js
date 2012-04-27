@@ -75,15 +75,15 @@ function touchHandler(event)
     {
         case "touchstart": 
 			type = "mousedown"; 
-			dotouchStart(event); 
+			//dotouchStart(event); 
 			break;
         case "touchmove":  
 			type="mousemove"; 
-			dotouchMove(event);
+			//dotouchMove(event);
 			break;
         case "touchend":
    			type="mouseup"; 
-			dotouchEnd(event);
+			//dotouchEnd(event);
 			break;
         default: return;
     }
@@ -97,12 +97,12 @@ function touchHandler(event)
     event.preventDefault();
 }
 
-function dotouchStart(e){
+function doTouchStart(e){
 	startY = e.touches[0].pageY;
 	startX = e.touches[0].pageX;		
 }
 
-function dotouchMove(e){
+function doTouchMove(e){
 	moveY = e.touches[0].pageY;
 	moveX = e.touches[0].pageX;
     if(Math.abs(moveY - startY) > moveThreshold && Math.abs(moveY - startY) > Math.abs(moveX - startX)) {
@@ -137,7 +137,7 @@ function dotouchMove(e){
     socket.emit('move', {x: deltaX, y: deltaY});
 }
 
-function dotouchEnd(e){
+function doTouchEnd(e){
 	deltaY = 0;
 	deltaX = 0;
     socket.emit('move', {x: deltaX, y: deltaY});
@@ -146,10 +146,15 @@ function dotouchEnd(e){
  
 function initTouch()
 {
-   document.addEventListener("touchstart", touchHandler, true);
-   document.addEventListener("touchmove", touchHandler, true);
-   document.addEventListener("touchend", touchHandler, true);
-   document.addEventListener("touchcancel", touchHandler, true);
+	document.addEventListener("touchstart", touchHandler, true);
+	document.addEventListener("touchmove", touchHandler, true);
+	document.addEventListener("touchend", touchHandler, true);
+	document.addEventListener("touchcancel", touchHandler, true);
+
+	var touchArea = document.getElementById('touchArea');
+	touchArea.addEventListener("touchstart", doTouchStart, true);
+	touchArea.addEventListener("touchmove", doTouchMove, true);
+	touchArea.addEventListener("touchend", doTouchEnd, true);
 }
 
 var rotateThreshold = 10;
@@ -211,6 +216,50 @@ function drawInventory(inventory){
 		$('#id'+i).draggable({revert:true});
     }
 }
+
+function doNothing(){
+	console.log("do nothing");
+}
+
+// Precondition: view inside clip
+function Scrollview(view) {
+	var pos = 0;
+	var startX = 0;
+	var diffX = 0;
+	var timetouched = 0;
+	var timePassed = 0;
+
+	view.addEventListener('touchstart', function(event) {
+		startX = event.touches[0].pageX;
+		timetouched = new Date().getTime();
+		console.log("start touch:",timetouched);
+	});
+	view.addEventListener('touchmove', function(event) {
+		var currX = event.touches[0].pageX;
+		diffX = currX - startX;
+		this.style.webkitTransform = 'translate3d(' + (pos + diffX) + 'px, 0px, 0px)';
+		
+		timePassed = new Date().getTime() - timetouched;
+		if (timePassed > 200)
+		{
+			var container = document.getElementsByClassName('itemContainer');
+			for (var i = 0; i < container.length; i++)
+			{
+				container[i].onmouseup = doNothing;
+				
+			}
+		}
+	});
+	view.addEventListener('touchend', function(event) {
+		pos = pos + diffX;
+		var container = document.getElementsByClassName('itemContainer');
+		for (var i = 0; i < container.length; i++)
+		{
+			container[i].onmouseup = clickItem;
+		}
+	});
+}
+
 
 function clickItem(){
     socket.emit('useItem', {item: this.item});
