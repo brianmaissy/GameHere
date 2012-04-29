@@ -1,11 +1,6 @@
 body{
     background-color: #000000;
-}
-div#message {
     color: #FFFFFF;
-}
-div#directions{
-	color: #FFFFFF;
 }
 div#flash{
     position: absolute;
@@ -22,8 +17,8 @@ div#game{
     position: relative;
     top: 50px;
     left: 150px;
-    width: 820px;
-    height: 420px;
+    width: 800px;
+    height: 400px;
     margin-left: 30px;
     margin-right: 30px;
 }
@@ -45,38 +40,42 @@ div.player{
     text-align: center;
     color: #FFEEFF;
 }
-div.cards{
-    position: absolute;
-    top: -100px;
-}
-div.hand{
-    font-size: large;
-    font-weight: bold;
-}
 div.card{
     height: 60px;
     width: 33px;
     padding: 10px;
+    color: black;
     text-align: center;
-    background-color: #FFFFFF;
+    background-image: url('images/cardback.jpg');
+    background-size: 100%;
     border: 1px solid #DDDDDD;
     -moz-border-radius: 5px;
     border-radius: 5px;
+}
+div.card#up{
+    background: #FFFFFF none;
+}
+div.cards{
+    position: absolute;
+    top: -100px;
 }
 div.cards div.card{
     margin: 10px;
     position: absolute;
 }
-div.card#down{
-    background-image: url('images/cardback.jpg');
-    background-size: 100%;
+div#hand{
+    font-size: large;
+    font-weight: bold;
 }
-div.hand div.card{
+div#hand div.card{
     display: inline-block;
+    margin: 3px;
 }
 div.input{
     position: static;
-    color: #FFFFFF;
     display: none;
     margin-bottom: 20px;
+}
+span#total {
+    font-weight: bold;
 }
