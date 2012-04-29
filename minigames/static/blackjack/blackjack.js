@@ -14,24 +14,27 @@ function Player(name, game){
     this.name = name;
     this.chips = game.initialChips;
     this.hand = [];
-    this.bet = 0;
+    this.currentBet = 0;
+    this.doneHitting = false;
 
     this.bet = function(amount){
         if(amount <= this.chips){
-            this.bet = amount;
+            this.currentBet = amount;
         }else{
-            this.bet = this.chips;
+            this.currentBet = this.chips;
         }
+        this.doneHitting = false;
     };
     this.hit = function(){
         this.hand.push(game.drawCard());
+        if(game.handValue(this.hand) > 21) this.doneHitting = true;
     };
     this.stand = function(){
-
+        this.doneHitting = true;
     };
 }
 
-// The Blackjack game constructor. A simple implementation of infinite-deck blackjack
+// The Blackjack game constructor
 function Blackjack(){
 
     // constants
@@ -40,12 +43,13 @@ function Blackjack(){
     this.initialChips = 500;
     this.numbers = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'];
     this.suits = ['hearts', 'clubs', 'diamonds', 'spades'];
+    this.numDecks = 1;
 
     // state variables
 
     this.deck = [];
     this.players = [];
-    this.phase = "betting";
+    this.dealerHand = [];
 
     // game lifecycle methods
 
@@ -53,8 +57,31 @@ function Blackjack(){
         this.initDeck();
         var i, len = this.players.length;
         for(i = 0; i < len; i++){
-            players[i].hand.push(this.drawCard());
-            players[i].hand.push(this.drawCard());
+            this.players[i].hand.push(this.drawCard());
+            this.players[i].hand.push(this.drawCard());
+        }
+        this.dealerHand.push(this.drawCard());
+        this.dealerHand.push(this.drawCard());
+    };
+
+    this.finish = function(){
+        this.dealerPlay();
+        this.payout();
+    };
+
+    this.dealerPlay = function(){
+        //TODO: finish this
+    };
+
+    this.payout = function(){
+        var dealerValue = this.handValue(this.dealerHand);
+        var i, player, playerValue, len = this.players.length;
+        for(i=0; i<len; i++){
+            player = this.players[i];
+            playerValue = this.handValue(player.hand);
+            //TODO: finish this
+            player.hand = [];
+            player.currentBet = 0;
         }
     };
 
@@ -62,19 +89,21 @@ function Blackjack(){
 
     this.initDeck = function(){
         this.deck = [];
-        var i, j, suits = this.suits, numbers = this.numbers;
+        var k, i, j, suits = this.suits, numbers = this.numbers;
         var numSuits = suits.length, numNumbers = numbers.length;
-        for(i=0; i<numSuits; i++){
-            var suit = suits[i];
-            for(j=0; j<numNumbers; j++){
-                var number = numbers[j];
-                this.deck.push(new Card(number, suit));
+        for(k=0; k<this.numDecks; k++){
+            for(i=0; i<numSuits; i++){
+                var suit = suits[i];
+                for(j=0; j<numNumbers; j++){
+                    var number = numbers[j];
+                    this.deck.push(new Card(number, suit));
+                }
             }
         }
     };
 
     this.drawCard = function(){
-        return this.deck.splice(Math.floor(Math.random() * this.deck.length), 1);
+        return this.deck.splice(Math.floor(Math.random() * this.deck.length), 1)[0];
     };
 
     this.handValue = function(hand){
@@ -126,11 +155,18 @@ function Blackjack(){
     this.allPlayersHaveBet = function(){
         var i, len = this.players.length;
         for(i=0; i<len; i++){
-            if(this.players[i].bet == 0) return false;
+            if(this.players[i].currentBet == 0) return false;
         }
         return true;
-    }
+    };
 
+    this.allPlayersDoneHitting = function(){
+        var i, len = this.players.length;
+        for(i=0; i<len; i++){
+            if(!this.players[i].doneHitting) return false;
+        }
+        return true;
+    };
 }
 
 // return a single instance of a Multipong object

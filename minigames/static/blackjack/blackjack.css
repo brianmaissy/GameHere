@@ -70,11 +70,15 @@ div#hand{
 div#hand div.card{
     display: inline-block;
     margin: 3px;
+    background: #FFFFFF none;
 }
 div.input{
     position: static;
     display: none;
     margin-bottom: 20px;
+}
+div#value {
+    opacity: .5;
 }
 span#total {
     font-weight: bold;

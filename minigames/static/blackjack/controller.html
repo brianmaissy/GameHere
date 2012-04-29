@@ -13,13 +13,15 @@
             <input type="button" value="Bet 10" onclick="bet(10);"> <input type="button" value="Bet 50" onclick="bet(50);">
         </div>
         <div class="input" id="hit">
-            <input type="button" value="Hit" onclick="hit();"> <input type="button" value="Stand" onclick="stand();">
+            <input type="button" id="hitButton" value="Hit" onclick="hit();"> <input type="button" value="Stand" onclick="stand();">
         </div>
         <div class="input" id="wait">
             Waiting for other players...
         </div>
 		<div id="hand">
 		</div>
-        Hand value: <span id="total">0</span><br>
+        <div id="value">
+            Hand value: <span id="total">0</span><br>
+        </div>
     </body>
 </html>

@@ -29,8 +29,6 @@ document.addEventListener("DOMContentLoaded", function(){
             players[data.controllerID] = player;
             var hand = player.hand;
             socket.emit('playerConnected', {controllerID: data.controllerID, title: game.title});
-            socket.emit('card', {controllerID: data.controllerID, card: hand[0], total: 0});
-            socket.emit('card', {controllerID: data.controllerID, card: hand[1], total: game.handValue(hand)});
         }else{
             socket.emit('playerConnected', {controllerID: data.controllerID, error: "too many players"});
         }
@@ -49,31 +47,44 @@ document.addEventListener("DOMContentLoaded", function(){
     // input from a controller through the server
     socket.on('bet', function(data){
         // ignore it if the message is from a controllerID that doesn't correspond to one of our players
-        if(players[data.controllerID]){
-            players[data.controllerID].bet(data.amount);
+        var player = players[data.controllerID];
+        if(player){
+            player.bet(data.amount);
             if(game.allPlayersHaveBet()){
                 game.deal();
                 var i, len = game.players.length;
                 for(i = 0; i < len; i++){
-                    var player = game.players[i];
-                    var hand = player.hand;
-                    socket.emit('card', {controllerID: player.controllerID, card: hand[0], total: 0});
-                    socket.emit('card', {controllerID: player.controllerID, card: hand[1], total: game.handValue(hand)});
+                    var pl = game.players[i];
+                    var hand = pl.hand;
+                    socket.emit('cards', {controllerID: pl.controllerID, cards: hand, total: game.handValue(hand)});
                 }
+                socket.emit('startHitting');
                 redraw();
             }
         }
     });
     socket.on('hit', function(data){
         // ignore it if the message is from a controllerID that doesn't correspond to one of our players
-        if(players[data.controllerID]){
-
+        var player = players[data.controllerID];
+        if(player){
+            players[data.controllerID].hit();
+            var hand = player.hand;
+            socket.emit('cards', {controllerID: player.controllerID, cards: hand, total: game.handValue(hand)});
+            if(game.allPlayersDoneHitting()){
+                game.finish();
+                socket.emit('startBetting');
+            }
         }
     });
     socket.on('stand', function(data){
         // ignore it if the message is from a controllerID that doesn't correspond to one of our players
-        if(players[data.controllerID]){
-            //if(!game.paused) game.dropItem(players[data.controllerID], data.item);
+        var player = players[data.controllerID];
+        if(player){
+            players[data.controllerID].stand();
+            if(game.allPlayersDoneHitting()){
+                game.finish();
+                socket.emit('startBetting');
+            }
         }
     });
     // set up the Bond debugger
@@ -81,4 +92,5 @@ document.addEventListener("DOMContentLoaded", function(){
 }, false);
 
 function redraw(){
+    //TODO: finish this
 };
