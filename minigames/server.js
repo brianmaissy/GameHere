@@ -92,6 +92,39 @@ io.sockets.on('connection', function (socket) {
     socket.on('pause', function(){
        if(display) display.emit('pause');
     });
+    socket.on('bet', function(data) {
+        socket.get('controllerID', function(err, controllerID){
+            if (controllerID){
+                data.controllerID = controllerID;
+                if(display) display.emit('bet', data);
+            }
+        });
+    });
+    socket.on('hit', function(data) {
+        socket.get('controllerID', function(err, controllerID){
+            if (controllerID){
+                data.controllerID = controllerID;
+                if(display) display.emit('hit', data);
+            }
+        });
+    });
+    socket.on('stand', function(data) {
+        socket.get('controllerID', function(err, controllerID){
+            if (controllerID){
+                data.controllerID = controllerID;
+                if(display) display.emit('stand', data);
+            }
+        });
+    });
+    socket.on('card', function(data){
+        controllers[data.controllerID].emit('card', data);
+    });
+    socket.on('startBetting', function(data){
+        socket.broadcast.emit('startBetting');
+    });
+    socket.on('startHitting', function(data){
+        socket.broadcast.emit('startHitting');
+    });
     // send commands to the server instance of Bond
     socket.on('bond', function(data){
         Bond.controlPanelCommand(data);
