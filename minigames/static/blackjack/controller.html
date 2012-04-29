@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <title>Blackjack Controller</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" href="blackjack.css" />
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="controller.js"></script>
+    </head>
+    <body>
+        <div id="message">Not Connected</div>
+        <div class="input" id="bet" style="display: block;">
+            <input type="button" value="Bet 1"> <input type="button" value="Bet 5">
+            <input type="button" value="Bet 10"> <input type="button" value="Bet 50">
+        </div>
+        <div class="input" id="hit">
+            <input type="button" value="Hit"> <input type="button" value="Stand">
+        </div>
+        <div class="input" id="wait">
+            Waiting for other players...
+        </div>
+		<div class="hand">
+            <div class="card" style="color: red">4<br>&hearts;</div>
+            <div class="card" style="color: black">J<br>&spades;</div>
+		</div>
+    </body>
+</html>
