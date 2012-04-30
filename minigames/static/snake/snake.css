@@ -58,9 +58,9 @@ div#key table {
 
 .clip {
 	position: absolute;
-	width: 400px;
-	height: 300px;
-	top: 50px;
+	width: 300px;
+	height: 200px;
+	top: 25px;
 	left: 10px;
 	overflow: hidden;
 }
@@ -69,7 +69,6 @@ div#key table {
 	display: -webkit-box;
 	-webkit-box-orient: horizontal;
 }
-
 
 div#inventory div.itemContainer{
     position: relative;
@@ -102,29 +101,30 @@ div.walls{
 	position: absolute;
 	top: 50px;
 	left: 600px;
-	
 }
 
 #touchArea{
 	position: absolute;
 	height: 200px;
 	width: 200px;
-	top: 300px;
+	top: 250px;
 	background-color: white;
+}
+
+#touchArea p{
+	color: black;
 }
 
 .dropArea{
 	position:absolute;
-	top:300px;
-	left:300px;
+	top:250px;
+	left:220px;
 	width:200px;
 	height:200px;
 	background:#eee;
 	border:#777 dashed 3px;
 	text-align:center;
 }
-
-
 
 .clearfix:after {
     content: &quot;.&quot;;

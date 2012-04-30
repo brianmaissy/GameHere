@@ -15,14 +15,14 @@ $(document).ready(function(){
             $('div#message').html('Error: ' + data.error);
             socket.disconnect();
         }else{
-            $('div#message').html(data.title + ' controller connected to display as player ' + name);
+            $('div#message').html(name + ' is now connected.');
         }
     });
     socket.on('inventory', function(data){
         drawInventory(data);
     });
 	initTouch();
-	initOrientation();
+	//initOrientation();  commented out so gyroscope is disabled
 });
 $(document).keypress(function(event) {
     var deltaY = 0;
@@ -74,16 +74,13 @@ function touchHandler(event)
     switch(event.type)
     {
         case "touchstart": 
-			type = "mousedown"; 
-			//dotouchStart(event); 
+			type = "mousedown";  
 			break;
         case "touchmove":  
 			type="mousemove"; 
-			//dotouchMove(event);
 			break;
         case "touchend":
    			type="mouseup"; 
-			//dotouchEnd(event);
 			break;
         default: return;
     }
@@ -218,7 +215,6 @@ function drawInventory(inventory){
 }
 
 function doNothing(){
-	console.log("do nothing");
 }
 
 // Precondition: view inside clip
@@ -232,7 +228,6 @@ function Scrollview(view) {
 	view.addEventListener('touchstart', function(event) {
 		startX = event.touches[0].pageX;
 		timetouched = new Date().getTime();
-		console.log("start touch:",timetouched);
 	});
 	view.addEventListener('touchmove', function(event) {
 		var currX = event.touches[0].pageX;
@@ -240,18 +235,14 @@ function Scrollview(view) {
 		this.style.webkitTransform = 'translate3d(' + (pos + diffX) + 'px, 0px, 0px)';
 		
 		timePassed = new Date().getTime() - timetouched;
-		if (timePassed > 200)
+		if (timePassed > 100)
 		{
 			var container = document.getElementsByClassName('itemContainer');
 			for (var i = 0; i < container.length; i++)
 			{
 				if (container[i].onmouseup != dropItem) {
 					container[i].onmouseup = doNothing;
-				} else {
-					console.log("doNothing is not set");
-					console.log("onmouseup:", container[i].onmouseup);
-				}
-				
+				} 				
 			}
 		}
 	});

@@ -41,38 +41,23 @@
     <body ontouchmove="blockMove()">
         <div id="message">Not Connected</div>
 		
-		
 		<div class="clip">
 			<div id="inventory" class="view">
 				
 			</div>			
 		</div>
 		
-<!--		<div class="clip">
-				<div id="testView" class="view">
-					<h1>Lorem Ipsum</h1>
-					<p>Lorem ipsum sit dolor amet. Awesome stuff here. This is some filler text. I really should use a generator but am way too lazy to open a browser.</p>
-					<h1>Lorem Ipsum</h1>
-					<p>Lorem ipsum sit dolor amet. Awesome stuff here. This is some filler text. I really should use a generator but am way too lazy to open a browser.</p>
-					<h1>Lorem Ipsum</h1>
-					<p>Lorem ipsum sit dolor amet. Awesome stuff here. This is some filler text. I really should use a generator but am way too lazy to open a browser.</p>
-				</div>
-			</div> -->
-		
 		<div id="drop" class="dropArea"><b>Drop here</b></div>
 		
-		<div id="touchArea" class="clearfix"></div>
+		<div id="touchArea" class="clearfix"><p>Touch here to navigate</p></div>
+
 		<script>
 		$("#drop").droppable({
 		    drop: function( event, ui ) {
-		    	//$(ui.draggable).css("background-color", "transparent");
-		    	//console.log($(ui.draggable));
 		        $(this).css({'border':'#777 dashed 3px','background':'#eee'});
 		    },
-		    over: function(event, ui) {
-				console.log("before:", $(ui.draggable).parent()[0].onmouseup);
+		    over: function(event, ui) {				
 		        $(ui.draggable).parent()[0].onmouseup = dropItem;
-				console.log("after:", $(ui.draggable).parent()[0].onmouseup);
 		        $(this).css({'border':'#a33 dashed 3px','background':'#faa'});
 		    },
 		    out: function (event, ui){
@@ -82,8 +67,6 @@
 		});
 		</script>
 		
-		
 	
-		
     </body>
 </html>
