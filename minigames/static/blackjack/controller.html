@@ -8,18 +8,21 @@
     </head>
     <body>
         <div id="message">Not Connected</div><br>
-        <div class="input" id="bet" style="display: block;">
+        <div class="input" id="bet">
             <input type="button" value="Bet 1" onclick="bet(1);"> <input type="button" value="Bet 5" onclick="bet(5);">
-            <input type="button" value="Bet 10" onclick="bet(10);"> <input type="button" value="Bet 50" onclick="bet(50);">
+            <input type="button" value="Bet 10" onclick="bet(10);"> <input type="button" value="Bet 25" onclick="bet(25);">
+            <input type="button" value="Bet 50" onclick="bet(50);"> <input type="button" value="Bet 100" onclick="bet(100);">
         </div>
         <div class="input" id="hit">
-            <input type="button" value="Hit" onclick="hit();"> <input type="button" value="Stand" onclick="stand();">
+            <input type="button" id="hitButton" value="Hit" onclick="hit();"> <input type="button" value="Stand" onclick="stand();">
         </div>
         <div class="input" id="wait">
             Waiting for other players...
         </div>
 		<div id="hand">
 		</div>
-        Hand value: <span id="total">0</span><br>
+        <div id="value">
+            Hand value: <span id="total">0</span><br>
+        </div>
     </body>
 </html>
