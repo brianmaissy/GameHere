@@ -245,7 +245,12 @@ function Scrollview(view) {
 			var container = document.getElementsByClassName('itemContainer');
 			for (var i = 0; i < container.length; i++)
 			{
-				container[i].onmouseup = doNothing;
+				if (container[i].onmouseup != dropItem) {
+					container[i].onmouseup = doNothing;
+				} else {
+					console.log("doNothing is not set");
+					console.log("onmouseup:", container[i].onmouseup);
+				}
 				
 			}
 		}
