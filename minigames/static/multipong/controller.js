@@ -17,7 +17,34 @@ $(document).ready(function(){
             $('div#message').html(data.title + ' controller connected to display as player ' + name);
         }
     });
+    initOrientation();
 });
+
+var rotateThreshold = 20;
+
+function orientationHandler(event) {
+	event.preventDefault();
+
+	var fb = event.beta;
+
+	if(fb > rotateThreshold) {
+		deltaY = 1;
+	}
+	else if(fb < -rotateThreshold) {
+		deltaY = -1;
+	}
+	else {
+		deltaY = 0;
+	}
+    socket.emit('move', {y: deltaY});
+
+}
+
+function initOrientation()
+{
+	window.addEventListener('deviceorientation', orientationHandler, true);
+}
+
 $(document).keypress(function(event) {
     var deltaY = 0;
     switch(parseInt(event.keyCode)){
