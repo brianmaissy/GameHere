@@ -18,11 +18,7 @@ function Player(name, game){
     this.doneHitting = false;
 
     this.bet = function(amount){
-        if(amount <= this.chips){
-            this.currentBet = amount;
-        }else{
-            this.currentBet = this.chips;
-        }
+        this.currentBet = amount;
         this.doneHitting = false;
     };
     this.hit = function(){
@@ -43,7 +39,7 @@ function Blackjack(){
     this.initialChips = 500;
     this.numbers = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'];
     this.suits = ['hearts', 'clubs', 'diamonds', 'spades'];
-    this.numDecks = 1;
+    this.numDecks = 3;
 
     // state variables
 
@@ -64,24 +60,28 @@ function Blackjack(){
         this.dealerHand.push(this.drawCard());
     };
 
-    this.finish = function(){
-        this.dealerPlay();
-        this.payout();
-    };
-
-    this.dealerPlay = function(){
-        //TODO: finish this
-    };
-
     this.payout = function(){
         var dealerValue = this.handValue(this.dealerHand);
         var i, player, playerValue, len = this.players.length;
         for(i=0; i<len; i++){
             player = this.players[i];
             playerValue = this.handValue(player.hand);
-            //TODO: finish this
+            if(playerValue > 21){
+                player.chips -= player.currentBet;
+            }else if(dealerValue > 21 || playerValue > dealerValue){
+                player.chips += player.currentBet;
+            }else if(playerValue < dealerValue){
+                player.chips -= player.currentBet;
+            }else if(playerValue == 21 && dealerValue == 21){
+                if(player.hand.length == 2 && this.dealerHand.length > 2){
+                    player.chips += player.currentBet;
+                }else if(player.hand.length > 2 && this.dealerHand.length == 2){
+                    player.chips -= player.currentBet;
+                }
+            }
             player.hand = [];
             player.currentBet = 0;
+            this.dealerHand = [];
         }
     };
 
@@ -118,7 +118,7 @@ function Blackjack(){
             numAces--;
         }
         return val;
-    }
+    };
 
     // returns the value of a card
     this.cardValue = function(card){
@@ -154,6 +154,7 @@ function Blackjack(){
 
     this.allPlayersHaveBet = function(){
         var i, len = this.players.length;
+        if(len == 0) return false;
         for(i=0; i<len; i++){
             if(this.players[i].currentBet == 0) return false;
         }

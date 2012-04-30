@@ -1,5 +1,7 @@
 var socket;
 var name;
+var connected = false;
+
 document.addEventListener("DOMContentLoaded", function(){
     name = prompt("What is your name?", "anonymous");
 
@@ -14,22 +16,28 @@ document.addEventListener("DOMContentLoaded", function(){
             document.getElementById('message').innerHTML =  'Error: ' + data.error;
             socket.disconnect();
         }else{
+            connected = true;
             document.getElementById('message').innerHTML =  data.title + ' controller connected to display as player ' + name;
+            document.getElementById('bet').style.display = 'block';
         }
     });
-    socket.on('startBetting', function(data){
-        document.getElementById('wait').style.display = 'none';
-        document.getElementById('hit').style.display = 'none';
-        document.getElementById('bet').style.display = 'block';
-        document.getElementById('hand').style.opacity = .5;
-        document.getElementById('value').style.opacity = .5;
+    socket.on('startBetting', function(){
+        if(connected){
+            document.getElementById('wait').style.display = 'none';
+            document.getElementById('hit').style.display = 'none';
+            document.getElementById('bet').style.display = 'block';
+            document.getElementById('hand').style.opacity = .5;
+            document.getElementById('value').style.opacity = .5;
+        }
     });
-    socket.on('startHitting', function(data){
-        document.getElementById('wait').style.display = 'none';
-        document.getElementById('bet').style.display = 'none';
-        document.getElementById('hit').style.display = 'block';
-        document.getElementById('hand').style.opacity = 1;
-        document.getElementById('value').style.opacity = 1;
+    socket.on('startHitting', function(){
+        if(connected){
+            document.getElementById('wait').style.display = 'none';
+            document.getElementById('bet').style.display = 'none';
+            document.getElementById('hit').style.display = 'block';
+            document.getElementById('hand').style.opacity = 1;
+            document.getElementById('value').style.opacity = 1;
+        }
     });
     socket.on('cards', function(data){
         document.getElementById('hand').innerHTML = "";
@@ -49,8 +57,12 @@ document.addEventListener("DOMContentLoaded", function(){
                 document.getElementById("hit").style.display = "none";
                 document.getElementById("wait").style.display = "block";
             }else if(total == 21){
-                total = "21!";
-                stand();
+                if(cards.length == 2){
+                    total = "blackjack!";
+                }else{
+                    total = "21!";
+                }
+                setTimeout(stand, 25);
             }
         }
         document.getElementById('total').innerHTML = total;
@@ -87,5 +99,7 @@ function suitToSymbol(suit){
         case 'spades':
             return '&#9824;';
             break;
+        default:
+            return '';
     }
 }

@@ -18,7 +18,7 @@ div#game{
     top: 50px;
     left: 150px;
     width: 800px;
-    height: 400px;
+    height: 600px;
     margin-left: 30px;
     margin-right: 30px;
 }
@@ -31,9 +31,15 @@ div#table{
     background-color: #559944;
     border: 1px solid #444444;
 }
+div.chips{
+    position: absolute;
+    bottom: 10px;
+    right: 30px;
+}
 div.player{
     position: absolute;
     padding: 10px;
+    text-align: center;
     vertical-align: bottom;
     font-size: large;
     font-weight: bold;
@@ -46,14 +52,14 @@ div.card{
     padding: 10px;
     color: black;
     text-align: center;
-    background-image: url('images/cardback.jpg');
-    background-size: 100%;
+    background: #FFFFFF none;
     border: 1px solid #DDDDDD;
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
-div.card#up{
-    background: #FFFFFF none;
+div.card#down{
+    background-image: url('images/cardback.jpg');
+    background-size: 100%;
 }
 div.cards{
     position: absolute;
@@ -82,4 +88,8 @@ div#value {
 }
 span#total {
     font-weight: bold;
+}
+input {
+    height: 60px;
+    min-width: 60px;
 }
