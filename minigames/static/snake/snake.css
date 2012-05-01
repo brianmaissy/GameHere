@@ -20,8 +20,8 @@ div#game{
     top: 50px;
     left: 0;
     background-color: #000000;
-    width: 400px;
-    height: 400px;
+    width: 800px;
+    height: 800px;
     border: 1px solid #00FF00;
 }
 div#field{
@@ -49,19 +49,18 @@ div#key{
     margin-left: 10px;
     opacity: 1;
 }
+
 div#key table {
     border-spacing: 10px;
     margin: -10px;
     font-size: small;
 }
 
-
 .clip {
 	position: absolute;
-	width: 300px;
-	height: 200px;
+	width: 1000px;
+	height: 300px;
 	top: 25px;
-	left: 10px;
 	overflow: hidden;
 }
 
@@ -70,9 +69,16 @@ div#key table {
 	-webkit-box-orient: horizontal;
 }
 
+div.scrollWrapper {
+	position: relative;
+	display: inline-block;
+	height: 200px;
+
+}
+
 div#inventory div.itemContainer{
     position: relative;
-    display: inline-block;
+	height: 200px;
 }
 
 div#inventory div.item{
@@ -107,23 +113,32 @@ div.walls{
 	position: absolute;
 	height: 200px;
 	width: 200px;
-	top: 250px;
-	background-color: white;
+	top: 200px;
+	border: 2px dotted white;
 }
 
 #touchArea p{
-	color: black;
+	color: white;
 }
 
 .dropArea{
 	position:absolute;
-	top:250px;
+	top:200px;
 	left:220px;
-	width:200px;
-	height:200px;
+	width:80px;
+	height:110px;
 	background:#eee;
 	border:#777 dashed 3px;
 	text-align:center;
+	background-image: url('images/trashcan.png');
+	background-size: 80px;
+	background-repeat: no-repeat;
+}
+
+#scroll {
+	position: absolute;
+	top: 150px;
+	z-index: -1;
 }
 
 .clearfix:after {

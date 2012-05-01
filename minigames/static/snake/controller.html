@@ -13,16 +13,6 @@
         <script src="snake.js"></script>
         <script src="controller.js"></script>
 	
-	<!-- // <script> // When ready...
-	// window.addEventListener("load",function() {
-	//   		// Set a timeout...
-	//   		setTimeout(function(){
-	//     			// Hide the address bar!
-	//     			window.scrollTo(0, 1);
-	//   		}, 0);
-	// }); 
-	// 
-	// </script> -->
 	<script type="text/javascript">
 		window.addEventListener('load', function() {
 			var inventory = document.querySelector('#inventory');
@@ -47,22 +37,24 @@
 			</div>			
 		</div>
 		
-		<div id="drop" class="dropArea"><b>Drop here</b></div>
+		<div id="scroll"> &lt--------- Scroll Left & Right Here ---------&gt </div>
+		
+		<div id="drop" class="dropArea"></div>
 		
 		<div id="touchArea" class="clearfix"><p>Touch here to navigate</p></div>
 
 		<script>
 		$("#drop").droppable({
 		    drop: function( event, ui ) {
-		        $(this).css({'border':'#777 dashed 3px','background':'#eee'});
+		        $(this).css({'border':'#777 dashed 3px','background':'#eee', 'background-image': 'url("' + 'images/trashcan.png' + '")'});
 		    },
-		    over: function(event, ui) {				
+		    over: function(event, ui) {
 		        $(ui.draggable).parent()[0].onmouseup = dropItem;
-		        $(this).css({'border':'#a33 dashed 3px','background':'#faa'});
+		        $(this).css({'border':'#a33 dashed 3px','background':'#faa', 'background-image': "url('" + 'images/trashcan.png' + "')"});
 		    },
 		    out: function (event, ui){
 		    	$(ui.draggable).parent()[0].onmouseup = clickItem;
-		        $(this).css({'border':'#777 dashed 3px','background':'#eee'});
+		        $(this).css({'border':'#777 dashed 3px','background':'#eee', 'background-image': "url('" + 'images/trashcan.png' + "')"});
 		    }
 		});
 		</script>

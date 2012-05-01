@@ -84,6 +84,7 @@ function touchHandler(event)
 			break;
         default: return;
     }
+    
     var simulatedEvent = document.createEvent("MouseEvent");
     simulatedEvent.initMouseEvent(type, true, true, window, 1,
                               first.screenX, first.screenY,
@@ -208,8 +209,13 @@ function drawInventory(inventory){
 		container.setAttribute('class', 'itemContainer');
 		container.item = item;
         container.onmouseup = clickItem;
+        
+        var scrollWrapper = document.createElement('div');
+        scrollWrapper.setAttribute('class', 'scrollWrapper');
+        
         container.appendChild(div);
-        inv.appendChild(container);
+        scrollWrapper.appendChild(container);
+        inv.appendChild(scrollWrapper);
 		$('#id'+i).draggable({revert:true});
     }
 }
@@ -229,6 +235,7 @@ function Scrollview(view) {
 		startX = event.touches[0].pageX;
 		timetouched = new Date().getTime();
 	});
+	
 	view.addEventListener('touchmove', function(event) {
 		var currX = event.touches[0].pageX;
 		diffX = currX - startX;
