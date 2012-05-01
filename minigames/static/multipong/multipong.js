@@ -43,7 +43,7 @@ function Multipong(){
     this.paddleWidth = .2;
     this.paddleThickness = .03;
     this.ballRadius = .02;
-    this.moveDistance = this.paddleWidth / 12;   // must be a fraction of paddleWidth
+    this.moveDistance = this.paddleWidth / 8;   // must be a fraction of paddleWidth
     this.startingSpeed = .0075;
     this.ballSpeedIncreasePerBounce = .00025;
 

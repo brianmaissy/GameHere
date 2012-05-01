@@ -109,10 +109,12 @@ div#ball{
     border: 1px solid #00FF00;
     background-color: rgba(0, 255, 0, .5);
 }
-
+#mobile-directions{
+	color: #FFFFFF;
+}
 #directions{
 	position: absolute;
 	top: 50px;
-	left: 900px;
+	left: 950px;
 	width: 400px;
 }
