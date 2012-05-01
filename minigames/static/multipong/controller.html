@@ -2,6 +2,7 @@
     <head>
         <title>Multipong Controller</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <link rel="stylesheet" type="text/css" href="multipong.css" />
         <script src="/jquery-1.7.1.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
@@ -9,10 +10,10 @@
     </head>
     <body ontouchmove="blockMove()">
         <div id="message">Not Connected</div>
-        <!-- TODO: show some sort of display explaining how to use the interface -->
 		<div id ="directions">
 			<h1>How to Use Your Phone As A Controller</h1>
-			<p> Swipe up and down to move the paddle. </p>
+			<p> Hold your phone parallel to the ground. </p>
+			<p> Tilt your phone up and down to control the paddle. </p>
 		</div>
     </body>
 </html>
