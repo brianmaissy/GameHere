@@ -274,13 +274,15 @@ function Snake(){
     };
     
     this.collideWithWalls = function(player){
-    	var head = player.segments[0];
-    	for (i = 0; i < this.walls.length; i++) {
-    		var wall = this.walls[i];
-    		if ((head.x >= wall.x) && (head.x <= (wall.x + wall.lenX - 1)) 
-    		&& (head.y >= wall.y) && (head.y <= (wall.y + wall.lenY - 1))) {
-    			player.dead = true;
-    		}	
+     	if(player.invincibilityTimeRemaining <= 0) {    
+			var head = player.segments[0];
+			for (i = 0; i < this.walls.length; i++) {
+				var wall = this.walls[i];
+				if ((head.x >= wall.x) && (head.x <= (wall.x + wall.lenX - 1)) 
+				&& (head.y >= wall.y) && (head.y <= (wall.y + wall.lenY - 1))) {
+					player.dead = true;
+				}	
+			}
     	}
     };
 
