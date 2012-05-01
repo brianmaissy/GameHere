@@ -62,7 +62,7 @@ function Player(name, color, game){
         this.dead = false;
         this.length = 2;
         this.segments = [];
-        this.segments.push(game.randomEmptySquare(5));
+        this.segments.push(game.randomEmptySquare(8));
         this.direction = randomDirection();
         this.nextDirection = this.secondNextDirection = "none";
         this.inventory = [];
@@ -405,9 +405,20 @@ function Snake(){
     
     this.createWall = function(){
     	this.walls = [];
-  		this.walls.push(new Wall(new Square(13,5), 5, 20));
-  		this.walls.push(new Wall(new Square(26,15), 5, 20));
-  		this.walls.push(new Wall(new Square(39,25), 5, 20));  		
+  		this.walls.push(new Wall(new Square(10,10), 1, 13));
+  		this.walls.push(new Wall(new Square(10,25), 1, 15));
+
+  		this.walls.push(new Wall(new Square(40,10), 1, 13));
+  		this.walls.push(new Wall(new Square(40,25), 1, 15));
+  		
+  		this.walls.push(new Wall(new Square(10,10), 15, 1));		
+  		this.walls.push(new Wall(new Square(27,10), 13, 1));		
+  		
+  		this.walls.push(new Wall(new Square(10,40), 15, 1));
+  		this.walls.push(new Wall(new Square(27,40), 14, 1));		
+  		
+  		this.walls.push(new Wall(new Square(25,21), 1, 5));	//this is for the plus
+		this.walls.push(new Wall(new Square(23,23), 5, 1));		
     };
 
     // logic for managing the players
