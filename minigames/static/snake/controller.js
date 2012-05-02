@@ -3,6 +3,7 @@ var name;
 var itemMode = "use";
 $(document).ready(function(){
     name = prompt("What is your name?", "anonymous");
+    name = name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
     // start the socket.io connection and set up the handlers
     socket = io.connect('http://' + window.location.host);
