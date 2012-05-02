@@ -244,7 +244,7 @@ function Snake(){
             if(player.dead){
                 player.score += this.deathScoreValue;
                 player.reset();
-                anyDead = true;
+                //anyDead = true;
             }
         }
         if(anyDead){
