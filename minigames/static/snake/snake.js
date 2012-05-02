@@ -60,6 +60,7 @@ function Player(name, color, game){
 
     this.reset = function(){
         this.dead = false;
+        this.speed = game.defaultSpeed;
         this.length = 2;
         this.segments = [];
         this.segments.push(game.randomEmptySquare(8));
