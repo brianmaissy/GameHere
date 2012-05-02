@@ -211,7 +211,7 @@ function getTransformProperty(element) {
     // msTransform appear in this list before MozTransform
     var properties = [
         'transform',
-        'WebkitTransform',
+        'webkitTransform',
         'msTransform',
         'MozTransform',
         'OTransform'
