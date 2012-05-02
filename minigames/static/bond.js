@@ -16,10 +16,10 @@ var Bond = {
 Bond.start = function(){
     Bond.observations = [];
     // clear log file
-    fs.createWriteStream('./BondLogs/default.log', {
-        flags: 'w',
-        encoding: "utf8"
-    }).write("");
+    //fs.createWriteStream('./BondLogs/default.log', {
+      //  flags: 'w',
+        //encoding: "utf8"
+    //}).write("");
 };
 
 // Call this to change to remote reporting mode, and pass the socket.io socket of the testing server.
@@ -61,10 +61,10 @@ Bond.spy = function(location, observations){
         Bond.observations[location].push(observations);
 
         // write to log file
-        fs.createWriteStream('./BondLogs/default.log', {
-            flags: 'a',
-            encoding: "utf8"
-        }).write(location + ": " + JSON.stringify(observations) + "\n");
+       // fs.createWriteStream('./BondLogs/default.log', {
+         //   flags: 'a',
+           // encoding: "utf8"
+      //  }).write(location + ": " + JSON.stringify(observations) + "\n");
     }
 };
 

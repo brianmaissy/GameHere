@@ -255,6 +255,9 @@ function Scrollview(view) {
 	});
 	view.addEventListener('touchend', function(event) {
 		pos = pos + diffX;
+		if (pos > 0) {
+			pos = 0;
+		}
 		var container = document.getElementsByClassName('itemContainer');
 		for (var i = 0; i < container.length; i++)
 		{

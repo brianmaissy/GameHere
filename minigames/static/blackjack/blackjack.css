@@ -93,3 +93,10 @@ input {
     height: 60px;
     min-width: 60px;
 }
+
+#directions{
+	position: absolute;
+	top: 50px;
+	left: 950px;
+	width: 400px;
+}

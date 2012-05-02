@@ -55,7 +55,7 @@ div#key{
 div#key table {
     border-spacing: 10px;
     margin: -10px;
-    font-size: small;
+    font-size: large;
 }
 
 .clip {
@@ -75,7 +75,7 @@ div.scrollWrapper {
 	position: relative;
 	display: inline-block;
 	height: 200px;
-
+	-webkit-tap-highlight-color: transparent;
 }
 
 div#inventory div.itemContainer{
